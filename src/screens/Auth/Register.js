@@ -7,7 +7,12 @@ import theme from "../../theme";
 import { AppBoldText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
 export const Register = () => {
-    const { handleSubmit, control, errors } = useForm();
+    const {
+        handleSubmit,
+        control,
+        errors,
+        formState: { isSubmitting },
+    } = useForm();
 
     const onSubmit = (values) => {
         console.log("The values: ", values);
@@ -21,8 +26,8 @@ export const Register = () => {
             <View style={styles.form}>
                 <FormErrorMessage label="Something happened" />
 
-                <View>
-                    <View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <View style={{ width: "48%" }}>
                         <Controller
                             name="firstName"
                             defaultValue=""
@@ -43,7 +48,7 @@ export const Register = () => {
                             <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>
                         )}
                     </View>
-                    <View>
+                    <View style={{ width: "48%" }}>
                         <Controller
                             name="lastName"
                             defaultValue=""
@@ -55,7 +60,7 @@ export const Register = () => {
                                     value={value}
                                     error={invalid}
                                     onBlur={onBlur}
-                                    placeholder="Enter Email"
+                                    placeholder="Enter Last Name"
                                     onChangeText={(value) => onChange(value)}
                                 />
                             )}
@@ -82,6 +87,7 @@ export const Register = () => {
                             error={invalid}
                             onBlur={onBlur}
                             placeholder="Enter Email"
+                            style={{ marginTop: RFPercentage(2) }}
                             onChangeText={(value) => onChange(value)}
                         />
                     )}
@@ -99,7 +105,8 @@ export const Register = () => {
                             value={value}
                             error={invalid}
                             onBlur={onBlur}
-                            placeholder="Enter Email"
+                            placeholder="Enter Phone Number"
+                            style={{ marginTop: RFPercentage(2) }}
                             onChangeText={(value) => onChange(value)}
                         />
                     )}
@@ -149,7 +156,7 @@ export const Register = () => {
                 )}
             </View>
 
-            <Button label="Register" onPress={handleSubmit(onSubmit)} />
+            <Button disabled={isSubmitting} label="Register" onPress={handleSubmit(onSubmit)} />
             <View style={styles.registerActionBox}>
                 <AppText>Already signed up?</AppText>
                 <AppBoldText style={styles.singupLink}>Log In</AppBoldText>

@@ -7,7 +7,12 @@ import theme from "../../theme";
 import { AppBoldText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
 export const Login = () => {
-    const { handleSubmit, control, errors } = useForm();
+    const {
+        handleSubmit,
+        control,
+        errors,
+        formState: { isSubmitting },
+    } = useForm();
 
     const onSubmit = (values) => {
         console.log("The values: ", values);
@@ -68,7 +73,7 @@ export const Login = () => {
                 <AppBoldText style={styles.forgetPassword}>Forget Password?</AppBoldText>
             </View>
 
-            <Button label="Log In" onPress={handleSubmit(onSubmit)} />
+            <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit(onSubmit)} />
 
             <View style={styles.registerActionBox}>
                 <AppText>Don't have an account?</AppText>
