@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         borderRadius: theme.radius.label,
-        paddingVertical: RFPercentage(2.5),
+        paddingVertical: RFPercentage(1.5),
         paddingHorizontal: RFPercentage(10),
         backgroundColor: Theme.colors.primary,
     },

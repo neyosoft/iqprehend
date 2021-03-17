@@ -3,9 +3,9 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import theme from "../theme";
-import { AppText, Button } from "../components";
-import { ArticleCard } from "../cards/ArticleCard";
+import theme from "../../theme";
+import { AppText, Button } from "../../components";
+import { ArticleCard } from "../../cards/ArticleCard";
 
 const data = [
     { title: "Rhoncus arcu massa 1." },
@@ -51,7 +51,7 @@ export const Home = () => {
                     renderItem={({ item }) => (
                         <ArticleCard
                             title={item.title}
-                            imageSource={require("../assets/images/image1.png")}
+                            imageSource={require("../../assets/images/image1.png")}
                             body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
                         />
                     )}
