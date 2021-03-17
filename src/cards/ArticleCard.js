@@ -1,6 +1,7 @@
 import React from "react";
-import { \StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { AppMediumText, AppText } from "../components";
 
 export const ArticleCard = ({ style, title, body, imageSource }) => (
     <View style={[styles.card, style]}>

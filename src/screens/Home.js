@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import theme from "../theme";
 import { AppMediumText, AppText, Button } from "../components";
+import { ArticleCard } from "../cards/ArticleCard";
 
 export const Home = () => {
     return (
