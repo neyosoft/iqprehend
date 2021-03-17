@@ -2,7 +2,8 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { Login, Register } from "./screens/Auth";
+import { Home } from "./screens";
+import { Login, Register, ForgetPassword, PasswordReset, PasswordResetSuccessful } from "./screens/Auth";
 
 const queryClient = new QueryClient();
 
@@ -10,7 +11,7 @@ const App = () => {
     return (
         <SafeAreaProvider>
             <QueryClientProvider client={queryClient}>
-                <Register />
+                <Home />
             </QueryClientProvider>
         </SafeAreaProvider>
     );

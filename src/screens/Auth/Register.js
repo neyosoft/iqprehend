@@ -48,6 +48,7 @@ export const Register = () => {
                             <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>
                         )}
                     </View>
+
                     <View style={{ width: "48%" }}>
                         <Controller
                             name="lastName"
@@ -156,7 +157,7 @@ export const Register = () => {
                 )}
             </View>
 
-            <Button disabled={isSubmitting} label="Register" onPress={handleSubmit(onSubmit)} />
+            <Button disabled={isSubmitting} label="Create Account" onPress={handleSubmit(onSubmit)} />
             <View style={styles.registerActionBox}>
                 <AppText>Already signed up?</AppText>
                 <AppBoldText style={styles.singupLink}>Log In</AppBoldText>

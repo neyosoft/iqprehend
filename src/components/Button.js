@@ -8,7 +8,7 @@ import Theme from "../theme";
 import { AppText } from "./AppText";
 
 export const Button = ({ style, label, children, ...rest }) => {
-    const buttonStyle = [style, styles.container];
+    const buttonStyle = [styles.button, style];
     const buttonTextStyle = [styles.buttonText];
 
     if (rest.disabled) {
@@ -17,23 +17,19 @@ export const Button = ({ style, label, children, ...rest }) => {
     }
 
     return (
-        <View style={buttonStyle}>
-            <RectButton testID="theButton" style={styles.button} {...rest}>
-                {children ? children : <AppText style={buttonTextStyle}>{label}</AppText>}
-            </RectButton>
-        </View>
+        <RectButton testID="theButton" style={buttonStyle} {...rest}>
+            {children ? children : <AppText style={buttonTextStyle}>{label}</AppText>}
+        </RectButton>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {},
     button: {
-        flex: 1,
-        borderRadius: 7,
         alignItems: "center",
         justifyContent: "center",
-        padding: RFPercentage(2.5),
-        paddingVertical: RFPercentage(3.5),
+        borderRadius: theme.radius.label,
+        paddingVertical: RFPercentage(2.5),
+        paddingHorizontal: RFPercentage(10),
         backgroundColor: Theme.colors.primary,
     },
     buttonText: {
