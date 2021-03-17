@@ -7,7 +7,7 @@ import { AppMediumText, AppText, Button } from "../../components";
 
 import theme from "../../theme";
 
-export const SingleArticleView = () => {
+export const Settings = () => {
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.header}>
