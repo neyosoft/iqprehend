@@ -1,11 +1,34 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import theme from "../theme";
-import { AppMediumText, AppText, Button } from "../components";
+import { AppText, Button } from "../components";
 import { ArticleCard } from "../cards/ArticleCard";
+
+const data = [
+    { title: "Rhoncus arcu massa 1." },
+    { title: "Rhoncus arcu massa 2." },
+    { title: "Rhoncus arcu massa 3." },
+    { title: "Rhoncus arcu massa 4." },
+    { title: "Rhoncus arcu massa 5." },
+    { title: "Rhoncus arcu massa 6." },
+    { title: "Rhoncus arcu massa 7." },
+    { title: "Rhoncus arcu massa 8." },
+    { title: "Rhoncus arcu massa 9." },
+    { title: "Rhoncus arcu massa 10." },
+    { title: "Rhoncus arcu massa 11." },
+    { title: "Rhoncus arcu massa 12." },
+    { title: "Rhoncus arcu massa 13." },
+    { title: "Rhoncus arcu massa 14." },
+    { title: "Rhoncus arcu massa 15." },
+    { title: "Rhoncus arcu massa 16." },
+    { title: "Rhoncus arcu massa 17." },
+    { title: "Rhoncus arcu massa 18." },
+    { title: "Rhoncus arcu massa 19." },
+    { title: "Rhoncus arcu massa 20." },
+];
 
 export const Home = () => {
     return (
@@ -15,30 +38,23 @@ export const Home = () => {
                 <AppText style={styles.headerTitle}>All Articles</AppText>
                 <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
             </View>
+            <View style={styles.filterArea}>
+                <View style={styles.filterBox} />
+                <View style={styles.filterBox} />
+                <Button label="FILTER" style={styles.filterBtn} />
+            </View>
             <View style={styles.content}>
-                <View style={styles.filterArea}>
-                    <View style={styles.filterBox} />
-                    <View style={styles.filterBox} />
-                    <Button label="FILTER" style={styles.filterBtn} />
-                </View>
-
-                <View style={styles.articleCard}>
-                    <View style={styles.articleLeft}>
-                        <AppMediumText style={styles.title}>Rhoncus arcu massa.</AppMediumText>
-                        <AppText style={styles.articleBody}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet, enim consectetur
-                            sagittis vitae. Amet nascetur eu, iaculis ullamcorper fermentum aliquam..
-                        </AppText>
-                        <View>
-                            <AppMediumText>Read Article</AppMediumText>
-                        </View>
-                    </View>
-                    <Image source={require("../assets/images/image1.png")} />
-                </View>
-                <ArticleCard
-                    title="Rhoncus arcu massa."
-                    body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet, enim consectetur
-                            sagittis vitae."
+                <FlatList
+                    data={data}
+                    keyExtractor={(_, index) => `article${index}`}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    renderItem={({ item }) => (
+                        <ArticleCard
+                            title={item.title}
+                            imageSource={require("../assets/images/image1.png")}
+                            body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
+                        />
+                    )}
                 />
             </View>
         </View>
@@ -46,6 +62,10 @@ export const Home = () => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
     header: {
         flexDirection: "row",
         alignItems: "center",
@@ -61,6 +81,8 @@ const styles = StyleSheet.create({
     filterArea: {
         flexDirection: "row",
         justifyContent: "flex-end",
+        paddingVertical: RFPercentage(2),
+        paddingHorizontal: RFPercentage(3),
     },
     filterBox: {
         borderWidth: 1,
@@ -74,22 +96,11 @@ const styles = StyleSheet.create({
         paddingVertical: RFPercentage(1),
     },
     content: {
-        padding: RFPercentage(3),
-    },
-    title: {
-        color: theme.colors.primary,
-        fontSize: RFPercentage(2.5),
-    },
-    articleCard: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: RFPercentage(2),
-    },
-    articleLeft: {
         flex: 1,
-        marginRight: RFPercentage(2),
+        marginTop: RFPercentage(1),
+        paddingHorizontal: RFPercentage(3),
     },
-    articleBody: {
-        marginVertical: 5,
+    separator: {
+        height: RFPercentage(2),
     },
 });

@@ -22,14 +22,14 @@ const styles = StyleSheet.create({
     card: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: RFPercentage(2),
+        borderRadius: 2,
     },
     leftSide: {
         flex: 1,
         marginRight: RFPercentage(2),
     },
     articleBody: {
-        marginVertical: 5,
+        fontSize: RFPercentage(1.8),
     },
     viewRow: {
         flexDirection: "row",
