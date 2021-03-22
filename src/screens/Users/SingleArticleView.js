@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TextInput, ScrollView } from "react-native";
+import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -7,11 +7,13 @@ import { AppMediumText, AppText, Button } from "../../components";
 
 import theme from "../../theme";
 
-export const SingleArticleView = () => {
+export const SingleArticleView = ({ navigation }) => {
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.header}>
-                <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                <TouchableOpacity onPress={navigation.goBack}>
+                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                </TouchableOpacity>
                 <AppText style={styles.headerTitle}>All Articles</AppText>
             </View>
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>

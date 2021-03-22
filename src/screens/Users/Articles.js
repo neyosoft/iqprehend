@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -30,11 +30,13 @@ const data = [
     { title: "Rhoncus arcu massa 20." },
 ];
 
-export const Home = () => {
+export const Articles = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
+                <TouchableOpacity onPress={navigation.openDrawer}>
+                    <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
+                </TouchableOpacity>
                 <AppText style={styles.headerTitle}>All Articles</AppText>
                 <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
             </View>
@@ -51,6 +53,7 @@ export const Home = () => {
                     renderItem={({ item }) => (
                         <ArticleCard
                             title={item.title}
+                            navigation={navigation}
                             imageSource={require("../../assets/images/image1.png")}
                             body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
                         />

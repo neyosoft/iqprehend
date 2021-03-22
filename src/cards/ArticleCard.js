@@ -3,9 +3,10 @@ import { View, StyleSheet, Image } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { AppMediumText, AppText } from "../components";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { RectButton } from "react-native-gesture-handler";
 
-export const ArticleCard = ({ style, title, body, imageSource }) => (
-    <View style={[styles.card, style]}>
+export const ArticleCard = ({ style, title, body, imageSource, navigation }) => (
+    <RectButton style={[styles.card, style]} onPress={() => navigation.navigate("SingleArticleView")}>
         <View style={styles.leftSide}>
             <AppMediumText style={styles.title}>{title}</AppMediumText>
             <AppText style={styles.articleBody}>{body}</AppText>
@@ -15,7 +16,7 @@ export const ArticleCard = ({ style, title, body, imageSource }) => (
             </View>
         </View>
         <Image source={imageSource} />
-    </View>
+    </RectButton>
 );
 
 const styles = StyleSheet.create({
