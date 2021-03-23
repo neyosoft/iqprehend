@@ -4,6 +4,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import theme from "../../theme";
+import { SearchIcon } from "../../icons";
 import { AppText, Button } from "../../components";
 import { ArticleCard } from "../../cards/ArticleCard";
 
@@ -37,14 +38,20 @@ export const Articles = ({ navigation }) => {
                 <TouchableOpacity onPress={navigation.openDrawer}>
                     <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
                 </TouchableOpacity>
+
                 <AppText style={styles.headerTitle}>All Articles</AppText>
-                <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
+
+                <TouchableOpacity>
+                    <SearchIcon />
+                </TouchableOpacity>
             </View>
+
             <View style={styles.filterArea}>
                 <View style={styles.filterBox} />
                 <View style={styles.filterBox} />
                 <Button label="FILTER" style={styles.filterBtn} />
             </View>
+
             <View style={styles.content}>
                 <FlatList
                     data={data}

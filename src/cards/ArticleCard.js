@@ -25,6 +25,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 2,
     },
+    title: {
+        fontSize: RFPercentage(2.3),
+    },
     leftSide: {
         flex: 1,
         marginRight: RFPercentage(2),
