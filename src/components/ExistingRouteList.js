@@ -5,6 +5,7 @@ import { CommonActions, DrawerActions } from "@react-navigation/native";
 import TouchableItem from "@react-navigation/drawer/src/views/TouchableItem";
 
 import { AppText } from "./AppText";
+import { AppMediumText } from "./AppMediumText";
 
 export const ExistingRouteList = ({
     state,
@@ -56,6 +57,8 @@ const DrawerItem = ({
 }) => {
     const color = focused ? activeTintColor : inactiveTintColor;
 
+    const ActiveText = focused ? AppMediumText : AppText;
+
     return (
         <View style={[styles.container, style]}>
             <TouchableItem
@@ -69,7 +72,7 @@ const DrawerItem = ({
                 accessibilityTraits={focused ? ["button", "selected"] : "button"}>
                 <>
                     {icon({ focused, color })}
-                    <AppText style={[styles.label, { color }, labelStyle]}>{label}</AppText>
+                    <ActiveText style={[styles.label, labelStyle, { color }]}>{label}</ActiveText>
                 </>
             </TouchableItem>
         </View>
@@ -87,7 +90,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     label: {
-        color: "#121212",
-        marginLeft: RFPercentage(1.6),
+        marginLeft: RFPercentage(2),
     },
 });

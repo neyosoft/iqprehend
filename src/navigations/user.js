@@ -23,9 +23,9 @@ const DrawerNavigation = () => {
     return (
         <Drawer.Navigator
             initialRouteName="Articles"
+            drawerStyle={{ backgroundColor: "#F6F6F6" }}
             drawerContent={(props) => <CustomDrawerContent {...props} />}
-            drawerContentOptions={{ activeTintColor: "#121212", inactiveTintColor: "#174542" }}
-            drawerStyle={{ backgroundColor: "#F6F6F6" }}>
+            drawerContentOptions={{ activeTintColor: "#121212", inactiveTintColor: "#174542" }}>
             <Drawer.Screen
                 name="Articles"
                 component={Articles}
@@ -44,7 +44,7 @@ const DrawerNavigation = () => {
             <Drawer.Screen
                 name="Settings"
                 component={Settings}
-                options={{ title: "My Articles", drawerIcon: ({ color }) => <SettingsIcon color={color} /> }}
+                options={{ title: "Settings", drawerIcon: ({ color }) => <SettingsIcon color={color} /> }}
             />
         </Drawer.Navigator>
     );
@@ -66,21 +66,21 @@ function CustomDrawerContent(props) {
     const user = { firstName: "Emmanuel", lastName: "Samson" };
 
     return (
-        <>
-            <DrawerContentScrollView {...props} showsVerticalScrollIndicator={false}>
-                <View style={styles.header}>
-                    <View style={styles.imageBox}>
-                        <Image source={require("../assets/images/avatar.jpg")} style={styles.profileImage} />
-                    </View>
-                    <View style={styles.nameBox}>
-                        <AppMediumText style={styles.name}>Obagunwa Emmanuel</AppMediumText>
-                        <AppText>access2emma@gmail.com</AppText>
-                    </View>
+        <DrawerContentScrollView {...props} showsVerticalScrollIndicator={false}>
+            <View style={styles.header}>
+                <View style={styles.imageBox}>
+                    <Image source={require("../assets/images/avatar.jpg")} style={styles.profileImage} />
                 </View>
+                <View style={styles.nameBox}>
+                    <AppMediumText style={styles.nameText}>Obagunwa Emmanuel</AppMediumText>
+                    <AppText style={styles.emailText}>access2emma@gmail.com</AppText>
+                </View>
+            </View>
 
+            <View style={styles.navContent}>
                 <ExistingRouteList {...props} />
-            </DrawerContentScrollView>
-        </>
+            </View>
+        </DrawerContentScrollView>
     );
 }
 
@@ -105,17 +105,14 @@ const styles = StyleSheet.create({
     nameBox: {
         marginTop: RFPercentage(1),
     },
-    name: {
-        fontSize: RFPercentage(2.3),
+    nameText: {
+        fontSize: RFPercentage(2.2),
     },
-    separator: {
-        height: 1,
-        marginTop: 5,
-        backgroundColor: "#fff",
-        marginBottom: RFPercentage(2),
+    emailText: {
+        color: "#121212",
+        fontSize: RFPercentage(1.8),
     },
-    footerLogo: {
-        width: RFPercentage(8),
-        height: RFPercentage(5.2),
+    navContent: {
+        padding: RFPercentage(2),
     },
 });
