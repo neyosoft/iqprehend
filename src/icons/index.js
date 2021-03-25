@@ -1,7 +1,12 @@
+export { VoteIcon } from "./VoteIcon";
+export { RecordIcon } from "./RecordIcon";
 export { SearchIcon } from "./searchIcon";
+export { ExpertIcon } from "./ExpertIcon";
 export { LogoutIcon } from "./LogoutIcon";
 export { PaymentIcon } from "./PaymentIcon";
 export { ArticleIcon } from "./ArticleIcon";
+export { GrammarIcon } from "./GrammarIcon";
 export { SettingsIcon } from "./SettingsIcon";
 export { MyArticleIcon } from "./MyArticleIcon";
+export { PlagiarismIcon } from "./PlagiarismIcon";
 export { EvaluationIcon } from "./EvaluationIcon";

@@ -60,8 +60,8 @@ export const Articles = ({ navigation }) => {
                     renderItem={({ item }) => (
                         <ArticleCard
                             title={item.title}
-                            navigation={navigation}
                             imageSource={require("../../assets/images/image1.png")}
+                            onPress={() => navigation.navigate("SingleArticleView")}
                             body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
                         />
                     )}

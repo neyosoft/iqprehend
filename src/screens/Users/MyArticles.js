@@ -37,7 +37,7 @@ export const MyArticles = ({ navigation }) => {
                 <TouchableOpacity onPress={navigation.openDrawer}>
                     <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
                 </TouchableOpacity>
-                <AppText style={styles.headerTitle}>All Articles</AppText>
+                <AppText style={styles.headerTitle}>My Articles</AppText>
                 <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
             </View>
             <View style={styles.filterArea}>
@@ -53,7 +53,7 @@ export const MyArticles = ({ navigation }) => {
                     renderItem={({ item }) => (
                         <ArticleCard
                             title={item.title}
-                            navigation={navigation}
+                            onPress={() => navigation.navigate("EvaluationResult")}
                             imageSource={require("../../assets/images/image1.png")}
                             body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
                         />

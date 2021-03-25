@@ -1,13 +1,15 @@
 import React from "react";
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import { useState } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
-import { AppMediumText, AppText, Button } from "../../components";
+import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
+import { AppMediumText, AppText, Button } from "../../components";
+import { RecordIcon } from "../../icons";
 
 export const SingleArticleView = ({ navigation }) => {
+    const [responseType, setResponseType] = useState("textual");
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.header}>
@@ -46,21 +48,68 @@ export const SingleArticleView = ({ navigation }) => {
                     status.
                 </AppText>
 
-                <AppText style={styles.wordCountText}>
-                    Summary words: 50/<AppMediumText>200</AppMediumText>
-                </AppText>
+                <View style={styles.responseRow}>
+                    <TouchableOpacity
+                        onPress={() => setResponseType("textual")}
+                        style={[
+                            styles.responseOption,
+                            { backgroundColor: responseType === "textual" ? theme.colors.primary : "#D8D8D8" },
+                        ]}>
+                        <AppMediumText
+                            style={[styles.optionText, { color: responseType === "textual" ? "#fff" : "#333" }]}>
+                            Textual
+                        </AppMediumText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setResponseType("audio")}
+                        style={[
+                            styles.responseOption,
+                            { backgroundColor: responseType === "audio" ? theme.colors.primary : "#D8D8D8" },
+                        ]}>
+                        <AppMediumText
+                            style={[styles.optionText, { color: responseType === "audio" ? "#fff" : "#333" }]}>
+                            Audio
+                        </AppMediumText>
+                    </TouchableOpacity>
+                </View>
 
-                <TextInput
-                    multiline={true}
-                    textAlignVertical="top"
-                    style={styles.summaryInput}
-                    placeholder="Enter summary here..."
-                />
+                {responseType === "textual" ? (
+                    <>
+                        <AppText style={styles.wordCountText}>
+                            Summary words: 50/<AppMediumText>200</AppMediumText>
+                        </AppText>
 
-                <AppText style={styles.note}>
-                    Note: You are not eligible for any reward if you do not have active paid subscription
-                </AppText>
-                <Button label="Submit" style={styles.button} />
+                        <TextInput
+                            multiline={true}
+                            textAlignVertical="top"
+                            style={styles.summaryInput}
+                            placeholder="Enter summary here..."
+                        />
+
+                        <AppText style={styles.note}>
+                            <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have
+                            active paid subscription
+                        </AppText>
+                        <Button label="Submit" style={styles.button} />
+                    </>
+                ) : (
+                    <View style={styles.audiobox}>
+                        <RecordIcon />
+
+                        <Button label="START" style={styles.startBtn} />
+
+                        <AppText style={styles.note}>
+                            <AppMediumText>Note:</AppMediumText> Accepted Format:Mp 3,Wav,AAC (up to 4mb)
+                        </AppText>
+
+                        <Button label="UPLOAD" style={styles.uploadBtn} />
+
+                        <AppText style={[styles.note, { textAlign: "center" }]}>
+                            <AppMediumText>Note:</AppMediumText> Summarize in audio by clicking the START button or
+                            UPLOAD button to upload from your device
+                        </AppText>
+                    </View>
+                )}
             </ScrollView>
         </View>
     );
@@ -116,6 +165,16 @@ const styles = StyleSheet.create({
         marginLeft: 4,
         fontSize: RFPercentage(1.8),
     },
+    responseRow: {
+        flexDirection: "row",
+        marginTop: RFPercentage(2),
+    },
+    responseOption: {
+        flexDirection: "row",
+        width: RFPercentage(23),
+        justifyContent: "center",
+        paddingVertical: RFPercentage(1.7),
+    },
     wordCountText: {
         marginBottom: 5,
         marginTop: RFPercentage(2),
@@ -128,12 +187,28 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
     },
     note: {
-        marginTop: RFPercentage(1),
+        marginTop: RFPercentage(2),
         lineHeight: RFPercentage(2.2),
         fontSize: RFPercentage(1.8),
     },
     button: {
         alignSelf: "flex-end",
         marginTop: RFPercentage(4),
+    },
+    audiobox: {
+        width: "90%",
+        alignItems: "center",
+        marginTop: RFPercentage(6),
+        alignSelf: "center",
+    },
+    startBtn: {
+        marginTop: RFPercentage(3),
+        backgroundColor: "#05B54B",
+        paddingVertical: RFPercentage(1),
+        marginBottom: RFPercentage(2),
+    },
+    uploadBtn: {
+        marginTop: RFPercentage(2),
+        paddingVertical: RFPercentage(1),
     },
 });
