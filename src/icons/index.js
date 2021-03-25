@@ -1,4 +1,5 @@
 export { VoteIcon } from "./VoteIcon";
+export { NairaIcon } from "./NairaIcon";
 export { RecordIcon } from "./RecordIcon";
 export { SearchIcon } from "./searchIcon";
 export { ExpertIcon } from "./ExpertIcon";
