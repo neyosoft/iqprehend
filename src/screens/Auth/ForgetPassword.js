@@ -1,12 +1,12 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
 import { useForm, Controller } from "react-hook-form";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import theme from "../../theme";
-import { AppBoldText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
+import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
 
-export const ForgetPassword = () => {
+export const ForgetPassword = ({ navigation }) => {
     const {
         control,
         errors,
@@ -16,6 +16,8 @@ export const ForgetPassword = () => {
 
     const onSubmit = (values) => {
         console.log("The values: ", values);
+
+        navigation.navigate("PasswordReset");
     };
 
     return (
@@ -47,6 +49,8 @@ export const ForgetPassword = () => {
                             value={value}
                             error={invalid}
                             onBlur={onBlur}
+                            autoCapitalize="none"
+                            keyboardType="email-address"
                             placeholder="Enter Email"
                             onChangeText={(value) => onChange(value)}
                         />
@@ -57,10 +61,10 @@ export const ForgetPassword = () => {
 
             <Button disabled={isSubmitting} label="Send Reset Code" onPress={handleSubmit(onSubmit)} />
 
-            <View style={styles.loginBtnLink}>
+            <TouchableOpacity style={styles.loginBtnLink} onPress={() => navigation.navigate("Login")}>
                 <AppText>Back to </AppText>
-                <AppBoldText style={styles.loginLink}>Log In</AppBoldText>
-            </View>
+                <AppMediumText style={styles.loginLink}>Log In</AppMediumText>
+            </TouchableOpacity>
         </Page>
     );
 };
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     loginLink: {
-        marginLeft: RFPercentage(1),
+        marginLeft: 3,
         color: theme.colors.primary,
     },
     fieldErrorText: {

@@ -9,26 +9,26 @@ import { AppText, Button } from "../../components";
 import { ArticleCard } from "../../cards/ArticleCard";
 
 const data = [
-    { title: "Rhoncus arcu massa 1." },
-    { title: "Rhoncus arcu massa 2." },
-    { title: "Rhoncus arcu massa 3." },
-    { title: "Rhoncus arcu massa 4." },
-    { title: "Rhoncus arcu massa 5." },
-    { title: "Rhoncus arcu massa 6." },
-    { title: "Rhoncus arcu massa 7." },
-    { title: "Rhoncus arcu massa 8." },
-    { title: "Rhoncus arcu massa 9." },
-    { title: "Rhoncus arcu massa 10." },
-    { title: "Rhoncus arcu massa 11." },
-    { title: "Rhoncus arcu massa 12." },
-    { title: "Rhoncus arcu massa 13." },
-    { title: "Rhoncus arcu massa 14." },
-    { title: "Rhoncus arcu massa 15." },
-    { title: "Rhoncus arcu massa 16." },
-    { title: "Rhoncus arcu massa 17." },
-    { title: "Rhoncus arcu massa 18." },
-    { title: "Rhoncus arcu massa 19." },
-    { title: "Rhoncus arcu massa 20." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 1." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 2." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 3." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 4." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 5." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 6." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 7." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 8." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 9." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 10." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 11." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 12." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 13." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 14." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 15." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 16." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 17." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 18." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 19." },
+    { title: "Rhoncus arcu massa Rhoncus arcu massa 20." },
 ];
 
 export const Articles = ({ navigation }) => {
@@ -62,7 +62,6 @@ export const Articles = ({ navigation }) => {
                             title={item.title}
                             imageSource={require("../../assets/images/image1.png")}
                             onPress={() => navigation.navigate("SingleArticleView")}
-                            body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
                         />
                     )}
                 />
@@ -111,6 +110,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: RFPercentage(3),
     },
     separator: {
-        height: RFPercentage(2),
+        height: RFPercentage(3),
     },
 });

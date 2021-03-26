@@ -55,7 +55,6 @@ export const MyArticles = ({ navigation }) => {
                             title={item.title}
                             onPress={() => navigation.navigate("EvaluationResult")}
                             imageSource={require("../../assets/images/image1.png")}
-                            body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitae amet."
                         />
                     )}
                 />
@@ -104,6 +103,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: RFPercentage(3),
     },
     separator: {
-        height: RFPercentage(2),
+        height: RFPercentage(3),
     },
 });

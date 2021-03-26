@@ -4,14 +4,15 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { AppMediumText, AppText } from "../components";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { RectButton } from "react-native-gesture-handler";
+import theme from "../theme";
 
-export const ArticleCard = ({ style, title, body, imageSource, onPress }) => (
+export const ArticleCard = ({ style, title, imageSource, onPress }) => (
     <RectButton style={[styles.card, style]} onPress={onPress}>
         <View style={styles.leftSide}>
             <AppMediumText style={styles.title}>{title}</AppMediumText>
-            <AppText style={styles.articleBody}>{body}</AppText>
+            <AppText style={styles.postedDate}>June 27th, 2021</AppText>
             <View style={styles.viewRow}>
-                <AppMediumText>Read Article</AppMediumText>
+                <AppMediumText style={styles.readText}>Read Article</AppMediumText>
                 <Icon name="menu-right" size={RFPercentage(3)} />
             </View>
         </View>
@@ -26,7 +27,17 @@ const styles = StyleSheet.create({
         borderRadius: 2,
     },
     title: {
+        color: theme.colors.primary,
         fontSize: RFPercentage(2.3),
+        lineHeight: RFPercentage(3),
+    },
+    postedDate: {
+        color: "#6B6B6B",
+        fontSize: RFPercentage(1.8),
+    },
+    readText: {
+        fontSize: RFPercentage(1.8),
+        textDecorationLine: "underline",
     },
     leftSide: {
         flex: 1,

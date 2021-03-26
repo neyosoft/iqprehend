@@ -1,12 +1,21 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import theme from "../../theme";
-import { AppBoldText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
+import {
+    AppBoldText,
+    AppMediumText,
+    AppText,
+    Button,
+    FormErrorMessage,
+    Page,
+    PasswordField,
+    TextField,
+} from "../../components";
 
-export const Login = () => {
+export const Login = ({ navigation }) => {
     const {
         handleSubmit,
         control,
@@ -70,14 +79,18 @@ export const Login = () => {
 
                 {errors.password && <AppText style={styles.fieldErrorText}>{errors.password.message}</AppText>}
 
-                <AppBoldText style={styles.forgetPassword}>Forget Password?</AppBoldText>
+                <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                    <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
+                </TouchableOpacity>
             </View>
 
             <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit(onSubmit)} />
 
             <View style={styles.registerActionBox}>
                 <AppText>Don't have an account?</AppText>
-                <AppBoldText style={styles.singupLink}>Sign Up</AppBoldText>
+                <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                    <AppMediumText style={styles.singupLink}>Sign Up</AppMediumText>
+                </TouchableOpacity>
             </View>
         </Page>
     );

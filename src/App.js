@@ -4,8 +4,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import AppNavigation from "./navigations";
 
-import { Login, Register, ForgetPassword, PasswordReset, PasswordResetSuccessful } from "./screens/Auth";
-
 const queryClient = new QueryClient();
 
 const App = () => {
