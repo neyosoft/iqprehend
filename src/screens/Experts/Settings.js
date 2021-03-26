@@ -22,10 +22,7 @@ export const Settings = ({ navigation }) => {
                     <AppMediumText>Personal Information</AppMediumText>
                     <Icon name="chevron-right" size={RFPercentage(3)} />
                 </RectButton>
-                <RectButton style={styles.option} onPress={() => navigation.navigate("BankSettings")}>
-                    <AppMediumText>Bank Information</AppMediumText>
-                    <Icon name="chevron-right" size={RFPercentage(3)} />
-                </RectButton>
+
                 <RectButton style={styles.option} onPress={() => navigation.navigate("ChangePassword")}>
                     <AppMediumText>Change Password</AppMediumText>
                     <Icon name="chevron-right" size={RFPercentage(3)} />

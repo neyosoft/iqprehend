@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
