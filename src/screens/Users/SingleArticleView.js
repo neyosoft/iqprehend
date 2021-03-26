@@ -1,22 +1,21 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
-import { AppMediumText, AppText, Button } from "../../components";
 import { RecordIcon } from "../../icons";
+import { AppMediumText, AppText, Button } from "../../components";
 
 export const SingleArticleView = ({ navigation }) => {
     const [responseType, setResponseType] = useState("textual");
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={navigation.goBack}>
                     <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
                 </TouchableOpacity>
-                <AppText style={styles.headerTitle}>All Articles</AppText>
+                <AppText style={styles.headerTitle}>Article</AppText>
             </View>
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>
                 <AppMediumText style={styles.title}>

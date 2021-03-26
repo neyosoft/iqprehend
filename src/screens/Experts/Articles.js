@@ -48,7 +48,6 @@ export const Articles = ({ navigation }) => {
 
             <View style={styles.filterArea}>
                 <View style={styles.filterBox} />
-                <View style={styles.filterBox} />
                 <Button label="FILTER" style={styles.filterBtn} />
             </View>
 
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     filterBox: {
         borderWidth: 1,
         marginRight: 8,
-        width: RFPercentage(14),
+        width: RFPercentage(20),
         height: RFPercentage(5),
         borderRadius: theme.radius.label,
     },

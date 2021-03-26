@@ -7,6 +7,8 @@ export default {
         diabledBtnText: "#242D38",
     },
     radius: {
+        card: 7,
+        small: 4,
         input: 7,
         label: 4,
     },

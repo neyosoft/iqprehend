@@ -6,6 +6,7 @@ import TouchableItem from "@react-navigation/drawer/src/views/TouchableItem";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 
 import {
+    Summary,
     Articles,
     Settings,
     ChangePassword,
@@ -47,6 +48,7 @@ const DrawerNavigation = () => {
 export default function UserNavigation() {
     return (
         <Stack.Navigator headerMode="none" initialRouteName="DrawerNavigation">
+            <Stack.Screen name="Summary" component={Summary} />
             <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="PersonalSettings" component={PersonalSettings} />

@@ -1,3 +1,4 @@
+export { Summary } from "./Summary";
 export { Articles } from "./Articles";
 export { Settings } from "./Settings";
 export { ChangePassword } from "./ChangePassword";
