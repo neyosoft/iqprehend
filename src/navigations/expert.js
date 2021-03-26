@@ -6,17 +6,14 @@ import TouchableItem from "@react-navigation/drawer/src/views/TouchableItem";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 
 import {
-    Payment,
     Articles,
     Settings,
-    MyArticles,
-    BankSettings,
     ChangePassword,
     EvaluationResult,
     PersonalSettings,
     SingleArticleView,
-} from "../screens/Users";
-import { ArticleIcon, LogoutIcon, MyArticleIcon, SettingsIcon } from "../icons";
+} from "../screens/Experts";
+import { ArticleIcon, LogoutIcon, SettingsIcon } from "../icons";
 import { AppMediumText, AppText, ExistingRouteList } from "../components";
 
 const Drawer = createDrawerNavigator();
@@ -39,18 +36,6 @@ const DrawerNavigation = () => {
             />
 
             <Drawer.Screen
-                name="MyArticles"
-                component={MyArticles}
-                options={{ title: "My Articles", drawerIcon: ({ color }) => <MyArticleIcon color={color} /> }}
-            />
-
-            <Drawer.Screen
-                name="Payment"
-                component={Payment}
-                options={{ title: "Payment", drawerIcon: ({ color }) => <MyArticleIcon color={color} /> }}
-            />
-
-            <Drawer.Screen
                 name="Settings"
                 component={Settings}
                 options={{ title: "Settings", drawerIcon: ({ color }) => <SettingsIcon color={color} /> }}
@@ -62,7 +47,6 @@ const DrawerNavigation = () => {
 export default function UserNavigation() {
     return (
         <Stack.Navigator headerMode="none" initialRouteName="DrawerNavigation">
-            <Stack.Screen name="BankSettings" component={BankSettings} />
             <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="PersonalSettings" component={PersonalSettings} />
