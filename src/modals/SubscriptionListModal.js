@@ -1,56 +1,73 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
 import Modal from "react-native-modal";
+import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { moneyFormatWS } from "../utils/money.utils";
+import theme from "../theme";
+import { moneyFormat } from "../utils/money.utils";
 import { AppMediumText, AppText, Button } from "../components";
-import { NairaIcon } from "../icons";
 
-export const SubscriptionListModal = ({ show = false, onClose }) => {
+export const SubscriptionListModal = ({ show = false, onClose, onChange }) => {
+    const [option, setOption] = useState(null);
+
     return (
         <Modal isVisible={show} onBackButtonPress={onClose} onBackdropPress={onClose}>
             <View style={styles.container}>
                 <View style={styles.box}>
                     <View style={styles.header}>
-                        <AppMediumText>Monthly</AppMediumText>
+                        <AppMediumText>Subscriptions</AppMediumText>
                     </View>
-                    <View style={styles.content}>
-                        <View style={styles.amountRow}>
-                            <NairaIcon />
-                            <AppMediumText style={styles.valueText}>{moneyFormatWS(1500)}</AppMediumText>
-                        </View>
-                        <TouchableOpacity style={styles.button}>
-                            <AppText>Subscribe</AppText>
+
+                    <View style={styles.cardContainer}>
+                        <TouchableOpacity style={styles.card} onPress={() => setOption("ONE-MONTH")}>
+                            <Icon
+                                size={RFPercentage(4)}
+                                color={theme.colors.primary}
+                                name={option === "ONE-MONTH" ? "circle-slice-8" : "checkbox-blank-circle-outline"}
+                            />
+                            <View style={styles.cardRight}>
+                                <AppText>1 Month</AppText>
+                                <AppMediumText style={styles.valueText}>{moneyFormat(1500)}</AppMediumText>
+                            </View>
                         </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={[styles.box, { marginTop: RFPercentage(3) }]}>
-                    <View style={styles.header}>
-                        <AppMediumText>3 Months</AppMediumText>
-                    </View>
-                    <View style={styles.content}>
-                        <View style={styles.amountRow}>
-                            <NairaIcon />
-                            <AppMediumText style={styles.valueText}>{moneyFormatWS(4000)}</AppMediumText>
-                        </View>
-                        <TouchableOpacity style={styles.button}>
-                            <AppText>Subscribe</AppText>
+                        <TouchableOpacity style={styles.card} onPress={() => setOption("THREE-MONTH")}>
+                            <Icon
+                                size={RFPercentage(4)}
+                                color={theme.colors.primary}
+                                name={option === "THREE-MONTH" ? "circle-slice-8" : "checkbox-blank-circle-outline"}
+                            />
+                            <View style={styles.cardRight}>
+                                <AppText>3 Months</AppText>
+                                <AppMediumText style={styles.valueText}>{moneyFormat(4000)}</AppMediumText>
+                            </View>
                         </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={[styles.box, { marginTop: RFPercentage(3) }]}>
-                    <View style={styles.header}>
-                        <AppMediumText>Yearly</AppMediumText>
-                    </View>
-                    <View style={styles.content}>
-                        <View style={styles.amountRow}>
-                            <NairaIcon />
-                            <AppMediumText style={styles.valueText}>{moneyFormatWS(20000)}</AppMediumText>
-                        </View>
-                        <TouchableOpacity style={styles.button}>
-                            <AppText>Subscribe</AppText>
+                        <TouchableOpacity style={styles.card} onPress={() => setOption("ONE-YEAR")}>
+                            <Icon
+                                size={RFPercentage(4)}
+                                color={theme.colors.primary}
+                                name={option === "ONE-YEAR" ? "circle-slice-8" : "checkbox-blank-circle-outline"}
+                            />
+                            <View style={styles.cardRight}>
+                                <AppText>1 Year</AppText>
+                                <AppMediumText style={styles.valueText}>{moneyFormat(15000)}</AppMediumText>
+                            </View>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.card} onPress={() => setOption("LIFE-TIME")}>
+                            <Icon
+                                size={RFPercentage(4)}
+                                color={theme.colors.primary}
+                                name={option === "LIFE-TIME" ? "circle-slice-8" : "checkbox-blank-circle-outline"}
+                            />
+                            <View style={styles.cardRight}>
+                                <AppText>Life Time</AppText>
+                                <AppMediumText style={styles.valueText}>{moneyFormat(60000)}</AppMediumText>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableWithoutFeedback onPress={() => onChange(option)}>
+                            <Button label="Subscribe" style={styles.button} />
+                        </TouchableWithoutFeedback>
                     </View>
                 </View>
             </View>
@@ -65,7 +82,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     box: {
-        width: "80%",
+        width: "90%",
         borderRadius: 5,
         backgroundColor: "#fff",
     },
@@ -75,26 +92,32 @@ const styles = StyleSheet.create({
         borderBottomColor: "#D9D9D9",
         paddingVertical: RFPercentage(1),
     },
-    content: {
-        alignItems: "center",
+    cardContainer: {
+        marginHorizontal: RFPercentage(3),
     },
-    amountRow: {
+    card: {
+        elevation: 3,
+        borderRadius: 7,
         flexDirection: "row",
-        alignItems: "center",
-        marginTop: RFPercentage(3),
-        marginBottom: RFPercentage(1),
+        alignItems: "flex-start",
+        backgroundColor: "#fff",
+        padding: RFPercentage(2),
+        marginTop: RFPercentage(2),
+        shadowColor: "#000",
+        shadowRadius: 3,
+        shadowOpacity: 0.6,
+        shadowOffset: {
+            x: 3,
+            y: 3,
+        },
+    },
+    cardRight: {
+        marginLeft: RFPercentage(2),
     },
     valueText: {
-        marginLeft: RFPercentage(1),
         fontSize: RFPercentage(3),
     },
     button: {
-        width: "70%",
-        borderWidth: 1,
-        alignItems: "center",
-        borderColor: "#E5E5E5",
-        padding: RFPercentage(1),
-        backgroundColor: "transparent",
-        marginBottom: RFPercentage(2),
+        marginVertical: RFPercentage(3),
     },
 });

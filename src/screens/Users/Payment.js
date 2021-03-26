@@ -6,6 +6,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import theme from "../../theme";
 import { AppMediumText, AppText, Button } from "../../components";
 import { SubscriptionListModal } from "../../modals/SubscriptionListModal";
+import { PaymentSuccessfulModal } from "../../modals/PaymentSuccessfulModal";
+import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
 
 export const Payment = ({ navigation }) => {
     const [modal, setModal] = useState(null);
@@ -50,7 +52,20 @@ export const Payment = ({ navigation }) => {
                 </View>
             </View>
 
-            <SubscriptionListModal show={modal === "list"} onClose={() => setModal(null)} />
+            <SubscriptionListModal
+                show={modal === "list"}
+                onClose={() => setModal(null)}
+                onChange={(option) => {
+                    setModal("confirm");
+                    console.log("Selected option: ", option);
+                }}
+            />
+            <PaymentConfirmationModal
+                show={modal === "confirm"}
+                onClose={() => setModal(null)}
+                onConfirm={() => setModal("success")}
+            />
+            <PaymentSuccessfulModal show={modal === "success"} onClose={() => setModal(null)} />
         </>
     );
 };

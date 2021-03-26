@@ -11,3 +11,5 @@ export { SettingsIcon } from "./SettingsIcon";
 export { MyArticleIcon } from "./MyArticleIcon";
 export { PlagiarismIcon } from "./PlagiarismIcon";
 export { EvaluationIcon } from "./EvaluationIcon";
+export { InformationIcon } from "./InformationIcon";
+export { CompletedCheckMark } from "./CompletedCheckMark";
