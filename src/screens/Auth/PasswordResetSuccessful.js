@@ -12,7 +12,7 @@ export const PasswordResetSuccessful = ({ navigation }) => (
             <Icon name="check-circle" size={RFPercentage(8)} color="#85C6C2" />
             <AppBoldText style={styles.title}>Reset Successful!</AppBoldText>
             <AppText style={styles.description}>
-                Your {CONFIG.APPNAME} password has been changed. You may now log in.
+                Your {CONFIG.appName} password has been changed. You may now log in.
             </AppText>
 
             <Button style={styles.button} label="Log In" onPress={() => navigation.navigate("Login")} />

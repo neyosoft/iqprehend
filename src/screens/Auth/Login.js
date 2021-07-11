@@ -1,30 +1,37 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useForm, Controller } from "react-hook-form";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import theme from "../../theme";
-import {
-    AppBoldText,
-    AppMediumText,
-    AppText,
-    Button,
-    FormErrorMessage,
-    Page,
-    PasswordField,
-    TextField,
-} from "../../components";
+import { useAuth } from "../../context";
+import { baseRequest, debugAxiosError } from "../../utils/request.utils";
+import { Page, AppText, Button, TextField, AppMediumText, PasswordField, FormErrorMessage } from "../../components";
 
 export const Login = ({ navigation }) => {
+    const { authenticate } = useAuth();
+
     const {
-        handleSubmit,
         control,
-        errors,
-        formState: { isSubmitting },
-    } = useForm();
+        setError,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({ defaultValues: { email: "", password: "" } });
 
     const onSubmit = (values) => {
         console.log("The values: ", values);
+
+        try {
+            const { data } = await baseRequest.post("/auth/login", values);
+
+            if (data && data.data && data.data.status) {
+                const { user, token, refreshToken } = data.data;
+
+                authenticate({ accessToken: token, refreshToken, user });
+            }
+        } catch (error) {
+            debugAxiosError(error);
+        }
     };
 
     return (
@@ -37,7 +44,6 @@ export const Login = ({ navigation }) => {
 
                 <Controller
                     name="email"
-                    defaultValue=""
                     control={control}
                     rules={{
                         required: "Email is required.",
@@ -46,14 +52,16 @@ export const Login = ({ navigation }) => {
                             message: "invalid email address",
                         },
                     }}
-                    render={({ onChange, onBlur, value, ref }, { invalid }) => (
+                    render={({ field: { onChange, onBlur, value, name, ref }, fieldState: { invalid } }) => (
                         <TextField
                             ref={ref}
                             value={value}
                             error={invalid}
                             onBlur={onBlur}
+                            autoCapitalize="none"
+                            onChangeText={onChange}
                             placeholder="Enter Email"
-                            onChangeText={(value) => onChange(value)}
+                            keyboardType="email-address"
                         />
                     )}
                 />
@@ -61,18 +69,18 @@ export const Login = ({ navigation }) => {
 
                 <Controller
                     name="password"
-                    defaultValue=""
                     control={control}
                     rules={{ required: "Password is required." }}
-                    render={({ onChange, onBlur, value, ref }, { invalid }) => (
+                    render={({ field: { onChange, onBlur, value, name, ref }, fieldState: { invalid } }) => (
                         <PasswordField
                             ref={ref}
                             value={value}
                             error={invalid}
                             onBlur={onBlur}
                             style={styles.input}
+                            autoCapitalize="none"
+                            onChangeText={onChange}
                             placeholder="Enter Password"
-                            onChangeText={(value) => onChange(value)}
                         />
                     )}
                 />

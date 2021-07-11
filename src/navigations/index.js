@@ -4,11 +4,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
 import ExpertNavigation from "./expert";
+import { useAuth } from "../context";
 
 export default function AppNavigation() {
-    // const user = null;
+    const { isLoading, user } = useAuth();
+    const user = null;
     // const user = { role: "USER" };
-    const user = { role: "EXPERT" };
+    // const user = { role: "EXPERT" };
 
     return <NavigationContainer>{switchNavigator(user)}</NavigationContainer>;
 }

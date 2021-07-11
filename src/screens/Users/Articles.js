@@ -1,5 +1,6 @@
 import React from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
+import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -7,6 +8,7 @@ import theme from "../../theme";
 import { SearchIcon } from "../../icons";
 import { AppText, Button } from "../../components";
 import { ArticleCard } from "../../cards/ArticleCard";
+import { useAuth } from "../../context";
 
 const data = [
     { title: "Rhoncus arcu massa Rhoncus arcu massa 1." },
@@ -32,6 +34,32 @@ const data = [
 ];
 
 export const Articles = ({ navigation }) => {
+    const { authenticatedRequest } = useAuth();
+
+    const articlesResponse = useQuery(["articles"], async () => {
+        try {
+            const { data } = await authenticatedRequest().get(`/articles`);
+
+            if (data && data.data) {
+                return data.data;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const renderArticleItem = ({ item }) => (
+        <ArticleCard
+            title={item.title}
+            imageSource={require("../../assets/images/image1.png")}
+            onPress={() => navigation.navigate("SingleArticleView")}
+        />
+    );
+
+    const ItemSeparatorComponent = () => <View style={styles.separator} />;
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -54,16 +82,11 @@ export const Articles = ({ navigation }) => {
 
             <View style={styles.content}>
                 <FlatList
-                    data={data}
-                    keyExtractor={(_, index) => `article${index}`}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    renderItem={({ item }) => (
-                        <ArticleCard
-                            title={item.title}
-                            imageSource={require("../../assets/images/image1.png")}
-                            onPress={() => navigation.navigate("SingleArticleView")}
-                        />
-                    )}
+                    renderItem={renderArticleItem}
+                    keyExtractor={(item) => item._id}
+                    data={articlesResponse.data.articles}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                    removeClippedSubviews={Platform.OS === "android"}
                 />
             </View>
         </View>
