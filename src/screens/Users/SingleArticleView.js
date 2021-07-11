@@ -1,14 +1,37 @@
 import React, { useState } from "react";
+import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
+import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
+import { debugAxiosError } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button } from "../../components";
 
-export const SingleArticleView = ({ navigation }) => {
+export const SingleArticleView = ({ navigation, route }) => {
+    const { authenticatedRequest } = useAuth();
+
+    const { articleID } = route.params;
+
     const [responseType, setResponseType] = useState("textual");
+
+    const articlesResponse = useQuery(["articles", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/articles", { params: { id: articleID } });
+
+            if (data && data.data) {
+                return data.data.article;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            debugAxiosError(error);
+            throw new Error();
+        }
+    });
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>

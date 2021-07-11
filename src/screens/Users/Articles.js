@@ -9,6 +9,7 @@ import { SearchIcon } from "../../icons";
 import { AppText, Button } from "../../components";
 import { ArticleCard } from "../../cards/ArticleCard";
 import { useAuth } from "../../context";
+import { debugAxiosError } from "../../utils/request.utils";
 
 const data = [
     { title: "Rhoncus arcu massa Rhoncus arcu massa 1." },
@@ -46,6 +47,7 @@ export const Articles = ({ navigation }) => {
                 throw new Error();
             }
         } catch (error) {
+            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -54,7 +56,7 @@ export const Articles = ({ navigation }) => {
         <ArticleCard
             title={item.title}
             imageSource={require("../../assets/images/image1.png")}
-            onPress={() => navigation.navigate("SingleArticleView")}
+            onPress={() => navigation.navigate("SingleArticleView", { articleID: "123" })}
         />
     );
 

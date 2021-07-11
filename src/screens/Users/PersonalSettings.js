@@ -1,13 +1,44 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
-import { AppMediumText, AppText, AppTextField, Button } from "../../components";
+import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { useToast } from "react-native-fast-toast";
 
 import theme from "../../theme";
+import { useAuth } from "../../context";
+import { debugAxiosError } from "../../utils/request.utils";
+import { AppMediumText, AppText, AppTextField, Button } from "../../components";
 
 export const PersonalSettings = ({ navigation }) => {
+    const toast = useToast();
+    const { user, refreshUser, authenticatedRequest } = useAuth();
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        defaultValues: {
+            lastName: user.lastName,
+            firstName: user.firstName,
+            phoneNumber: user.phoneNumber,
+        },
+    });
+
+    const onSubmit = async (values) => {
+        try {
+            const { data } = await authenticatedRequest.put("/user/update-user-profile", values);
+
+            if (data && data.data) {
+                toast.show(data.data.message);
+                await refreshUser();
+            }
+        } catch (error) {
+            debugAxiosError(error);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -31,11 +62,67 @@ export const PersonalSettings = ({ navigation }) => {
                 </View>
 
                 <View>
-                    <AppTextField style={styles.input} label="First name" />
-                    <AppTextField style={styles.input} label="Last name" />
-                    <AppTextField style={styles.input} label="Phone number" />
+                    <Controller
+                        name="firstName"
+                        control={control}
+                        rules={{ required: "First name is required." }}
+                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                            <AppTextField
+                                ref={ref}
+                                value={value}
+                                onBlur={onBlur}
+                                style={styles.input}
+                                onChangeText={onChange}
+                                placeholder="First Name"
+                            />
+                        )}
+                    />
+                    {errors.firstName && <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>}
 
-                    <Button style={styles.button} label="Save" />
+                    <Controller
+                        name="lastName"
+                        control={control}
+                        rules={{ required: "First name is required." }}
+                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                            <AppTextField
+                                ref={ref}
+                                value={value}
+                                onBlur={onBlur}
+                                style={styles.input}
+                                onChangeText={onChange}
+                                placeholder="Last Name"
+                            />
+                        )}
+                    />
+
+                    {errors.lastName && <AppText style={styles.fieldErrorText}>{errors.lastName.message}</AppText>}
+
+                    <Controller
+                        control={control}
+                        name="phoneNumber"
+                        rules={{ required: "First name is required." }}
+                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                            <AppTextField
+                                ref={ref}
+                                value={value}
+                                onBlur={onBlur}
+                                style={styles.input}
+                                onChangeText={onChange}
+                                placeholder="Phone number"
+                            />
+                        )}
+                    />
+
+                    {errors.phoneNumber && (
+                        <AppText style={styles.fieldErrorText}>{errors.phoneNumber.message}</AppText>
+                    )}
+
+                    <Button
+                        style={styles.button}
+                        disabled={isSubmitting}
+                        onPress={handleSubmit(onSubmit)}
+                        label={isSubmitting ? "Saving..." : "Save"}
+                    />
                 </View>
             </ScrollView>
         </View>
@@ -95,5 +182,10 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: RFPercentage(5),
+    },
+    fieldErrorText: {
+        marginTop: 3,
+        color: "#FF7878",
+        fontSize: RFPercentage(1.8),
     },
 });
