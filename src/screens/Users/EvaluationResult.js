@@ -2,6 +2,7 @@ import React from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
 import { AppMediumText, AppText } from "../../components";
@@ -9,7 +10,7 @@ import { PlagiarismIcon, GrammarIcon, ExpertIcon, VoteIcon } from "../../icons";
 
 export const EvaluationResult = ({ navigation }) => {
     return (
-        <View style={{ flex: 1 }}>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={navigation.goBack}>
                     <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
@@ -73,7 +74,7 @@ export const EvaluationResult = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 

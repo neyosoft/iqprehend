@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
 import { AppText, Button } from "../../components";
@@ -32,34 +33,36 @@ const data = [
 
 export const MyArticles = ({ navigation }) => {
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.openDrawer}>
-                    <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>My Articles</AppText>
-                <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.openDrawer}>
+                        <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+                    <AppText style={styles.headerTitle}>My Articles</AppText>
+                    <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
+                </View>
+                <View style={styles.filterArea}>
+                    <View style={styles.filterBox} />
+                    <View style={styles.filterBox} />
+                    <Button label="FILTER" style={styles.filterBtn} />
+                </View>
+                <View style={styles.content}>
+                    <FlatList
+                        data={data}
+                        keyExtractor={(_, index) => `article${index}`}
+                        ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        renderItem={({ item }) => (
+                            <ArticleCard
+                                title={item.title}
+                                onPress={() => navigation.navigate("EvaluationResult")}
+                                imageSource={require("../../assets/images/image1.png")}
+                            />
+                        )}
+                    />
+                </View>
             </View>
-            <View style={styles.filterArea}>
-                <View style={styles.filterBox} />
-                <View style={styles.filterBox} />
-                <Button label="FILTER" style={styles.filterBtn} />
-            </View>
-            <View style={styles.content}>
-                <FlatList
-                    data={data}
-                    keyExtractor={(_, index) => `article${index}`}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    renderItem={({ item }) => (
-                        <ArticleCard
-                            title={item.title}
-                            onPress={() => navigation.navigate("EvaluationResult")}
-                            imageSource={require("../../assets/images/image1.png")}
-                        />
-                    )}
-                />
-            </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

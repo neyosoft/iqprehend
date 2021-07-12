@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import theme from "../../theme";
@@ -12,7 +13,7 @@ import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal"
 export const Payment = ({ navigation }) => {
     const [modal, setModal] = useState(null);
     return (
-        <>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={navigation.openDrawer}>
@@ -66,7 +67,7 @@ export const Payment = ({ navigation }) => {
                 onConfirm={() => setModal("success")}
             />
             <PaymentSuccessfulModal show={modal === "success"} onClose={() => setModal(null)} />
-        </>
+        </SafeAreaView>
     );
 };
 
