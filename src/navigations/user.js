@@ -18,7 +18,7 @@ import {
 } from "../screens/Users";
 import { useAuth } from "../context";
 import { AppMediumText, AppText, ExistingRouteList } from "../components";
-import { ArticleIcon, LogoutIcon, MyArticleIcon, SettingsIcon } from "../icons";
+import { ArticleIcon, EvaluationIcon, LogoutIcon, MyArticleIcon, PaymentIcon, SettingsIcon } from "../icons";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -42,13 +42,19 @@ const DrawerNavigation = () => {
             <Drawer.Screen
                 name="MyArticles"
                 component={MyArticles}
-                options={{ title: "My Articles", drawerIcon: ({ color }) => <MyArticleIcon color={color} /> }}
+                options={{ title: "My Summaries", drawerIcon: ({ color }) => <MyArticleIcon color={color} /> }}
+            />
+
+            <Drawer.Screen
+                name="Evaluation"
+                component={MyArticles}
+                options={{ title: "Evaluation", drawerIcon: ({ color }) => <EvaluationIcon color={color} /> }}
             />
 
             <Drawer.Screen
                 name="Payment"
                 component={Payment}
-                options={{ title: "Payment", drawerIcon: ({ color }) => <MyArticleIcon color={color} /> }}
+                options={{ title: "Payment", drawerIcon: ({ color }) => <PaymentIcon color={color} /> }}
             />
 
             <Drawer.Screen

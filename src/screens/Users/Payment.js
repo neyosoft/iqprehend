@@ -12,6 +12,7 @@ import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal"
 
 export const Payment = ({ navigation }) => {
     const [modal, setModal] = useState(null);
+
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
@@ -58,7 +59,6 @@ export const Payment = ({ navigation }) => {
                 onClose={() => setModal(null)}
                 onChange={(option) => {
                     setModal("confirm");
-                    console.log("Selected option: ", option);
                 }}
             />
             <PaymentConfirmationModal
