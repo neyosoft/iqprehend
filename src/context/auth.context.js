@@ -129,6 +129,7 @@ export default class AuthProvider extends Component {
                 const decoded = jwt_decode(accessToken);
 
                 if (isFuture(new Date(decoded.exp * 1000))) {
+                    console.log("Token is not yet expired.");
                     try {
                         const { data } = await axios.get("/user/profile", {
                             baseURL:
@@ -138,13 +139,14 @@ export default class AuthProvider extends Component {
                             },
                         });
 
-                        console.log("the user info: ", data);
-
                         if (data && data.status) {
                             user = data.data;
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        console.log("login changed: ", e);
+                    }
                 } else {
+                    console.log("Token already expired.");
                     const { data } = await axios.post("/auth/refresh-token", params, {
                         baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                         headers: {

@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-fast-toast";
 import { useForm, Controller } from "react-hook-form";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import RNPickerSelect from "react-native-picker-select";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const banks = ["GTBank"];
+
 export const BankSettings = ({ navigation }) => {
     const toast = useToast();
+
+    const [bank, setBank] = useState("");
 
     const { user, refreshUser, authenticatedRequest } = useAuth();
 
@@ -54,6 +59,20 @@ export const BankSettings = ({ navigation }) => {
                 </View>
                 <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
                     <AppMediumText style={styles.title}>Bank Information</AppMediumText>
+
+                    <RNPickerSelect
+                        value={bank}
+                        onValueChange={setBank}
+                        useNativeAndroidPickerStyle={false}
+                        placeholder={{ label: "Select Bank", value: null }}
+                        Icon={() => <Icon name="chevron-down" size={24} color="#fff" />}
+                        items={banks.map((record) => ({ label: record, value: record }))}
+                        style={{
+                            inputIOS: styles.dropdownInput,
+                            inputAndroid: styles.dropdownInput,
+                            iconContainer: { top: 25, right: 12 },
+                        }}
+                    />
 
                     <View>
                         <Controller
@@ -147,6 +166,16 @@ const styles = StyleSheet.create({
     },
     contentContainerStyle: {
         padding: RFPercentage(3),
+    },
+    dropdownInput: {
+        fontSize: 15,
+        marginTop: 10,
+        borderRadius: 8,
+        paddingRight: 40,
+        color: theme.white,
+        paddingVertical: 13,
+        paddingHorizontal: 20,
+        backgroundColor: "red",
     },
     title: {
         fontSize: RFPercentage(2.5),

@@ -7,7 +7,7 @@ import theme from "../theme";
 import Theme from "../theme";
 import { AppText } from "./AppText";
 
-export const Button = ({ style, label, children, ...rest }) => {
+export const Button = ({ style, label, labelStyle, children, ...rest }) => {
     const buttonStyle = [styles.button, style];
     const buttonTextStyle = [styles.buttonText];
 
@@ -15,6 +15,7 @@ export const Button = ({ style, label, children, ...rest }) => {
         buttonStyle.push(styles.disabledBtn);
         buttonTextStyle.push(styles.disabledBtnText);
     }
+    buttonTextStyle.push(labelStyle);
 
     return (
         <RectButton testID="theButton" style={buttonStyle} {...rest}>

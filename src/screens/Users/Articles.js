@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import RNPickerSelect from "react-native-picker-select";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { SearchIcon } from "../../icons";
 import { ArticleCard } from "../../cards/ArticleCard";
 import { AppText, Button, PageLoading } from "../../components";
-import { debugAxiosError } from "../../utils/request.utils";
 
 export const Articles = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
+
+    const [articleType, setArticleType] = useState("");
+    const [sector, setSector] = useState("");
 
     const articlesResponse = useQuery(["articles"], async () => {
         try {
@@ -25,7 +28,6 @@ export const Articles = ({ navigation }) => {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -59,9 +61,40 @@ export const Articles = ({ navigation }) => {
         return (
             <>
                 <View style={styles.filterArea}>
-                    <View style={styles.filterBox} />
-                    <View style={styles.filterBox} />
-                    <Button label="FILTER" style={styles.filterBtn} />
+                    <RNPickerSelect
+                        value={sector}
+                        onValueChange={setSector}
+                        useNativeAndroidPickerStyle={false}
+                        placeholder={{ label: "All", value: null }}
+                        Icon={() => <Icon name="chevron-down" size={24} color="#000" />}
+                        items={[
+                            { label: "Medicine", value: "Medicine" },
+                            { label: "Football", value: "Football" },
+                            { label: "Programming", value: "Programming" },
+                        ]}
+                        style={{
+                            inputIOS: styles.dropdownInput,
+                            inputAndroid: styles.dropdownInput,
+                            iconContainer: { top: 7, right: 15 },
+                        }}
+                    />
+                    <RNPickerSelect
+                        value={articleType}
+                        onValueChange={setArticleType}
+                        useNativeAndroidPickerStyle={false}
+                        placeholder={{ label: "All", value: null }}
+                        Icon={() => <Icon name="chevron-down" size={24} color="#000" />}
+                        items={[
+                            { label: "Video", value: "video" },
+                            { label: "Textual", value: "textual" },
+                        ]}
+                        style={{
+                            inputIOS: styles.dropdownInput,
+                            inputAndroid: styles.dropdownInput,
+                            iconContainer: { top: 7, right: 15 },
+                        }}
+                    />
+                    <Button label="FILTER" style={styles.filterBtn} labelStyle={{ fontSize: 13 }} />
                 </View>
 
                 <View style={styles.content}>
@@ -79,7 +112,7 @@ export const Articles = ({ navigation }) => {
 
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
-            <StatusBar barStyle="light-content" />
+            <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={navigation.openDrawer}>
@@ -118,6 +151,7 @@ const styles = StyleSheet.create({
     },
     filterArea: {
         flexDirection: "row",
+        alignItems: "center",
         justifyContent: "flex-end",
         paddingVertical: RFPercentage(2),
         paddingHorizontal: RFPercentage(3),
@@ -130,8 +164,20 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.label,
     },
     filterBtn: {
-        paddingHorizontal: RFPercentage(3),
+        height: RFPercentage(5),
         paddingVertical: RFPercentage(1),
+        paddingHorizontal: RFPercentage(3),
+    },
+    dropdownInput: {
+        fontSize: 15,
+        color: "gray",
+        borderWidth: 1,
+        marginRight: 8,
+        borderRadius: 8,
+        paddingRight: 30,
+        paddingLeft: 10,
+        width: RFPercentage(14),
+        height: RFPercentage(5),
     },
     content: {
         flex: 1,
