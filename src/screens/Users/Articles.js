@@ -1,38 +1,16 @@
 import React from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { SearchIcon } from "../../icons";
-import { AppText, Button, PageLoading } from "../../components";
 import { ArticleCard } from "../../cards/ArticleCard";
+import { AppText, Button, PageLoading } from "../../components";
 import { debugAxiosError } from "../../utils/request.utils";
-
-const data = [
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 1." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 2." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 3." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 4." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 5." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 6." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 7." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 8." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 9." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 10." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 11." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 12." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 13." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 14." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 15." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 16." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 17." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 18." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 19." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 20." },
-];
 
 export const Articles = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
@@ -100,21 +78,24 @@ export const Articles = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.openDrawer}>
-                    <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <StatusBar barStyle="light-content" />
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.openDrawer}>
+                        <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
 
-                <AppText style={styles.headerTitle}>All Articles</AppText>
+                    <AppText style={styles.headerTitle}>All Articles</AppText>
 
-                <TouchableOpacity>
-                    <SearchIcon />
-                </TouchableOpacity>
+                    <TouchableOpacity>
+                        <SearchIcon />
+                    </TouchableOpacity>
+                </View>
+
+                {renderArticles()}
             </View>
-
-            {renderArticles()}
-        </View>
+        </SafeAreaView>
     );
 };
 

@@ -5,6 +5,7 @@ import { useToast } from "react-native-fast-toast";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -29,87 +30,89 @@ export const PersonalSettings = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Settings</AppText>
-            </View>
-            <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
-                <AppMediumText style={styles.title}>Personal information</AppMediumText>
-
-                <View style={styles.imageArea}>
-                    <View>
-                        <View style={styles.profileImageContainer}>
-                            <Image style={styles.profileImage} source={require("../../assets/images/image1.png")} />
-                        </View>
-                        <TouchableOpacity style={styles.uploadIcon}>
-                            <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
-                        </TouchableOpacity>
-                    </View>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.goBack}>
+                        <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+                    <AppText style={styles.headerTitle}>Settings</AppText>
                 </View>
+                <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
+                    <AppMediumText style={styles.title}>Personal information</AppMediumText>
 
-                <Formik
-                    onSubmit={onSubmit}
-                    validationSchema={personalInformationSchema}
-                    initialValues={{
-                        lastName: user.lastName,
-                        firstName: user.firstName,
-                        phoneNumber: user.phoneNumber,
-                    }}>
-                    {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
-                        <>
-                            <AppTextField
-                                label="First Name"
-                                style={styles.input}
-                                value={values.firstName}
-                                placeholder="First Name"
-                                onBlur={handleBlur("firstName")}
-                                onChangeText={handleChange("firstName")}
-                            />
-                            {errors.firstName && (
-                                <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>
-                            )}
+                    <View style={styles.imageArea}>
+                        <View>
+                            <View style={styles.profileImageContainer}>
+                                <Image style={styles.profileImage} source={require("../../assets/images/image1.png")} />
+                            </View>
+                            <TouchableOpacity style={styles.uploadIcon}>
+                                <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
 
-                            <AppTextField
-                                label="Last Name"
-                                style={styles.input}
-                                placeholder="Last Name"
-                                value={values.firstName}
-                                onBlur={handleBlur("lastName")}
-                                onChangeText={handleChange("lastName")}
-                            />
+                    <Formik
+                        onSubmit={onSubmit}
+                        validationSchema={personalInformationSchema}
+                        initialValues={{
+                            lastName: user.lastName,
+                            firstName: user.firstName,
+                            phoneNumber: user.phoneNumber,
+                        }}>
+                        {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                            <>
+                                <AppTextField
+                                    label="First Name"
+                                    style={styles.input}
+                                    value={values.firstName}
+                                    placeholder="First Name"
+                                    onBlur={handleBlur("firstName")}
+                                    onChangeText={handleChange("firstName")}
+                                />
+                                {errors.firstName && (
+                                    <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>
+                                )}
 
-                            {errors.lastName && (
-                                <AppText style={styles.fieldErrorText}>{errors.lastName.message}</AppText>
-                            )}
+                                <AppTextField
+                                    label="Last Name"
+                                    style={styles.input}
+                                    placeholder="Last Name"
+                                    value={values.firstName}
+                                    onBlur={handleBlur("lastName")}
+                                    onChangeText={handleChange("lastName")}
+                                />
 
-                            <AppTextField
-                                style={styles.input}
-                                label="Phone number"
-                                keyboardType="numeric"
-                                placeholder="Phone number"
-                                value={values.phoneNumber}
-                                onBlur={handleBlur("phoneNumber")}
-                                onChangeText={handleChange("phoneNumber")}
-                            />
+                                {errors.lastName && (
+                                    <AppText style={styles.fieldErrorText}>{errors.lastName.message}</AppText>
+                                )}
 
-                            {errors.phoneNumber && (
-                                <AppText style={styles.fieldErrorText}>{errors.phoneNumber.message}</AppText>
-                            )}
+                                <AppTextField
+                                    style={styles.input}
+                                    label="Phone number"
+                                    keyboardType="numeric"
+                                    placeholder="Phone number"
+                                    value={values.phoneNumber}
+                                    onBlur={handleBlur("phoneNumber")}
+                                    onChangeText={handleChange("phoneNumber")}
+                                />
 
-                            <Button
-                                style={styles.button}
-                                onPress={handleSubmit}
-                                disabled={isSubmitting}
-                                label={isSubmitting ? "Saving..." : "Save"}
-                            />
-                        </>
-                    )}
-                </Formik>
-            </ScrollView>
-        </View>
+                                {errors.phoneNumber && (
+                                    <AppText style={styles.fieldErrorText}>{errors.phoneNumber.message}</AppText>
+                                )}
+
+                                <Button
+                                    style={styles.button}
+                                    onPress={handleSubmit}
+                                    disabled={isSubmitting}
+                                    label={isSubmitting ? "Saving..." : "Save"}
+                                />
+                            </>
+                        )}
+                    </Formik>
+                </ScrollView>
+            </View>
+        </SafeAreaView>
     );
 };
 

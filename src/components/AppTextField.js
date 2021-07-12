@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         borderColor: "#CACACA",
         fontSize: RFPercentage(2.1),
         paddingLeft: RFPercentage(2),
-        fontFamily: "Baloo2 Regular",
+        fontFamily: "Baloo2-Regular",
         borderRadius: 4,
     },
     error: {

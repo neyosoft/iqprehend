@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#7A7A7A",
         height: RFPercentage(20),
-        fontFamily: "Baloo2 Regular",
         textAlignVertical: "top",
+        fontFamily: "Baloo2-Regular",
     },
     note: {
         marginTop: RFPercentage(2),

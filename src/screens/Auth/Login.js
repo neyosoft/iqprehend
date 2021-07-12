@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
@@ -19,7 +20,7 @@ export const Login = ({ navigation }) => {
             if (data && data.data) {
                 const { user, token, refreshToken } = data.data;
 
-                authenticate({ accessToken: token, refreshToken, user });
+                await authenticate({ accessToken: token, refreshToken, user });
             }
         } catch (error) {
             setFieldError("general", extractResponseErrorMessage(error, "Invalid email or password."));
@@ -27,56 +28,58 @@ export const Login = ({ navigation }) => {
     };
 
     return (
-        <Page>
-            <View style={styles.header}>
-                <AppText style={styles.pageTitle}>Sign In</AppText>
-            </View>
-            <Formik initialValues={{ email: "", password: "" }} onSubmit={onSubmit} validationSchema={loginSchema}>
-                {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
-                    <>
-                        <View style={styles.form}>
-                            {errors.general ? <FormErrorMessage label={errors.general} /> : null}
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+            <Page>
+                <View style={styles.header}>
+                    <AppText style={styles.pageTitle}>Sign In</AppText>
+                </View>
+                <Formik initialValues={{ email: "", password: "" }} onSubmit={onSubmit} validationSchema={loginSchema}>
+                    {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                        <>
+                            <View style={styles.form}>
+                                {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
-                            <TextField
-                                value={values.email}
-                                error={!!errors.email}
-                                autoCapitalize="none"
-                                placeholder="Enter Email"
-                                onBlur={handleBlur("email")}
-                                keyboardType="email-address"
-                                onChangeText={handleChange("email")}
-                            />
-                            {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
+                                <TextField
+                                    value={values.email}
+                                    error={!!errors.email}
+                                    autoCapitalize="none"
+                                    placeholder="Enter Email"
+                                    onBlur={handleBlur("email")}
+                                    keyboardType="email-address"
+                                    onChangeText={handleChange("email")}
+                                />
+                                {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
 
-                            <PasswordField
-                                style={styles.input}
-                                autoCapitalize="none"
-                                value={values.password}
-                                error={!!errors.password}
-                                placeholder="Enter Password"
-                                onBlur={handleBlur("password")}
-                                onChangeText={handleChange("password")}
-                            />
+                                <PasswordField
+                                    style={styles.input}
+                                    autoCapitalize="none"
+                                    value={values.password}
+                                    error={!!errors.password}
+                                    placeholder="Enter Password"
+                                    onBlur={handleBlur("password")}
+                                    onChangeText={handleChange("password")}
+                                />
 
-                            {errors.password && <AppText style={styles.fieldErrorText}>{errors.password}</AppText>}
+                                {errors.password && <AppText style={styles.fieldErrorText}>{errors.password}</AppText>}
 
-                            <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
-                                <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                    <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
+                                </TouchableOpacity>
+                            </View>
 
-                        <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit} />
-                    </>
-                )}
-            </Formik>
+                            <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit} />
+                        </>
+                    )}
+                </Formik>
 
-            <View style={styles.registerActionBox}>
-                <AppText>Don't have an account?</AppText>
-                <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                    <AppMediumText style={styles.singupLink}>Sign Up</AppMediumText>
-                </TouchableOpacity>
-            </View>
-        </Page>
+                <View style={styles.registerActionBox}>
+                    <AppText>Don't have an account?</AppText>
+                    <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                        <AppMediumText style={styles.singupLink}>Sign Up</AppMediumText>
+                    </TouchableOpacity>
+                </View>
+            </Page>
+        </SafeAreaView>
     );
 };
 

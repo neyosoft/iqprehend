@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         fontSize: RFPercentage(2.1),
-        fontFamily: "Baloo2 Regular",
+        fontFamily: "Baloo2-Regular",
     },
     error: {
         borderWidth: 1,

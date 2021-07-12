@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
@@ -15,42 +16,44 @@ export const ForgetPassword = ({ navigation }) => {
     };
 
     return (
-        <Page>
-            <View style={styles.header}>
-                <AppText style={styles.pageTitle}>RECOVER PASSWORD</AppText>
-            </View>
-            <Formik initialValues={{ email: "" }} onSubmit={onSubmit} validationSchema={forgetPasswordSchema}>
-                {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
-                    <>
-                        <View style={styles.form}>
-                            <FormErrorMessage label="Something happened" />
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+            <Page>
+                <View style={styles.header}>
+                    <AppText style={styles.pageTitle}>RECOVER PASSWORD</AppText>
+                </View>
+                <Formik initialValues={{ email: "" }} onSubmit={onSubmit} validationSchema={forgetPasswordSchema}>
+                    {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
+                        <>
+                            <View style={styles.form}>
+                                <FormErrorMessage label="Something happened" />
 
-                            <AppText style={styles.description}>
-                                Enter your email address and we'll send you a reset code to reset your password.
-                            </AppText>
+                                <AppText style={styles.description}>
+                                    Enter your email address and we'll send you a reset code to reset your password.
+                                </AppText>
 
-                            <TextField
-                                value={values.email}
-                                error={!!errors.email}
-                                onBlur={handleBlur("email")}
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                                placeholder="Enter Email"
-                                onChangeText={handleChange("email")}
-                            />
-                            {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
-                        </View>
+                                <TextField
+                                    value={values.email}
+                                    error={!!errors.email}
+                                    onBlur={handleBlur("email")}
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                    placeholder="Enter Email"
+                                    onChangeText={handleChange("email")}
+                                />
+                                {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
+                            </View>
 
-                        <Button disabled={isSubmitting} label="Send Reset Code" onPress={handleSubmit} />
-                    </>
-                )}
-            </Formik>
+                            <Button disabled={isSubmitting} label="Send Reset Code" onPress={handleSubmit} />
+                        </>
+                    )}
+                </Formik>
 
-            <TouchableOpacity style={styles.loginBtnLink} onPress={() => navigation.navigate("Login")}>
-                <AppText>Back to </AppText>
-                <AppMediumText style={styles.loginLink}>Log In</AppMediumText>
-            </TouchableOpacity>
-        </Page>
+                <TouchableOpacity style={styles.loginBtnLink} onPress={() => navigation.navigate("Login")}>
+                    <AppText>Back to </AppText>
+                    <AppMediumText style={styles.loginLink}>Log In</AppMediumText>
+                </TouchableOpacity>
+            </Page>
+        </SafeAreaView>
     );
 };
 
