@@ -1,36 +1,28 @@
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Formik } from "formik";
+import { object, string } from "yup";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError } from "../../utils/request.utils";
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 import { Page, AppText, Button, TextField, AppMediumText, PasswordField, FormErrorMessage } from "../../components";
 
 export const Login = ({ navigation }) => {
     const { authenticate } = useAuth();
 
-    const {
-        control,
-        setError,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-    } = useForm({ defaultValues: { email: "", password: "" } });
-
-    const onSubmit = (values) => {
-        console.log("The values: ", values);
-
+    const onSubmit = async (values, { setFieldError }) => {
         try {
             const { data } = await baseRequest.post("/auth/login", values);
 
-            if (data && data.data && data.data.status) {
+            if (data && data.data) {
                 const { user, token, refreshToken } = data.data;
 
                 authenticate({ accessToken: token, refreshToken, user });
             }
         } catch (error) {
-            debugAxiosError(error);
+            setFieldError("general", extractResponseErrorMessage(error, "Invalid email or password."));
         }
     };
 
@@ -39,60 +31,44 @@ export const Login = ({ navigation }) => {
             <View style={styles.header}>
                 <AppText style={styles.pageTitle}>Sign In</AppText>
             </View>
-            <View style={styles.form}>
-                <FormErrorMessage label="Something happened" />
+            <Formik initialValues={{ email: "", password: "" }} onSubmit={onSubmit} validationSchema={loginSchema}>
+                {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                    <>
+                        <View style={styles.form}>
+                            {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
-                <Controller
-                    name="email"
-                    control={control}
-                    rules={{
-                        required: "Email is required.",
-                        pattern: {
-                            value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i,
-                            message: "invalid email address",
-                        },
-                    }}
-                    render={({ field: { onChange, onBlur, value, name, ref }, fieldState: { invalid } }) => (
-                        <TextField
-                            ref={ref}
-                            value={value}
-                            error={invalid}
-                            onBlur={onBlur}
-                            autoCapitalize="none"
-                            onChangeText={onChange}
-                            placeholder="Enter Email"
-                            keyboardType="email-address"
-                        />
-                    )}
-                />
-                {errors.email && <AppText style={styles.fieldErrorText}>{errors.email.message}</AppText>}
+                            <TextField
+                                value={values.email}
+                                error={!!errors.email}
+                                autoCapitalize="none"
+                                placeholder="Enter Email"
+                                onBlur={handleBlur("email")}
+                                keyboardType="email-address"
+                                onChangeText={handleChange("email")}
+                            />
+                            {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
 
-                <Controller
-                    name="password"
-                    control={control}
-                    rules={{ required: "Password is required." }}
-                    render={({ field: { onChange, onBlur, value, name, ref }, fieldState: { invalid } }) => (
-                        <PasswordField
-                            ref={ref}
-                            value={value}
-                            error={invalid}
-                            onBlur={onBlur}
-                            style={styles.input}
-                            autoCapitalize="none"
-                            onChangeText={onChange}
-                            placeholder="Enter Password"
-                        />
-                    )}
-                />
+                            <PasswordField
+                                style={styles.input}
+                                autoCapitalize="none"
+                                value={values.password}
+                                error={!!errors.password}
+                                placeholder="Enter Password"
+                                onBlur={handleBlur("password")}
+                                onChangeText={handleChange("password")}
+                            />
 
-                {errors.password && <AppText style={styles.fieldErrorText}>{errors.password.message}</AppText>}
+                            {errors.password && <AppText style={styles.fieldErrorText}>{errors.password}</AppText>}
 
-                <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
-                    <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
-                </TouchableOpacity>
-            </View>
+                            <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
+                            </TouchableOpacity>
+                        </View>
 
-            <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit(onSubmit)} />
+                        <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit} />
+                    </>
+                )}
+            </Formik>
 
             <View style={styles.registerActionBox}>
                 <AppText>Don't have an account?</AppText>
@@ -103,6 +79,11 @@ export const Login = ({ navigation }) => {
         </Page>
     );
 };
+
+const loginSchema = object().shape({
+    email: string().required("Email is required.").email("Enter valid email address").lowercase(),
+    password: string().required("Password is required.").min(6),
+});
 
 const styles = StyleSheet.create({
     header: {

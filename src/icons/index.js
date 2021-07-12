@@ -12,4 +12,5 @@ export { MyArticleIcon } from "./MyArticleIcon";
 export { PlagiarismIcon } from "./PlagiarismIcon";
 export { EvaluationIcon } from "./EvaluationIcon";
 export { InformationIcon } from "./InformationIcon";
+export { VideoArticleIcon } from "./VideoArticleIcon";
 export { CompletedCheckMark } from "./CompletedCheckMark";

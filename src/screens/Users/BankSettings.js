@@ -5,13 +5,13 @@ import { useForm, Controller } from "react-hook-form";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import theme from "../../theme";
 import { useAuth } from "../../context";
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
 
-import theme from "../../theme";
-
 export const BankSettings = ({ navigation }) => {
     const toast = useToast();
+
     const { user, refreshUser, authenticatedRequest } = useAuth();
 
     const {
@@ -70,6 +70,10 @@ export const BankSettings = ({ navigation }) => {
                         )}
                     />
 
+                    {errors.accountName && (
+                        <AppText style={styles.fieldErrorText}>{errors.accountName.message}</AppText>
+                    )}
+
                     <Controller
                         control={control}
                         name="accountNumber"
@@ -85,7 +89,9 @@ export const BankSettings = ({ navigation }) => {
                             />
                         )}
                     />
-                    <AppTextField style={styles.input} label="Bank" />
+                    {errors.accountNumber && (
+                        <AppText style={styles.fieldErrorText}>{errors.accountNumber.message}</AppText>
+                    )}
 
                     <Controller
                         name="bank"
@@ -102,6 +108,7 @@ export const BankSettings = ({ navigation }) => {
                             />
                         )}
                     />
+                    {errors.bank && <AppText style={styles.fieldErrorText}>{errors.bank.message}</AppText>}
 
                     <Button
                         style={styles.button}

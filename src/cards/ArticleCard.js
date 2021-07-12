@@ -4,19 +4,27 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { AppMediumText, AppText } from "../components";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { RectButton } from "react-native-gesture-handler";
-import theme from "../theme";
 
-export const ArticleCard = ({ style, title, imageSource, onPress }) => (
+import theme from "../theme";
+import { VideoArticleIcon } from "../icons";
+
+export const ArticleCard = ({ style, title, imageSource, excerpt, articleType, onPress }) => (
     <RectButton style={[styles.card, style]} onPress={onPress}>
         <View style={styles.leftSide}>
             <AppMediumText style={styles.title}>{title}</AppMediumText>
-            <AppText style={styles.postedDate}>June 27th, 2021</AppText>
+            <AppText style={styles.postedDate}>{excerpt}</AppText>
             <View style={styles.viewRow}>
                 <AppMediumText style={styles.readText}>Read Article</AppMediumText>
                 <Icon name="menu-right" size={RFPercentage(3)} />
             </View>
         </View>
-        <Image source={imageSource} />
+        {articleType === "VIDEO" ? (
+            <View style={{ padding: 20, backgroundColor: "#C4C4C4" }}>
+                <VideoArticleIcon />
+            </View>
+        ) : (
+            <Image source={imageSource} />
+        )}
     </RectButton>
 );
 

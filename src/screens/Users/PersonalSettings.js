@@ -1,9 +1,10 @@
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Formik } from "formik";
+import { object, string } from "yup";
+import { useToast } from "react-native-fast-toast";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import { useToast } from "react-native-fast-toast";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -14,21 +15,9 @@ export const PersonalSettings = ({ navigation }) => {
     const toast = useToast();
     const { user, refreshUser, authenticatedRequest } = useAuth();
 
-    const {
-        control,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-    } = useForm({
-        defaultValues: {
-            lastName: user.lastName,
-            firstName: user.firstName,
-            phoneNumber: user.phoneNumber,
-        },
-    });
-
     const onSubmit = async (values) => {
         try {
-            const { data } = await authenticatedRequest.put("/user/update-user-profile", values);
+            const { data } = await authenticatedRequest().put("/user/update-user-profile", values);
 
             if (data && data.data) {
                 toast.show(data.data.message);
@@ -61,73 +50,74 @@ export const PersonalSettings = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View>
-                    <Controller
-                        name="firstName"
-                        control={control}
-                        rules={{ required: "First name is required." }}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Formik
+                    onSubmit={onSubmit}
+                    validationSchema={personalInformationSchema}
+                    initialValues={{
+                        lastName: user.lastName,
+                        firstName: user.firstName,
+                        phoneNumber: user.phoneNumber,
+                    }}>
+                    {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                        <>
                             <AppTextField
-                                ref={ref}
-                                value={value}
-                                onBlur={onBlur}
+                                label="First Name"
                                 style={styles.input}
-                                onChangeText={onChange}
+                                value={values.firstName}
                                 placeholder="First Name"
+                                onBlur={handleBlur("firstName")}
+                                onChangeText={handleChange("firstName")}
                             />
-                        )}
-                    />
-                    {errors.firstName && <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>}
+                            {errors.firstName && (
+                                <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>
+                            )}
 
-                    <Controller
-                        name="lastName"
-                        control={control}
-                        rules={{ required: "First name is required." }}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
                             <AppTextField
-                                ref={ref}
-                                value={value}
-                                onBlur={onBlur}
+                                label="Last Name"
                                 style={styles.input}
-                                onChangeText={onChange}
                                 placeholder="Last Name"
+                                value={values.firstName}
+                                onBlur={handleBlur("lastName")}
+                                onChangeText={handleChange("lastName")}
                             />
-                        )}
-                    />
 
-                    {errors.lastName && <AppText style={styles.fieldErrorText}>{errors.lastName.message}</AppText>}
+                            {errors.lastName && (
+                                <AppText style={styles.fieldErrorText}>{errors.lastName.message}</AppText>
+                            )}
 
-                    <Controller
-                        control={control}
-                        name="phoneNumber"
-                        rules={{ required: "First name is required." }}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
                             <AppTextField
-                                ref={ref}
-                                value={value}
-                                onBlur={onBlur}
                                 style={styles.input}
-                                onChangeText={onChange}
+                                label="Phone number"
+                                keyboardType="numeric"
                                 placeholder="Phone number"
+                                value={values.phoneNumber}
+                                onBlur={handleBlur("phoneNumber")}
+                                onChangeText={handleChange("phoneNumber")}
                             />
-                        )}
-                    />
 
-                    {errors.phoneNumber && (
-                        <AppText style={styles.fieldErrorText}>{errors.phoneNumber.message}</AppText>
+                            {errors.phoneNumber && (
+                                <AppText style={styles.fieldErrorText}>{errors.phoneNumber.message}</AppText>
+                            )}
+
+                            <Button
+                                style={styles.button}
+                                onPress={handleSubmit}
+                                disabled={isSubmitting}
+                                label={isSubmitting ? "Saving..." : "Save"}
+                            />
+                        </>
                     )}
-
-                    <Button
-                        style={styles.button}
-                        disabled={isSubmitting}
-                        onPress={handleSubmit(onSubmit)}
-                        label={isSubmitting ? "Saving..." : "Save"}
-                    />
-                </View>
+                </Formik>
             </ScrollView>
         </View>
     );
 };
+
+const personalInformationSchema = object().shape({
+    accountName: string().required(),
+    accountNumber: string().required(),
+    bank: string().required("Bank is required."),
+});
 
 const styles = StyleSheet.create({
     container: {

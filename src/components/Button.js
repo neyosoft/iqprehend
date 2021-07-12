@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import theme from "../theme";

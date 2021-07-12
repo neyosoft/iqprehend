@@ -20,9 +20,16 @@ export const authenticatedRequest = (token) => {
     return instance;
 };
 
-export const extractResponseErrorMessage = (error) => {
+export const extractResponseErrorMessage = (
+    error,
+    defaultMessage = "Unable to process the request. Kindly try again.",
+) => {
     if (error.response) {
-        return error.response.data.responseDescription;
+        if (error.response.data && error.response.data.message) {
+            return error.response.data.message;
+        } else {
+            return defaultMessage;
+        }
     } else {
         return error.message;
     }

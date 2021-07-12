@@ -16,8 +16,9 @@ import {
     PersonalSettings,
     SingleArticleView,
 } from "../screens/Users";
-import { ArticleIcon, LogoutIcon, MyArticleIcon, SettingsIcon } from "../icons";
+import { useAuth } from "../context";
 import { AppMediumText, AppText, ExistingRouteList } from "../components";
+import { ArticleIcon, LogoutIcon, MyArticleIcon, SettingsIcon } from "../icons";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -73,7 +74,7 @@ export default function UserNavigation() {
 }
 
 function CustomDrawerContent(props) {
-    const user = { firstName: "Emmanuel", lastName: "Samson" };
+    const { user } = useAuth();
 
     return (
         <DrawerContentScrollView {...props} showsVerticalScrollIndicator={false}>
@@ -82,8 +83,10 @@ function CustomDrawerContent(props) {
                     <Image source={require("../assets/images/avatar.jpg")} style={styles.profileImage} />
                 </View>
                 <View style={styles.nameBox}>
-                    <AppMediumText style={styles.nameText}>Obagunwa Emmanuel</AppMediumText>
-                    <AppText style={styles.emailText}>access2emma@gmail.com</AppText>
+                    <AppMediumText style={styles.nameText}>
+                        {user?.firstName} {user?.lastName}
+                    </AppMediumText>
+                    <AppText style={styles.emailText}>{user?.email}</AppText>
                 </View>
             </View>
 

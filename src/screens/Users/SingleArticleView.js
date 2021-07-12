@@ -3,12 +3,13 @@ import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import { format } from "date-fns";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
 import { debugAxiosError } from "../../utils/request.utils";
-import { AppMediumText, AppText, Button } from "../../components";
+import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
@@ -19,7 +20,7 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     const articlesResponse = useQuery(["articles", articleID], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/articles", { params: { id: articleID } });
+            const { data } = await authenticatedRequest().get("/articles/single", { params: { id: articleID } });
 
             if (data && data.data) {
                 return data.data.article;
@@ -32,43 +33,41 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     });
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Article</AppText>
-            </View>
+    const renderContent = () => {
+        if (articlesResponse.isLoading) {
+            return <PageLoading />;
+        }
+
+        if (articlesResponse.isError) {
+            return (
+                <View>
+                    <AppText>There is a problem fetching articles.</AppText>
+                </View>
+            );
+        }
+
+        const article = articlesResponse.data;
+
+        return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-                <AppMediumText style={styles.title}>
-                    Perform Graphql Mutation And Query On The Same Screen/Page
-                </AppMediumText>
+                <AppMediumText style={styles.title}>{article.title}</AppMediumText>
 
                 <View style={styles.dateBox}>
                     <View style={styles.postedBox}>
                         <Icon name="clock-outline" color="#608EC1" size={RFPercentage(3)} />
-                        <AppText style={styles.postedText}>Posted on Feb 2, 2021</AppText>
+                        <AppText style={styles.postedText}>
+                            Posted on {format(new Date(article.createdAt), "MMM dd, yyyy")}
+                        </AppText>
                     </View>
                     <View style={[styles.deadlineBox, { marginLeft: RFPercentage(2) }]}>
                         <Icon name="clock-outline" color="#102F55" size={RFPercentage(3)} />
-                        <AppText style={styles.deadlineText}>Deadline: Feb 7, 2021</AppText>
+                        <AppText style={styles.deadlineText}>
+                            Deadline: {format(new Date(article.deadline), "MMM dd, yyyy")}
+                        </AppText>
                     </View>
                 </View>
 
-                <AppText style={styles.body}>
-                    GraqhQL has been an amazing technology provided by Facebook. It simplifies the client consumption of
-                    information provided by the server in an incredible way. GraphQL gives clients the power to ask for
-                    exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables
-                    powerful developer tools. We at Herlabytes has adopted the cutting-edge technology and implementing
-                    it into all of our mobile application, web application, personal website and also our server
-                    deployment. This has really enable us to deliver our services on time and also satisfy our
-                    customers’ demand. Recently, we were working on an enterprise mobile application for a client and
-                    there is need to perform a query (fetch data from the server) on screen (mobile application screen)
-                    and also to perform another mutation (modify information on the server) operation on the same
-                    screen. For example, fetch all users form the server and update their registration/administration
-                    status.
-                </AppText>
+                <AppText style={styles.body}>{article?.content}</AppText>
 
                 <View style={styles.responseRow}>
                     <TouchableOpacity
@@ -133,6 +132,18 @@ export const SingleArticleView = ({ navigation, route }) => {
                     </View>
                 )}
             </ScrollView>
+        );
+    };
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={navigation.goBack}>
+                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                </TouchableOpacity>
+                <AppText style={styles.headerTitle}>Article</AppText>
+            </View>
+            {renderContent()}
         </View>
     );
 };

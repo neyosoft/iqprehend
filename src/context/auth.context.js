@@ -24,8 +24,6 @@ export default class AuthProvider extends Component {
         accessToken: null,
         refreshToken: null,
         authenticate: async ({ accessToken, refreshToken, user }) => {
-            let user = null;
-
             await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
 
             this.setState({
@@ -131,16 +129,21 @@ export default class AuthProvider extends Component {
                 const decoded = jwt_decode(accessToken);
 
                 if (isFuture(new Date(decoded.exp * 1000))) {
-                    const { data } = await axios.get("/user/profile", {
-                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
-                    });
+                    try {
+                        const { data } = await axios.get("/user/profile", {
+                            baseURL:
+                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
+                            headers: {
+                                Authorization: `Bearer ${accessToken}`,
+                            },
+                        });
 
-                    if (data && data.status) {
-                        user = data.data;
-                    }
+                        console.log("the user info: ", data);
+
+                        if (data && data.status) {
+                            user = data.data;
+                        }
+                    } catch (e) {}
                 } else {
                     const { data } = await axios.post("/auth/refresh-token", params, {
                         baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,

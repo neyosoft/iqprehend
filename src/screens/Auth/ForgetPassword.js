@@ -1,19 +1,13 @@
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { Formik } from "formik";
+import { object, string } from "yup";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
 
 export const ForgetPassword = ({ navigation }) => {
-    const {
-        control,
-        errors,
-        handleSubmit,
-        formState: { isSubmitting },
-    } = useForm();
-
     const onSubmit = (values) => {
         console.log("The values: ", values);
 
@@ -25,41 +19,32 @@ export const ForgetPassword = ({ navigation }) => {
             <View style={styles.header}>
                 <AppText style={styles.pageTitle}>RECOVER PASSWORD</AppText>
             </View>
-            <View style={styles.form}>
-                <FormErrorMessage label="Something happened" />
+            <Formik initialValues={{ email: "" }} onSubmit={onSubmit} validationSchema={forgetPasswordSchema}>
+                {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
+                    <>
+                        <View style={styles.form}>
+                            <FormErrorMessage label="Something happened" />
 
-                <AppText style={styles.description}>
-                    Enter your email address and we'll send you a reset code to reset your password.
-                </AppText>
+                            <AppText style={styles.description}>
+                                Enter your email address and we'll send you a reset code to reset your password.
+                            </AppText>
 
-                <Controller
-                    name="email"
-                    defaultValue=""
-                    control={control}
-                    rules={{
-                        required: "Email is required.",
-                        pattern: {
-                            value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i,
-                            message: "invalid email address",
-                        },
-                    }}
-                    render={({ onChange, onBlur, value, ref }, { invalid }) => (
-                        <TextField
-                            ref={ref}
-                            value={value}
-                            error={invalid}
-                            onBlur={onBlur}
-                            autoCapitalize="none"
-                            keyboardType="email-address"
-                            placeholder="Enter Email"
-                            onChangeText={(value) => onChange(value)}
-                        />
-                    )}
-                />
-                {errors.email && <AppText style={styles.fieldErrorText}>{errors.email.message}</AppText>}
-            </View>
+                            <TextField
+                                value={values.email}
+                                error={!!errors.email}
+                                onBlur={handleBlur("email")}
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                                placeholder="Enter Email"
+                                onChangeText={handleChange("email")}
+                            />
+                            {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
+                        </View>
 
-            <Button disabled={isSubmitting} label="Send Reset Code" onPress={handleSubmit(onSubmit)} />
+                        <Button disabled={isSubmitting} label="Send Reset Code" onPress={handleSubmit} />
+                    </>
+                )}
+            </Formik>
 
             <TouchableOpacity style={styles.loginBtnLink} onPress={() => navigation.navigate("Login")}>
                 <AppText>Back to </AppText>
@@ -68,6 +53,11 @@ export const ForgetPassword = ({ navigation }) => {
         </Page>
     );
 };
+
+const forgetPasswordSchema = () =>
+    object().shape({
+        email: string().required("Email is required.").email().lowercase(),
+    });
 
 const styles = StyleSheet.create({
     header: {
