@@ -8,22 +8,24 @@ import { RectButton } from "react-native-gesture-handler";
 import theme from "../theme";
 import { VideoArticleIcon } from "../icons";
 
-export const ArticleCard = ({ style, title, imageSource, excerpt, articleType, onPress }) => (
+export const ArticleCard = ({ style, article, onPress }) => (
     <RectButton style={[styles.card, style]} onPress={onPress}>
         <View style={styles.leftSide}>
-            <AppMediumText style={styles.title}>{title}</AppMediumText>
-            <AppText style={styles.postedDate}>{excerpt}</AppText>
+            <AppMediumText style={styles.title}>{article.title}</AppMediumText>
+            <AppText style={styles.postedDate}>{article.excerpt}</AppText>
             <View style={styles.viewRow}>
                 <AppMediumText style={styles.readText}>Read Article</AppMediumText>
                 <Icon name="menu-right" size={RFPercentage(3)} />
             </View>
         </View>
-        {articleType === "VIDEO" ? (
+        {article.articleType === "VIDEO" ? (
             <View style={{ padding: 20, backgroundColor: "#C4C4C4" }}>
                 <VideoArticleIcon />
             </View>
         ) : (
-            <Image source={imageSource} />
+            <View style={styles.imagebox}>
+                <Image style={styles.articleFeatureImage} source={{ uri: article.featuredImage }} />
+            </View>
         )}
     </RectButton>
 );
@@ -57,5 +59,15 @@ const styles = StyleSheet.create({
     viewRow: {
         flexDirection: "row",
         alignItems: "center",
+    },
+    imagebox: {
+        width: RFPercentage(11.7),
+        height: RFPercentage(10),
+        backgroundColor: "red",
+    },
+    articleFeatureImage: {
+        flex: 1,
+        width: undefined,
+        height: undefined,
     },
 });

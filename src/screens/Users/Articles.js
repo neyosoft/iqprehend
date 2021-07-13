@@ -49,14 +49,7 @@ export const Articles = ({ navigation }) => {
     });
 
     const renderArticleItem = ({ item }) => (
-        <ArticleCard
-            title={item.title}
-            excerpt={item.excerpt}
-            createdAt={item.createdAt}
-            articleType={item.articleType}
-            imageSource={require("../../assets/images/image1.png")}
-            onPress={() => navigation.navigate("SingleArticleView", { articleID: item._id })}
-        />
+        <ArticleCard article={item} onPress={() => navigation.navigate("SingleArticleView", { articleID: item._id })} />
     );
 
     const renderEmptyArticle = () => (
@@ -136,16 +129,16 @@ export const Articles = ({ navigation }) => {
                     />
                 </View>
 
-                <View style={styles.content}>
-                    <FlatList
-                        renderItem={renderArticleItem}
-                        keyExtractor={(item) => item._id}
-                        data={articlesResponse.data.articles}
-                        ListEmptyComponent={renderEmptyArticle}
-                        ItemSeparatorComponent={ItemSeparatorComponent}
-                        removeClippedSubviews={Platform.OS === "android"}
-                    />
-                </View>
+                <FlatList
+                    style={styles.flatlist}
+                    renderItem={renderArticleItem}
+                    keyExtractor={(item) => item._id}
+                    data={articlesResponse.data.articles}
+                    ListEmptyComponent={renderEmptyArticle}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                    removeClippedSubviews={Platform.OS === "android"}
+                    contentContainerStyle={styles.contentContainerStyle}
+                />
             </>
         );
     };
@@ -205,10 +198,11 @@ const styles = StyleSheet.create({
         width: RFPercentage(14),
         height: RFPercentage(5),
     },
-    content: {
-        flex: 1,
+    flatlist: {
         marginTop: RFPercentage(1),
-        paddingHorizontal: RFPercentage(3),
+    },
+    contentContainerStyle: {
+        paddingHorizontal: RFPercentage(2),
     },
     separator: {
         height: RFPercentage(3),

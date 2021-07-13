@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useWindowDimensions } from "react-native";
 import { format } from "date-fns";
+import HTML from "react-native-render-html";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -14,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
+    const contentWidth = useWindowDimensions().width;
 
     const { articleID } = route.params;
 
@@ -49,6 +51,8 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         const article = articlesResponse.data;
 
+        console.log({ article });
+
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>
                 <AppMediumText style={styles.title}>{article.title}</AppMediumText>
@@ -68,7 +72,20 @@ export const SingleArticleView = ({ navigation, route }) => {
                     </View>
                 </View>
 
-                <AppText style={styles.body}>{article?.content}</AppText>
+                {article?.featuredImage ? (
+                    <View>
+                        <AppText>Feature image here: {article.featuredImage}</AppText>
+                    </View>
+                ) : null}
+
+                <AppText style={styles.body}>
+                    <HTML
+                        emSize={16}
+                        contentWidth={contentWidth}
+                        source={{ html: article.content }}
+                        baseFontStyle={{ fontSize: RFPercentage(2.1) }}
+                    />
+                </AppText>
 
                 <View style={styles.responseRow}>
                     <TouchableOpacity
