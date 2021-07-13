@@ -10,6 +10,7 @@ import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
 import { debugAxiosError } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
@@ -136,15 +137,17 @@ export const SingleArticleView = ({ navigation, route }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Article</AppText>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.goBack}>
+                        <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+                    <AppText style={styles.headerTitle}>Article</AppText>
+                </View>
+                {renderContent()}
             </View>
-            {renderContent()}
-        </View>
+        </SafeAreaView>
     );
 };
 
