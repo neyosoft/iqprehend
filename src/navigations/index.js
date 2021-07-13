@@ -5,8 +5,8 @@ import RNBootSplash from "react-native-bootsplash";
 
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
-import ExpertNavigation from "./expert";
 import { useAuth } from "../context";
+import ExpertNavigation from "./expert";
 import { AppText } from "../components";
 
 export default function AppNavigation() {
