@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import RNBootSplash from "react-native-bootsplash";
 
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
@@ -19,7 +20,7 @@ export default function AppNavigation() {
         );
     }
 
-    return <NavigationContainer>{switchNavigator(user)}</NavigationContainer>;
+    return <NavigationContainer onReady={() => RNBootSplash.hide()}>{switchNavigator(user)}</NavigationContainer>;
 }
 
 const switchNavigator = (user) => {
