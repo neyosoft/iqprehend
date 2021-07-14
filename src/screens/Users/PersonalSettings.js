@@ -5,6 +5,7 @@ import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { launchImageLibrary } from "react-native-image-picker";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
@@ -29,6 +30,10 @@ export const PersonalSettings = ({ navigation }) => {
         }
     };
 
+    const handleImageSelection = () => {
+        launchImageLibrary({ mediaType: "photo", maxWidth: 400, includeBase64: false }, (response) => {});
+    };
+
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
@@ -39,19 +44,6 @@ export const PersonalSettings = ({ navigation }) => {
                     <AppText style={styles.headerTitle}>Settings</AppText>
                 </View>
                 <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
-                    <AppMediumText style={styles.title}>Personal information</AppMediumText>
-
-                    <View style={styles.imageArea}>
-                        <View>
-                            <View style={styles.profileImageContainer}>
-                                <Image style={styles.profileImage} source={require("../../assets/images/avatar.jpg")} />
-                            </View>
-                            <TouchableOpacity style={styles.uploadIcon}>
-                                <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
                     <Formik
                         onSubmit={onSubmit}
                         validationSchema={personalInformationSchema}
@@ -61,7 +53,23 @@ export const PersonalSettings = ({ navigation }) => {
                             phoneNumber: user.phoneNumber,
                         }}>
                         {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
-                            <>
+                            <View>
+                                <AppMediumText style={styles.title}>Personal information</AppMediumText>
+
+                                <View style={styles.imageArea}>
+                                    <View>
+                                        <View style={styles.profileImageContainer}>
+                                            <Image
+                                                style={styles.profileImage}
+                                                source={require("../../assets/images/avatar.jpg")}
+                                            />
+                                        </View>
+                                        <TouchableOpacity style={styles.uploadIcon} onPress={handleImageSelection}>
+                                            <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
                                 <AppTextField
                                     label="First Name"
                                     style={styles.input}
@@ -105,7 +113,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     disabled={isSubmitting}
                                     label={isSubmitting ? "Saving..." : "Save"}
                                 />
-                            </>
+                            </View>
                         )}
                     </Formik>
                 </ScrollView>
