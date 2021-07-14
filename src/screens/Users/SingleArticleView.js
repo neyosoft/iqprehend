@@ -129,8 +129,15 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         if (articlesResponse.isError) {
             return (
-                <View>
-                    <AppText>There is a problem fetching articles.</AppText>
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Icon name="alert" color="red" size={RFPercentage(10)} />
+                    <AppText>There is a problem retrieveing article.</AppText>
+
+                    <Button
+                        label="Retry"
+                        style={{ marginTop: RFPercentage(5) }}
+                        onPress={() => articlesResponse.refetch}
+                    />
                 </View>
             );
         }

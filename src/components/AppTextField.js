@@ -18,7 +18,6 @@ export const AppTextField = forwardRef(({ style, label, inputStyle, labelStyle, 
                 returnKeyType="done"
                 placeholderTextColor="#6D6D6D"
                 underlineColorAndroid="transparent"
-                enablesReturnKeyAutomatically={true}
                 {...rest}
                 style={theInputStyle}
             />

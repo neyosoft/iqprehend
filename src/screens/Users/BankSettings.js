@@ -12,10 +12,13 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
+import { extractResponseErrorAsObject } from "../../utils/request.utils";
 
 export const BankSettings = ({ navigation }) => {
     const toast = useToast();
     const { user, refreshUser, authenticatedRequest } = useAuth();
+
+    const bankInformation = user.bankInformation || {};
 
     const bankResponse = useQuery("banks", async () => {
         try {
@@ -31,7 +34,7 @@ export const BankSettings = ({ navigation }) => {
         }
     });
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, { setErrors }) => {
         const formData = new FormData();
 
         formData.append("bankInformation", JSON.stringify(values));
@@ -49,6 +52,7 @@ export const BankSettings = ({ navigation }) => {
             }
         } catch (error) {
             debugAxiosError(error);
+            setErrors(extractResponseErrorAsObject(error));
         }
     };
 
@@ -63,12 +67,13 @@ export const BankSettings = ({ navigation }) => {
                 </View>
                 <Formik
                     onSubmit={onSubmit}
+                    validationSchema={accountSchema}
                     initialValues={{
-                        bvn: user.bvn,
-                        bank: user.bank,
-                        accountType: user.accountType,
-                        accountName: user.accountName,
-                        accountNumber: user.accountNumber,
+                        bvn: bankInformation.bvn,
+                        bank: bankInformation.bank,
+                        accountType: bankInformation.accountType,
+                        accountName: bankInformation.accountName,
+                        accountNumber: bankInformation.accountNumber,
                     }}>
                     {({ handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, errors, values }) => (
                         <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
@@ -79,7 +84,7 @@ export const BankSettings = ({ navigation }) => {
                             <RNPickerSelect
                                 value={values.bank}
                                 useNativeAndroidPickerStyle={false}
-                                placeholder={{ label: "Select Bank", value: null }}
+                                placeholder={{ label: "Select Bank", value: "" }}
                                 onValueChange={(value) => setFieldValue("bank", value)}
                                 Icon={() => <Icon name="chevron-down" size={24} color="#000" />}
                                 items={
@@ -97,10 +102,11 @@ export const BankSettings = ({ navigation }) => {
                                     iconContainer: { top: 14, right: 12 },
                                 }}
                             />
+                            {errors.bank && <AppText style={styles.fieldErrorText}>{errors.bank}</AppText>}
 
                             <View>
                                 <AppTextField
-                                    label="Account number"
+                                    label="Account name"
                                     style={styles.input}
                                     value={values.accountName}
                                     onBlur={handleBlur("accountName")}
@@ -114,6 +120,7 @@ export const BankSettings = ({ navigation }) => {
                                 <AppTextField
                                     label="Account number"
                                     style={styles.input}
+                                    keyboardType="numeric"
                                     value={values.accountNumber}
                                     onBlur={handleBlur("accountNumber")}
                                     onChangeText={handleChange("accountNumber")}
@@ -121,6 +128,16 @@ export const BankSettings = ({ navigation }) => {
                                 {errors.accountNumber && (
                                     <AppText style={styles.fieldErrorText}>{errors.accountNumber}</AppText>
                                 )}
+
+                                <AppTextField
+                                    label="BVN"
+                                    value={values.bvn}
+                                    style={styles.input}
+                                    keyboardType="numeric"
+                                    onBlur={handleBlur("bvn")}
+                                    onChangeText={handleChange("bvn")}
+                                />
+                                {errors.bvn && <AppText style={styles.fieldErrorText}>{errors.bvn}</AppText>}
 
                                 <AppText
                                     style={{ fontSize: RFPercentage(2), marginBottom: 5, marginTop: RFPercentage(3) }}>
@@ -143,6 +160,9 @@ export const BankSettings = ({ navigation }) => {
                                         iconContainer: { top: 14, right: 12 },
                                     }}
                                 />
+                                {errors.accountType && (
+                                    <AppText style={styles.fieldErrorText}>{errors.accountType}</AppText>
+                                )}
 
                                 <Button
                                     style={styles.button}
@@ -160,9 +180,11 @@ export const BankSettings = ({ navigation }) => {
 };
 
 const accountSchema = object().shape({
-    accountName: string().required(),
-    accountNumber: string().required(),
     bank: string().required("Bank is required."),
+    accountName: string().required("Account name is required."),
+    accountNumber: string().required("Account number is required.").length(10),
+    accountType: string().required("Account type is required."),
+    bvn: string().required("Bank is required.").length(11),
 });
 
 const styles = StyleSheet.create({
@@ -207,5 +229,10 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: RFPercentage(5),
+    },
+    fieldErrorText: {
+        marginTop: 3,
+        color: "#FF7878",
+        fontSize: RFPercentage(1.8),
     },
 });
