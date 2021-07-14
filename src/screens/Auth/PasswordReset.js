@@ -26,7 +26,7 @@ export const PasswordReset = ({ navigation }) => {
             <Page style={styles.page}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.header}>
-                        <AppText style={styles.pageTitle}>Set a new password</AppText>
+                        <AppMediumText style={styles.pageTitle}>Set a new password</AppMediumText>
                     </View>
                     <View style={styles.form}>
                         <FormErrorMessage label="Something happened" />
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     },
     pageTitle: {
         fontSize: RFPercentage(3),
-        color: theme.colors.secondary,
+        color: theme.colors.primary,
     },
     input: {
         marginTop: RFPercentage(2),

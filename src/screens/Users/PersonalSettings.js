@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik } from "formik";
-import { object, string } from "yup";
+import { object, string, mixed } from "yup";
 import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -18,8 +18,21 @@ export const PersonalSettings = ({ navigation }) => {
     const { user, refreshUser, authenticatedRequest } = useAuth();
 
     const onSubmit = async (values) => {
+        const formData = new FormData();
+
+        formData.set("lastName", values.lastName);
+        formData.set("firstName", values.firstName);
+
+        if (values.profileImage && typeof values.profileImage !== "string") {
+            formData.set("profileImage", values.profileImage);
+        }
+
         try {
-            const { data } = await authenticatedRequest().put("/user/update-user-profile", values);
+            const { data } = await authenticatedRequest().put("/user/update-user-profile", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
 
             if (data && data.data) {
                 toast.show(data.data.message);
@@ -30,8 +43,18 @@ export const PersonalSettings = ({ navigation }) => {
         }
     };
 
-    const handleImageSelection = () => {
-        launchImageLibrary({ mediaType: "photo", maxWidth: 400, includeBase64: false }, (response) => {});
+    const handleImageSelection = (setFieldValue) => {
+        launchImageLibrary({ mediaType: "photo", maxWidth: 400, includeBase64: false }, (response) => {
+            if (response.assets && Array.isArray(response.assets) && response.assets.length === 1) {
+                const selelctedAssets = response.assets[0];
+
+                setFieldValue("profileImage", {
+                    uri: selelctedAssets.uri,
+                    name: selelctedAssets.fileName,
+                    type: selelctedAssets.type,
+                });
+            }
+        });
     };
 
     return (
@@ -51,8 +74,9 @@ export const PersonalSettings = ({ navigation }) => {
                             lastName: user.lastName,
                             firstName: user.firstName,
                             phoneNumber: user.phoneNumber,
+                            profileImage: null,
                         }}>
-                        {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                        {({ handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, errors, values }) => (
                             <View>
                                 <AppMediumText style={styles.title}>Personal information</AppMediumText>
 
@@ -61,10 +85,18 @@ export const PersonalSettings = ({ navigation }) => {
                                         <View style={styles.profileImageContainer}>
                                             <Image
                                                 style={styles.profileImage}
-                                                source={require("../../assets/images/avatar.jpg")}
+                                                source={
+                                                    values?.profileImage
+                                                        ? typeof values.profileImage === "string"
+                                                            ? { uri: values.profileImage }
+                                                            : values.profileImage
+                                                        : require("../../assets/images/avatar.jpg")
+                                                }
                                             />
                                         </View>
-                                        <TouchableOpacity style={styles.uploadIcon} onPress={handleImageSelection}>
+                                        <TouchableOpacity
+                                            style={styles.uploadIcon}
+                                            onPress={() => handleImageSelection(setFieldValue)}>
                                             <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
                                         </TouchableOpacity>
                                     </View>
@@ -123,9 +155,10 @@ export const PersonalSettings = ({ navigation }) => {
 };
 
 const personalInformationSchema = object().shape({
-    firstName: string().required("First name is required."),
     lastName: string().required("Last name is required."),
+    firstName: string().required("First name is required."),
     phoneNumber: string().required("Phone number is required."),
+    profileImage: mixed(),
 });
 
 const styles = StyleSheet.create({

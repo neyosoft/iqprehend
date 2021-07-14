@@ -88,13 +88,18 @@ export default class AuthProvider extends Component {
                 if (isFuture(new Date(decoded.exp * 1000))) {
                     return config;
                 } else {
-                    const { data } = await axios.post("/auth/refresh-token", params, {
-                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                        headers: {
-                            Authorization: accessToken,
-                            "X-Refresh-Token": refreshToken,
+                    const { data } = await axios.post(
+                        "/auth/refresh-token",
+                        {},
+                        {
+                            baseURL:
+                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
+                            headers: {
+                                Authorization: accessToken,
+                                "X-Refresh-Token": refreshToken,
+                            },
                         },
-                    });
+                    );
 
                     if (data && data.data && data.data.status) {
                         const { accessToken, refreshToken } = data.data;
@@ -141,36 +146,37 @@ export default class AuthProvider extends Component {
                             },
                         });
 
-                        console.log("User successfully authenticated: ", data);
-
                         if (data && data.status) {
                             user = data.data;
                         }
                     } catch (e) {
-                        debugAxiosError(e);
                         console.log("There is a problem completing login: ", e);
-                        ß;
+                        debugAxiosError(e);
                     }
                 } else {
-                    console.log("Token already expired.");
-                    const { data } = await axios.post("/auth/refresh-token", params, {
-                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                        headers: {
-                            Authorization: accessToken,
-                            "X-Refresh-Token": refreshToken,
+                    const { data } = await axios.post(
+                        "/auth/refresh-token",
+                        {},
+                        {
+                            baseURL:
+                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
+                            headers: {
+                                Authorization: `Bearer ${accessToken}`,
+                                "X-Refresh-Token": `Bearer ${refreshToken}`,
+                            },
                         },
-                    });
+                    );
 
                     if (data && data.data && data.data.status) {
-                        const { accessToken, refreshToken } = data.data;
+                        const { token, refreshToken } = data.data;
 
-                        await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
+                        await Promise.all([saveUserToken(token), saveRefreshToken(refreshToken)]);
 
                         const { data: userData } = await baseRequest.get("/user/profile", {
                             baseURL:
                                 Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                             headers: {
-                                Authorization: `Bearer ${accessToken}`,
+                                Authorization: `Bearer ${token}`,
                             },
                         });
 
@@ -180,9 +186,9 @@ export default class AuthProvider extends Component {
 
                         this.setState({
                             user,
-                            accessToken,
                             refreshToken,
                             isLoading: false,
+                            accessToken: token,
                         });
                     }
                 }

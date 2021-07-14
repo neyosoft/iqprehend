@@ -23,7 +23,7 @@ export const Login = ({ navigation }) => {
                 await authenticate({ accessToken: token, refreshToken, user });
             }
         } catch (error) {
-            setFieldError("general", extractResponseErrorMessage(error, "Invalid email or password."));
+            setFieldError("general", extractResponseErrorMessage(error));
         }
     };
 
@@ -31,7 +31,7 @@ export const Login = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <Page>
                 <View style={styles.header}>
-                    <AppText style={styles.pageTitle}>Sign In</AppText>
+                    <AppMediumText style={styles.pageTitle}>Sign In</AppMediumText>
                 </View>
                 <Formik initialValues={{ email: "", password: "" }} onSubmit={onSubmit} validationSchema={loginSchema}>
                     {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     },
     pageTitle: {
         fontSize: RFPercentage(3),
-        color: theme.colors.secondary,
+        color: theme.colors.primary,
     },
     input: {
         marginTop: RFPercentage(2),

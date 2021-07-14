@@ -22,7 +22,7 @@ export const authenticatedRequest = (token) => {
 
 export const extractResponseErrorMessage = (
     error,
-    defaultMessage = "Unable to process the request. Kindly try again.",
+    defaultMessage = "Unable to process the request. Kindly check your internet connectivity.",
 ) => {
     if (error.response) {
         if (error.response.data && error.response.data.message) {
@@ -30,8 +30,27 @@ export const extractResponseErrorMessage = (
         } else {
             return defaultMessage;
         }
+    } else if (error.request) {
+        return defaultMessage;
     } else {
         return error.message;
+    }
+};
+
+export const extractResponseErrorAsObject = (
+    error,
+    defaultMessage = "Unable to process the request. Kindly check your internet connectivity.",
+) => {
+    if (error.response) {
+        if (error.response.data && error.response.data.message) {
+            return { general: error.response.data.message };
+        } else {
+            return { general: defaultMessage };
+        }
+    } else if (error.request) {
+        return { general: defaultMessage };
+    } else {
+        return { general: error.message };
     }
 };
 

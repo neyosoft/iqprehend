@@ -7,7 +7,7 @@ import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorAsObject } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
 export const Register = ({ navigation }) => {
@@ -19,7 +19,7 @@ export const Register = ({ navigation }) => {
 
     const { authenticate } = useAuth();
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, setErrors) => {
         try {
             const { data } = await baseRequest.post("/user", values);
 
@@ -30,6 +30,7 @@ export const Register = ({ navigation }) => {
             }
         } catch (error) {
             debugAxiosError(error);
+            setErrors(extractResponseErrorAsObject(error));
         }
     };
 
@@ -38,7 +39,7 @@ export const Register = ({ navigation }) => {
             <Page>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.header}>
-                        <AppText style={styles.pageTitle}>Create Account</AppText>
+                        <AppMediumText style={styles.pageTitle}>Create Account</AppMediumText>
                     </View>
 
                     <Formik
@@ -48,7 +49,7 @@ export const Register = ({ navigation }) => {
                         {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
                             <>
                                 <View style={styles.form}>
-                                    <FormErrorMessage label="Something happened" />
+                                    {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
                                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                         <View style={{ width: "48%" }}>
@@ -63,9 +64,7 @@ export const Register = ({ navigation }) => {
                                                 onEndEditing={() => lastNameRef?.current?.focus()}
                                             />
                                             {errors.firstName && (
-                                                <AppText style={styles.fieldErrorText}>
-                                                    {errors.firstName.message}
-                                                </AppText>
+                                                <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
                                             )}
                                         </View>
 
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
     },
     pageTitle: {
         fontSize: RFPercentage(3),
-        color: theme.colors.secondary,
+        color: theme.colors.primary,
     },
     input: {
         marginTop: RFPercentage(2),

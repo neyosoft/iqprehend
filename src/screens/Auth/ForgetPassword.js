@@ -19,7 +19,7 @@ export const ForgetPassword = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <Page>
                 <View style={styles.header}>
-                    <AppText style={styles.pageTitle}>RECOVER PASSWORD</AppText>
+                    <AppMediumText style={styles.pageTitle}>RECOVER PASSWORD</AppMediumText>
                 </View>
                 <Formik initialValues={{ email: "" }} onSubmit={onSubmit} validationSchema={forgetPasswordSchema}>
                     {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     },
     pageTitle: {
         fontSize: RFPercentage(3),
-        color: theme.colors.secondary,
+        color: theme.colors.primary,
     },
     input: {
         marginTop: RFPercentage(2),
