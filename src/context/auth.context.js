@@ -12,7 +12,7 @@ import {
 } from "../utils/storage.utils";
 import Config from "../../config";
 import { isFuture } from "date-fns";
-import { debugAxiosError } from "../utils/request.utils";
+import { baseRequest, debugAxiosError } from "../utils/request.utils";
 
 const AuthContext = React.createContext();
 
@@ -58,7 +58,7 @@ export default class AuthProvider extends Component {
         },
         refreshUser: async () => {
             try {
-                const { data } = await axios.get("/user/profile", {
+                const { data } = await baseRequest.get("/user/profile", {
                     baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                     headers: {
                         Authorization: `Bearer ${this.state.accessToken}`,
@@ -132,7 +132,8 @@ export default class AuthProvider extends Component {
 
                 if (isFuture(new Date(decoded.exp * 1000))) {
                     try {
-                        const { data } = await axios.get("/user/profile", {
+                        console.log("attempting to auto-login");
+                        const { data } = await baseRequest.get("/user/profile", {
                             baseURL:
                                 Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                             headers: {
@@ -146,8 +147,9 @@ export default class AuthProvider extends Component {
                             user = data.data;
                         }
                     } catch (e) {
-                        console.log("There is a problem completing login: ", e);
                         debugAxiosError(e);
+                        console.log("There is a problem completing login: ", e);
+                        ß;
                     }
                 } else {
                     console.log("Token already expired.");
@@ -164,7 +166,7 @@ export default class AuthProvider extends Component {
 
                         await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
 
-                        const { data: userData } = await axios.get("/user/profile", {
+                        const { data: userData } = await baseRequest.get("/user/profile", {
                             baseURL:
                                 Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                             headers: {

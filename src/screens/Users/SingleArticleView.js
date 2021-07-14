@@ -1,25 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
+import { format } from "date-fns";
+import { useToast } from "react-native-fast-toast";
+import HTML from "react-native-render-html";
+import YoutubePlayer from "react-native-youtube-iframe";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useWindowDimensions } from "react-native";
-import { format } from "date-fns";
-import HTML from "react-native-render-html";
+import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useWindowDimensions, Image } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
-import { debugAxiosError } from "../../utils/request.utils";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export const SingleArticleView = ({ navigation, route }) => {
+    const toast = useToast();
     const { authenticatedRequest } = useAuth();
     const contentWidth = useWindowDimensions().width;
 
+    const [playing, setPlaying] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [summaryText, setSummaryText] = useState("");
+    const [responseType, setResponseType] = useState("textual");
+
     const { articleID } = route.params;
 
-    const [responseType, setResponseType] = useState("textual");
+    const onStateChange = useCallback((state) => {
+        if (state === "ended") {
+            setPlaying(false);
+        }
+    }, []);
 
     const articlesResponse = useQuery(["articles", articleID], async () => {
         try {
@@ -36,6 +48,80 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     });
 
+    const handleSummaryTextSubmission = async () => {
+        if (summaryText.trim().length < 1) {
+            return toast.show("Kindly submit content for summary.");
+        }
+
+        console.log("submitting summary: ", summaryText);
+
+        try {
+            setIsSubmitting(true);
+            const { data } = await authenticatedRequest().post("/summary", {
+                article: articleID,
+                content: summaryText,
+            });
+
+            if (data && data.data) {
+                toast.show(data.data.message, { type: "success" });
+                navigation.goBack();
+            } else {
+                throw new Error("There is a problem submitting your summary. Kindly try again");
+            }
+        } catch (error) {
+            toast.show(extractResponseErrorMessage(error));
+            setIsSubmitting(false);
+        }
+    };
+
+    const renderSummaryForm = () => (
+        <>
+            <AppText style={styles.wordCountText}>
+                Summary words: 50/<AppMediumText>200</AppMediumText>
+            </AppText>
+
+            <TextInput
+                multiline={true}
+                value={summaryText}
+                textAlignVertical="top"
+                style={styles.summaryInput}
+                onChangeText={setSummaryText}
+                placeholder="Enter summary here..."
+            />
+
+            <AppText style={styles.note}>
+                <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have active paid
+                subscription
+            </AppText>
+
+            <Button
+                style={styles.button}
+                disabled={isSubmitting}
+                onPress={handleSummaryTextSubmission}
+                label={isSubmitting ? "Submitting..." : "Submit"}
+            />
+        </>
+    );
+
+    const renderAudioForm = () => (
+        <View style={styles.audiobox}>
+            <RecordIcon />
+
+            <Button label="START" style={styles.startBtn} />
+
+            <AppText style={styles.note}>
+                <AppMediumText>Note:</AppMediumText> Accepted Format:Mp 3,Wav,AAC (up to 4mb)
+            </AppText>
+
+            <Button label="UPLOAD" style={styles.uploadBtn} />
+
+            <AppText style={[styles.note, { textAlign: "center" }]}>
+                <AppMediumText>Note:</AppMediumText> Summarize in audio by clicking the START button or UPLOAD button to
+                upload from your device
+            </AppText>
+        </View>
+    );
+
     const renderContent = () => {
         if (articlesResponse.isLoading) {
             return <PageLoading />;
@@ -51,10 +137,10 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         const article = articlesResponse.data;
 
-        console.log({ article });
+        console.log("article: ", article);
 
         return (
-            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+            <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>
                 <AppMediumText style={styles.title}>{article.title}</AppMediumText>
 
                 <View style={styles.dateBox}>
@@ -72,82 +158,64 @@ export const SingleArticleView = ({ navigation, route }) => {
                     </View>
                 </View>
 
-                {article?.featuredImage ? (
-                    <View>
-                        <AppText>Feature image here: {article.featuredImage}</AppText>
-                    </View>
-                ) : null}
-
-                <AppText style={styles.body}>
-                    <HTML
-                        emSize={16}
-                        contentWidth={contentWidth}
-                        source={{ html: article.content }}
-                        baseFontStyle={{ fontSize: RFPercentage(2.1) }}
-                    />
-                </AppText>
-
-                <View style={styles.responseRow}>
-                    <TouchableOpacity
-                        onPress={() => setResponseType("textual")}
-                        style={[
-                            styles.responseOption,
-                            { backgroundColor: responseType === "textual" ? theme.colors.primary : "#D8D8D8" },
-                        ]}>
-                        <AppMediumText
-                            style={[styles.optionText, { color: responseType === "textual" ? "#fff" : "#333" }]}>
-                            Textual
-                        </AppMediumText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setResponseType("audio")}
-                        style={[
-                            styles.responseOption,
-                            { backgroundColor: responseType === "audio" ? theme.colors.primary : "#D8D8D8" },
-                        ]}>
-                        <AppMediumText
-                            style={[styles.optionText, { color: responseType === "audio" ? "#fff" : "#333" }]}>
-                            Audio
-                        </AppMediumText>
-                    </TouchableOpacity>
-                </View>
-
-                {responseType === "textual" ? (
+                {article.articleType === "VIDEO" ? (
                     <>
-                        <AppText style={styles.wordCountText}>
-                            Summary words: 50/<AppMediumText>200</AppMediumText>
-                        </AppText>
-
-                        <TextInput
-                            multiline={true}
-                            textAlignVertical="top"
-                            style={styles.summaryInput}
-                            placeholder="Enter summary here..."
+                        <YoutubePlayer
+                            play={playing}
+                            videoId={"iee2TATGMyI"}
+                            height={RFPercentage(30)}
+                            onChangeState={onStateChange}
                         />
 
-                        <AppText style={styles.note}>
-                            <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have
-                            active paid subscription
-                        </AppText>
-                        <Button label="Submit" style={styles.button} />
+                        <View style={styles.responseRow}>
+                            <TouchableOpacity
+                                onPress={() => setResponseType("textual")}
+                                style={[
+                                    styles.responseOption,
+                                    { backgroundColor: responseType === "textual" ? theme.colors.primary : "#D8D8D8" },
+                                ]}>
+                                <AppMediumText
+                                    style={[
+                                        styles.optionText,
+                                        { color: responseType === "textual" ? "#fff" : "#333" },
+                                    ]}>
+                                    Textual
+                                </AppMediumText>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setResponseType("audio")}
+                                style={[
+                                    styles.responseOption,
+                                    { backgroundColor: responseType === "audio" ? theme.colors.primary : "#D8D8D8" },
+                                ]}>
+                                <AppMediumText
+                                    style={[styles.optionText, { color: responseType === "audio" ? "#fff" : "#333" }]}>
+                                    Audio
+                                </AppMediumText>
+                            </TouchableOpacity>
+                        </View>
+
+                        {responseType === "textual" ? renderSummaryForm() : renderAudioForm()}
                     </>
                 ) : (
-                    <View style={styles.audiobox}>
-                        <RecordIcon />
+                    <>
+                        {article.featuredImage ? (
+                            <View style={styles.featureImageBox}>
+                                <Image style={styles.featureImage} source={{ uri: article.featuredImage }} />
+                            </View>
+                        ) : null}
 
-                        <Button label="START" style={styles.startBtn} />
-
-                        <AppText style={styles.note}>
-                            <AppMediumText>Note:</AppMediumText> Accepted Format:Mp 3,Wav,AAC (up to 4mb)
+                        <AppText style={styles.body}>
+                            <HTML
+                                emSize={16}
+                                contentWidth={contentWidth}
+                                source={{ html: article.content }}
+                                baseFontStyle={{ fontSize: RFPercentage(2.1) }}
+                            />
                         </AppText>
 
-                        <Button label="UPLOAD" style={styles.uploadBtn} />
-
-                        <AppText style={[styles.note, { textAlign: "center" }]}>
-                            <AppMediumText>Note:</AppMediumText> Summarize in audio by clicking the START button or
-                            UPLOAD button to upload from your device
-                        </AppText>
-                    </View>
+                        {renderSummaryForm()}
+                    </>
                 )}
             </ScrollView>
         );
@@ -233,11 +301,14 @@ const styles = StyleSheet.create({
         marginTop: RFPercentage(2),
     },
     summaryInput: {
+        color: "#000",
         borderWidth: 1,
         borderColor: "#7A7A7A",
         height: RFPercentage(20),
         textAlignVertical: "top",
+        fontSize: RFPercentage(2.1),
         fontFamily: "Baloo2-Regular",
+        padding: RFPercentage(1.5),
     },
     note: {
         marginTop: RFPercentage(2),
@@ -263,5 +334,13 @@ const styles = StyleSheet.create({
     uploadBtn: {
         marginTop: RFPercentage(2),
         paddingVertical: RFPercentage(1),
+    },
+    featureImageBox: {
+        height: RFPercentage(25),
+    },
+    featureImage: {
+        flex: 1,
+        width: undefined,
+        height: undefined,
     },
 });

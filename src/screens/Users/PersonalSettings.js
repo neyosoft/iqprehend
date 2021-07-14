@@ -2,14 +2,14 @@ import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { useToast } from "react-native-fast-toast";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { debugAxiosError } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
 
 export const PersonalSettings = ({ navigation }) => {
@@ -25,7 +25,7 @@ export const PersonalSettings = ({ navigation }) => {
                 await refreshUser();
             }
         } catch (error) {
-            debugAxiosError(error);
+            toast.show(extractResponseErrorMessage(error));
         }
     };
 
@@ -44,7 +44,7 @@ export const PersonalSettings = ({ navigation }) => {
                     <View style={styles.imageArea}>
                         <View>
                             <View style={styles.profileImageContainer}>
-                                <Image style={styles.profileImage} source={require("../../assets/images/image1.png")} />
+                                <Image style={styles.profileImage} source={require("../../assets/images/avatar.jpg")} />
                             </View>
                             <TouchableOpacity style={styles.uploadIcon}>
                                 <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
@@ -71,7 +71,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     onChangeText={handleChange("firstName")}
                                 />
                                 {errors.firstName && (
-                                    <AppText style={styles.fieldErrorText}>{errors.firstName.message}</AppText>
+                                    <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
                                 )}
 
                                 <AppTextField
@@ -83,9 +83,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     onChangeText={handleChange("lastName")}
                                 />
 
-                                {errors.lastName && (
-                                    <AppText style={styles.fieldErrorText}>{errors.lastName.message}</AppText>
-                                )}
+                                {errors.lastName && <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>}
 
                                 <AppTextField
                                     style={styles.input}
@@ -98,7 +96,7 @@ export const PersonalSettings = ({ navigation }) => {
                                 />
 
                                 {errors.phoneNumber && (
-                                    <AppText style={styles.fieldErrorText}>{errors.phoneNumber.message}</AppText>
+                                    <AppText style={styles.fieldErrorText}>{errors.phoneNumber}</AppText>
                                 )}
 
                                 <Button
@@ -117,9 +115,9 @@ export const PersonalSettings = ({ navigation }) => {
 };
 
 const personalInformationSchema = object().shape({
-    accountName: string().required(),
-    accountNumber: string().required(),
-    bank: string().required("Bank is required."),
+    firstName: string().required("First name is required."),
+    lastName: string().required("Last name is required."),
+    phoneNumber: string().required("Phone number is required."),
 });
 
 const styles = StyleSheet.create({

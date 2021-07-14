@@ -53,11 +53,7 @@ export const MyArticles = ({ navigation }) => {
                         keyExtractor={(_, index) => `article${index}`}
                         ItemSeparatorComponent={() => <View style={styles.separator} />}
                         renderItem={({ item }) => (
-                            <ArticleCard
-                                title={item.title}
-                                onPress={() => navigation.navigate("EvaluationResult")}
-                                imageSource={require("../../assets/images/image1.png")}
-                            />
+                            <ArticleCard article={item} onPress={() => navigation.navigate("EvaluationResult")} />
                         )}
                     />
                 </View>

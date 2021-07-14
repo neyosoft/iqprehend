@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     imagebox: {
         width: RFPercentage(11.7),
         height: RFPercentage(10),
-        backgroundColor: "red",
+        backgroundColor: "#C4C4C4",
     },
     articleFeatureImage: {
         flex: 1,

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-fast-toast";
+import { Formik } from "formik";
+import { object, string } from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -143,6 +145,12 @@ export const BankSettings = ({ navigation }) => {
         </SafeAreaView>
     );
 };
+
+const accountSchema = object().shape({
+    accountName: string().required(),
+    accountNumber: string().required(),
+    bank: string().required("Bank is required."),
+});
 
 const styles = StyleSheet.create({
     container: {

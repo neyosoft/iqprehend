@@ -14,7 +14,7 @@ export default function AppNavigation() {
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}>
                 <AppText>Loading...</AppText>
             </View>
         );

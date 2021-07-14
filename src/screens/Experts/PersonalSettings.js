@@ -22,7 +22,7 @@ export const PersonalSettings = ({ navigation }) => {
                 <View style={styles.imageArea}>
                     <View>
                         <View style={styles.profileImageContainer}>
-                            <Image style={styles.profileImage} source={require("../../assets/images/image1.png")} />
+                            <Image style={styles.profileImage} source={require("../../assets/images/avatar.jpg")} />
                         </View>
                         <TouchableOpacity style={styles.uploadIcon}>
                             <Icon name="camera-outline" color="#fff" size={RFPercentage(3.5)} />
