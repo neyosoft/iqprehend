@@ -10,6 +10,7 @@ export const AppText = ({ children, style, ...rest }) => (
 
 const styles = StyleSheet.create({
     root: {
+        color: "#000",
         fontSize: RFPercentage(2.1),
         fontFamily: "Baloo2-Regular",
     },

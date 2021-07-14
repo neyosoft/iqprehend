@@ -80,13 +80,18 @@ export default function UserNavigation() {
 }
 
 function CustomDrawerContent(props) {
-    const { user } = useAuth();
+    const { logout, user } = useAuth();
 
     return (
         <DrawerContentScrollView {...props} showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
                 <View style={styles.imageBox}>
-                    <Image source={require("../assets/images/avatar.jpg")} style={styles.profileImage} />
+                    <Image
+                        style={styles.profileImage}
+                        source={
+                            user?.profilePicture ? { uri: user.profilePicture } : require("../assets/images/avatar.jpg")
+                        }
+                    />
                 </View>
                 <View style={styles.nameBox}>
                     <AppMediumText style={styles.nameText}>
@@ -100,7 +105,7 @@ function CustomDrawerContent(props) {
                 <ExistingRouteList {...props} />
                 <TouchableItem
                     delayPressIn={0}
-                    onPress={() => console.log("handle logout")}
+                    onPress={logout}
                     style={[styles.button]}
                     accessibilityRole="button"
                     accessibilityComponentType="button"

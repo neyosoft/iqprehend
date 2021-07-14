@@ -20,11 +20,11 @@ export const PersonalSettings = ({ navigation }) => {
     const onSubmit = async (values) => {
         const formData = new FormData();
 
-        formData.set("lastName", values.lastName);
-        formData.set("firstName", values.firstName);
+        formData.append("lastName", values.lastName);
+        formData.append("firstName", values.firstName);
 
-        if (values.profileImage && typeof values.profileImage !== "string") {
-            formData.set("profileImage", values.profileImage);
+        if (values.profilePicture && typeof values.profilePicture !== "string") {
+            formData.append("profilePicture", values.profilePicture);
         }
 
         try {
@@ -48,7 +48,7 @@ export const PersonalSettings = ({ navigation }) => {
             if (response.assets && Array.isArray(response.assets) && response.assets.length === 1) {
                 const selelctedAssets = response.assets[0];
 
-                setFieldValue("profileImage", {
+                setFieldValue("profilePicture", {
                     uri: selelctedAssets.uri,
                     name: selelctedAssets.fileName,
                     type: selelctedAssets.type,
@@ -74,7 +74,7 @@ export const PersonalSettings = ({ navigation }) => {
                             lastName: user.lastName,
                             firstName: user.firstName,
                             phoneNumber: user.phoneNumber,
-                            profileImage: null,
+                            profilePicture: user.profilePicture || null,
                         }}>
                         {({ handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, errors, values }) => (
                             <View>
@@ -84,12 +84,12 @@ export const PersonalSettings = ({ navigation }) => {
                                     <View>
                                         <View style={styles.profileImageContainer}>
                                             <Image
-                                                style={styles.profileImage}
+                                                style={styles.profilePicture}
                                                 source={
-                                                    values?.profileImage
-                                                        ? typeof values.profileImage === "string"
-                                                            ? { uri: values.profileImage }
-                                                            : values.profileImage
+                                                    values?.profilePicture
+                                                        ? typeof values.profilePicture === "string"
+                                                            ? { uri: values.profilePicture }
+                                                            : { uri: values.profilePicture.uri }
                                                         : require("../../assets/images/avatar.jpg")
                                                 }
                                             />
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         height: RFPercentage(20),
         borderRadius: RFPercentage(10),
     },
-    profileImage: {
+    profilePicture: {
         flex: 1,
         height: undefined,
         width: undefined,

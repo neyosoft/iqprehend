@@ -12,8 +12,8 @@ import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useWindowDim
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const toast = useToast();

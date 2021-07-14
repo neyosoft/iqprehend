@@ -29,16 +29,18 @@ export const AppTextField = forwardRef(({ style, label, inputStyle, labelStyle, 
 const styles = StyleSheet.create({
     container: {},
     label: {
-        marginBottom: 3,
+        marginBottom: 5,
+        fontSize: RFPercentage(2),
     },
     input: {
-        height: RFPercentage(6),
+        color: "#000",
         borderWidth: 1,
+        borderRadius: 4,
         borderColor: "#CACACA",
+        height: RFPercentage(6),
         fontSize: RFPercentage(2.1),
         paddingLeft: RFPercentage(2),
         fontFamily: "Baloo2-Regular",
-        borderRadius: 4,
     },
     error: {
         borderWidth: 1,
