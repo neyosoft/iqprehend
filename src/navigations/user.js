@@ -9,6 +9,7 @@ import {
     Payment,
     Articles,
     Settings,
+    Evaluation,
     MyArticles,
     BankSettings,
     ChangePassword,
@@ -47,7 +48,7 @@ const DrawerNavigation = () => {
 
             <Drawer.Screen
                 name="Evaluation"
-                component={MyArticles}
+                component={Evaluation}
                 options={{ title: "Evaluation", drawerIcon: ({ color }) => <EvaluationIcon color={color} /> }}
             />
 

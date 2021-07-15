@@ -12,13 +12,15 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
-import { extractResponseErrorAsObject } from "../../utils/request.utils";
+import { debugAxiosError, extractResponseErrorAsObject } from "../../utils/request.utils";
 
 export const BankSettings = ({ navigation }) => {
     const toast = useToast();
     const { user, refreshUser, authenticatedRequest } = useAuth();
 
     const bankInformation = user.bankInformation || {};
+
+    console.log("bankInformation: ", bankInformation);
 
     const bankResponse = useQuery("banks", async () => {
         try {
@@ -40,7 +42,7 @@ export const BankSettings = ({ navigation }) => {
         formData.append("bankInformation", JSON.stringify(values));
 
         try {
-            const { data } = await authenticatedRequest.put("/user/update-user-profile", formData, {
+            const { data } = await authenticatedRequest().put("/user/update-user-profile", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -51,6 +53,7 @@ export const BankSettings = ({ navigation }) => {
                 await refreshUser();
             }
         } catch (error) {
+            console.log("The error: ", error);
             debugAxiosError(error);
             setErrors(extractResponseErrorAsObject(error));
         }
@@ -151,8 +154,8 @@ export const BankSettings = ({ navigation }) => {
                                     onValueChange={(value) => setFieldValue("accountType", value)}
                                     Icon={() => <Icon name="chevron-down" size={24} color="#000" />}
                                     items={[
-                                        { label: "Individual Account", value: "Individual Account" },
-                                        { label: "Corporate Account", value: "Corporate Account" },
+                                        { label: "SAVINGS", value: "SAVINGS" },
+                                        { label: "CURRENT", value: "CURRENT" },
                                     ]}
                                     style={{
                                         inputIOS: styles.dropdownInput,

@@ -137,7 +137,6 @@ export default class AuthProvider extends Component {
 
                 if (isFuture(new Date(decoded.exp * 1000))) {
                     try {
-                        console.log("attempting to auto-login");
                         const { data } = await baseRequest.get("/user/profile", {
                             baseURL:
                                 Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
@@ -150,7 +149,6 @@ export default class AuthProvider extends Component {
                             user = data.data;
                         }
                     } catch (e) {
-                        console.log("There is a problem completing login: ", e);
                         debugAxiosError(e);
                     }
                 } else {
