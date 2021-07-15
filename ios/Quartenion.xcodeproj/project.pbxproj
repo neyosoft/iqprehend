@@ -11,6 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1A203510269F33F200B1F2AB /* BridgeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A20350F269F33F200B1F2AB /* BridgeHeader.swift */; };
 		1A251A2B269DF7B2006D5D84 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A251A2A269DF7B2006D5D84 /* BootSplash.storyboard */; };
 		1E34523DF0E74538A1720085 /* Baloo2-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F60A0E41E4E4FEE89D2BD94 /* Baloo2-Regular.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -54,6 +55,8 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Quartenion/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Quartenion/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Quartenion/main.m; sourceTree = "<group>"; };
+		1A20350E269F33F100B1F2AB /* Quartenion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quartenion-Bridging-Header.h"; sourceTree = "<group>"; };
+		1A20350F269F33F200B1F2AB /* BridgeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeHeader.swift; sourceTree = "<group>"; };
 		1A251A2A269DF7B2006D5D84 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = Quartenion/BootSplash.storyboard; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Quartenion-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quartenion-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Quartenion-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Quartenion-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +173,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				1A20350F269F33F200B1F2AB /* BridgeHeader.swift */,
 				13B07FAE1A68108700A75B9A /* Quartenion */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* QuartenionTests */,
@@ -177,6 +181,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				738B1622E0E74A1F87679CEE /* Resources */,
 				AFBD2032A0A19FC0780E3C80 /* Pods */,
+				1A20350E269F33F100B1F2AB /* Quartenion-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -301,7 +306,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1250;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -635,6 +640,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A203510269F33F200B1F2AB /* BridgeHeader.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -677,6 +683,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5959A3A5A6071EC3F432AC9C /* Pods-Quartenion-QuartenionTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -700,6 +707,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 43CA96553D831B2B770A08AA /* Pods-Quartenion-QuartenionTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = QuartenionTests/Info.plist;
@@ -734,6 +742,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.iqprehend;
 				PRODUCT_NAME = Quartenion;
+				SWIFT_OBJC_BRIDGING_HEADER = "Quartenion-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -757,6 +766,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.iqprehend;
 				PRODUCT_NAME = Quartenion;
+				SWIFT_OBJC_BRIDGING_HEADER = "Quartenion-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

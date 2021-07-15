@@ -70,8 +70,8 @@ export default function UserNavigation() {
     return (
         <Stack.Navigator headerMode="none" initialRouteName="DrawerNavigation">
             <Stack.Screen name="BankSettings" component={BankSettings} />
-            <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
+            <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="PersonalSettings" component={PersonalSettings} />
             <Stack.Screen name="EvaluationResult" component={EvaluationResult} />
             <Stack.Screen name="SingleArticleView" component={SingleArticleView} />

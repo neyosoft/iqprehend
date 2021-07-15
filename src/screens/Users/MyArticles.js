@@ -1,63 +1,95 @@
 import React from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { useQuery } from "react-query";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, StyleSheet, FlatList, TouchableOpacity, Platform, StatusBar } from "react-native";
 
 import theme from "../../theme";
-import { AppText, Button } from "../../components";
+import { useAuth } from "../../context";
 import { ArticleCard } from "../../cards/ArticleCard";
-
-const data = [
-    { title: "Rhoncus arcu massa 1." },
-    { title: "Rhoncus arcu massa 2." },
-    { title: "Rhoncus arcu massa 3." },
-    { title: "Rhoncus arcu massa 4." },
-    { title: "Rhoncus arcu massa 5." },
-    { title: "Rhoncus arcu massa 6." },
-    { title: "Rhoncus arcu massa 7." },
-    { title: "Rhoncus arcu massa 8." },
-    { title: "Rhoncus arcu massa 9." },
-    { title: "Rhoncus arcu massa 10." },
-    { title: "Rhoncus arcu massa 11." },
-    { title: "Rhoncus arcu massa 12." },
-    { title: "Rhoncus arcu massa 13." },
-    { title: "Rhoncus arcu massa 14." },
-    { title: "Rhoncus arcu massa 15." },
-    { title: "Rhoncus arcu massa 16." },
-    { title: "Rhoncus arcu massa 17." },
-    { title: "Rhoncus arcu massa 18." },
-    { title: "Rhoncus arcu massa 19." },
-    { title: "Rhoncus arcu massa 20." },
-];
+import { AppText, Button, PageLoading } from "../../components";
 
 export const MyArticles = ({ navigation }) => {
-    return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
-            <View style={styles.container}>
+    const { authenticatedRequest } = useAuth();
+
+    const articlesResponse = useQuery(["all-summaries"], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/summary", {
+                params: { isEvaluated: false },
+            });
+
+            if (data && data.data) {
+                return data.data;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const renderArticleItem = ({ item }) => (
+        <ArticleCard
+            article={item.article}
+            onPress={() => navigation.navigate("SingleArticleView", { articleID: item.article._id })}
+        />
+    );
+
+    const renderEmptyArticle = () => (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", height: RFPercentage(50) }}>
+            <AppText>No article found.</AppText>
+        </View>
+    );
+
+    const ItemSeparatorComponent = () => <View style={styles.separator} />;
+
+    const renderArticles = () => {
+        if (articlesResponse.isLoading) {
+            return <PageLoading />;
+        }
+
+        if (articlesResponse.isError) {
+            return (
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Icon name="alert" color="red" size={RFPercentage(10)} />
+                    <AppText>There is a problem fetching articles.</AppText>
+
+                    <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={articlesResponse.refetch} />
+                </View>
+            );
+        }
+
+        return (
+            <>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={navigation.openDrawer}>
                         <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
                     </TouchableOpacity>
-                    <AppText style={styles.headerTitle}>My Articles</AppText>
-                    <Icon name="magnify" color="#fff" size={RFPercentage(3.5)} />
+
+                    <AppText style={styles.headerTitle}>My Summaries</AppText>
                 </View>
-                <View style={styles.filterArea}>
-                    <View style={styles.filterBox} />
-                    <View style={styles.filterBox} />
-                    <Button label="FILTER" style={styles.filterBtn} />
-                </View>
-                <View style={styles.content}>
-                    <FlatList
-                        data={data}
-                        keyExtractor={(_, index) => `article${index}`}
-                        ItemSeparatorComponent={() => <View style={styles.separator} />}
-                        renderItem={({ item }) => (
-                            <ArticleCard article={item} onPress={() => navigation.navigate("EvaluationResult")} />
-                        )}
-                    />
-                </View>
-            </View>
+
+                <FlatList
+                    style={styles.flatlist}
+                    renderItem={renderArticleItem}
+                    keyExtractor={(item) => item._id}
+                    onRefresh={articlesResponse.refetch}
+                    data={articlesResponse.data.summaries}
+                    ListEmptyComponent={renderEmptyArticle}
+                    refreshing={articlesResponse.isFetching}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                    removeClippedSubviews={Platform.OS === "android"}
+                    contentContainerStyle={styles.contentContainerStyle}
+                />
+            </>
+        );
+    };
+
+    return (
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
+            <View style={styles.container}>{renderArticles()}</View>
         </SafeAreaView>
     );
 };
@@ -81,6 +113,7 @@ const styles = StyleSheet.create({
     },
     filterArea: {
         flexDirection: "row",
+        alignItems: "center",
         justifyContent: "flex-end",
         paddingVertical: RFPercentage(2),
         paddingHorizontal: RFPercentage(3),
@@ -93,13 +126,26 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.label,
     },
     filterBtn: {
-        paddingHorizontal: RFPercentage(3),
+        height: RFPercentage(5),
         paddingVertical: RFPercentage(1),
-    },
-    content: {
-        flex: 1,
-        marginTop: RFPercentage(1),
         paddingHorizontal: RFPercentage(3),
+    },
+    dropdownInput: {
+        fontSize: 15,
+        color: "gray",
+        borderWidth: 1,
+        marginRight: 8,
+        borderRadius: 8,
+        paddingRight: 30,
+        paddingLeft: 10,
+        width: RFPercentage(14),
+        height: RFPercentage(5),
+    },
+    flatlist: {
+        marginTop: RFPercentage(1),
+    },
+    contentContainerStyle: {
+        paddingHorizontal: RFPercentage(2),
     },
     separator: {
         height: RFPercentage(3),

@@ -11,7 +11,6 @@ import { useAuth } from "../../context";
 import { SearchIcon } from "../../icons";
 import { ArticleCard } from "../../cards/ArticleCard";
 import { AppText, Button, PageLoading } from "../../components";
-import { debugAxiosError } from "../../utils/request.utils";
 
 export const Articles = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
@@ -43,7 +42,6 @@ export const Articles = ({ navigation }) => {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -133,7 +131,9 @@ export const Articles = ({ navigation }) => {
                     style={styles.flatlist}
                     renderItem={renderArticleItem}
                     keyExtractor={(item) => item._id}
+                    onRefresh={articlesResponse.refetch}
                     data={articlesResponse.data.articles}
+                    refreshing={articlesResponse.isFetching}
                     ListEmptyComponent={renderEmptyArticle}
                     ItemSeparatorComponent={ItemSeparatorComponent}
                     removeClippedSubviews={Platform.OS === "android"}

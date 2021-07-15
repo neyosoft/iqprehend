@@ -1,19 +1,26 @@
 import React, { useState, useCallback } from "react";
+import { format, isFuture } from "date-fns";
 import { useQuery } from "react-query";
-import { format } from "date-fns";
-import { useToast } from "react-native-fast-toast";
 import HTML from "react-native-render-html";
+import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
 import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useWindowDimensions, Image } from "react-native";
+
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+
+const wordCount = (text) => {
+    return text.trim().split(" ").length;
+};
 
 export const SingleArticleView = ({ navigation, route }) => {
     const toast = useToast();
@@ -48,12 +55,47 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     });
 
+    const articlesSummaryResponse = useQuery(["articles-summary", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
+
+            if (data && data.data) {
+                if (data.data.summary) {
+                    setSummaryText(data.data.summary.content);
+                }
+                return data.data.summary;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const settingsResponse = useQuery(["settings"], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/settings");
+
+            if (data && data.data) {
+                return data.data;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
     const handleSummaryTextSubmission = async () => {
         if (summaryText.trim().length < 1) {
             return toast.show("Kindly submit content for summary.");
         }
 
-        console.log("submitting summary: ", summaryText);
+        const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
+
+        if (wordCount(summaryText) > summaryMaxWordCount) {
+            return toast.show("Summary text is too long.");
+        }
 
         try {
             setIsSubmitting(true);
@@ -74,34 +116,55 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     };
 
-    const renderSummaryForm = () => (
-        <>
-            <AppText style={styles.wordCountText}>
-                Summary words: 50/<AppMediumText>200</AppMediumText>
-            </AppText>
+    const renderSummaryForm = () => {
+        const settingsConfig = settingsResponse.data;
+        const summaryMaxWordCount = settingsConfig?.summary?.count || 200;
 
-            <TextInput
-                multiline={true}
-                value={summaryText}
-                textAlignVertical="top"
-                style={styles.summaryInput}
-                onChangeText={setSummaryText}
-                placeholder="Enter summary here..."
-            />
+        return (
+            <>
+                {isFuture(new Date(articlesResponse.data.deadline)) ? (
+                    <>
+                        <AppText style={styles.wordCountText}>
+                            Summary words: {wordCount(summaryText)}/<AppMediumText>{summaryMaxWordCount}</AppMediumText>
+                        </AppText>
 
-            <AppText style={styles.note}>
-                <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have active paid
-                subscription
-            </AppText>
+                        <TextInput
+                            multiline={true}
+                            value={summaryText}
+                            textAlignVertical="top"
+                            style={styles.summaryInput}
+                            onChangeText={setSummaryText}
+                            placeholder="Enter summary here..."
+                        />
 
-            <Button
-                style={styles.button}
-                disabled={isSubmitting}
-                onPress={handleSummaryTextSubmission}
-                label={isSubmitting ? "Submitting..." : "Submit"}
-            />
-        </>
-    );
+                        <AppText style={styles.note}>
+                            <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have
+                            active paid subscription
+                        </AppText>
+
+                        <Button
+                            style={styles.button}
+                            disabled={isSubmitting}
+                            onPress={handleSummaryTextSubmission}
+                            label={isSubmitting ? "Submitting..." : "Submit"}
+                        />
+                    </>
+                ) : (
+                    <View
+                        style={{
+                            borderColor: "gray",
+                            marginTop: RFPercentage(3),
+                            paddingBottom: RFPercentage(2),
+                            borderTopWidth: StyleSheet.hairlineWidth,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
+                        }}>
+                        <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
+                        <AppText style={styles.note}>{summaryText}</AppText>
+                    </View>
+                )}
+            </>
+        );
+    };
 
     const renderAudioForm = () => (
         <View style={styles.audiobox}>
@@ -123,11 +186,11 @@ export const SingleArticleView = ({ navigation, route }) => {
     );
 
     const renderContent = () => {
-        if (articlesResponse.isLoading) {
+        if (articlesResponse.isLoading || articlesSummaryResponse.isLoading || settingsResponse.isLoading) {
             return <PageLoading />;
         }
 
-        if (articlesResponse.isError) {
+        if (articlesResponse.isError || articlesSummaryResponse.isError || settingsResponse.isError) {
             return (
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
@@ -136,15 +199,17 @@ export const SingleArticleView = ({ navigation, route }) => {
                     <Button
                         label="Retry"
                         style={{ marginTop: RFPercentage(5) }}
-                        onPress={() => articlesResponse.refetch}
+                        onPress={() => {
+                            articlesResponse.refetch();
+                            articlesSummaryResponse.refetch();
+                        }}
                     />
                 </View>
             );
         }
 
         const article = articlesResponse.data;
-
-        console.log("article: ", article);
+        const summary = articlesSummaryResponse.data;
 
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>
@@ -169,9 +234,9 @@ export const SingleArticleView = ({ navigation, route }) => {
                     <>
                         <YoutubePlayer
                             play={playing}
-                            videoId={"iee2TATGMyI"}
                             height={RFPercentage(30)}
                             onChangeState={onStateChange}
+                            videoId={article.videoLink.replace("https://www.youtube.com/watch?v=", "")}
                         />
 
                         <View style={styles.responseRow}>
@@ -311,11 +376,11 @@ const styles = StyleSheet.create({
         color: "#000",
         borderWidth: 1,
         borderColor: "#7A7A7A",
-        height: RFPercentage(20),
+        height: RFPercentage(30),
         textAlignVertical: "top",
         fontSize: RFPercentage(2.1),
-        fontFamily: "Baloo2-Regular",
         padding: RFPercentage(1.5),
+        fontFamily: "Baloo2-Regular",
     },
     note: {
         marginTop: RFPercentage(2),
