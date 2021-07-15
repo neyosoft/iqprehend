@@ -1,19 +1,50 @@
 import React from "react";
+import { Formik } from "formik";
+import { object, string, ref } from "yup";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useToast } from "react-native-fast-toast";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Formik } from "formik";
-import { object, string } from "yup";
 
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
 
 import theme from "../../theme";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { useAuth } from "../../context";
 
 export const ChangePassword = ({ navigation }) => {
+    const toast = useToast();
+    const { authenticatedRequest } = useAuth();
+
+    const onSubmit = async (values, { resetForm }) => {
+        const formData = new FormData();
+
+        formData.append("password", values.password);
+
+        try {
+            const { data } = await authenticatedRequest().put("/user/update-user-profile", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            if (data && data.data) {
+                resetForm({ values: { password: "", confirmPassword: "" } });
+                toast.show("Password successfully changed.");
+            }
+        } catch (error) {
+            toast.show(extractResponseErrorMessage(error));
+        }
+    };
+
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
-            <Formik validationSchema={changePasswordSchema} initialValues={{ password: "", confirmPassword: "" }}>
+            <Formik
+                onSubmit={onSubmit}
+                validateOnChange={false}
+                validationSchema={changePasswordSchema}
+                initialValues={{ password: "", confirmPassword: "" }}>
                 {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
                     <View style={styles.container}>
                         <View style={styles.header}>
@@ -25,11 +56,11 @@ export const ChangePassword = ({ navigation }) => {
                         <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
                             <AppMediumText style={styles.title}>Change Password</AppMediumText>
 
-                            <View>
+                            <View style={{ marginTop: RFPercentage(2) }}>
                                 <AppTextField
                                     style={styles.input}
                                     label="New Password"
-                                    values={values.password}
+                                    value={values.password}
                                     error={!!errors.password}
                                     onBlur={handleBlur("password")}
                                     onChangeText={handleChange("password")}
@@ -40,7 +71,7 @@ export const ChangePassword = ({ navigation }) => {
                                     style={styles.input}
                                     label="Confirm Password"
                                     error={!!errors.password}
-                                    values={values.confirmPassword}
+                                    value={values.confirmPassword}
                                     onBlur={handleBlur("confirmPassword")}
                                     onChangeText={handleChange("confirmPassword")}
                                 />
@@ -65,7 +96,9 @@ export const ChangePassword = ({ navigation }) => {
 
 const changePasswordSchema = object().shape({
     password: string().required("Password is required.").min(6),
-    confirmPassword: string().required("Password confirmation is required."),
+    confirmPassword: string()
+        .required("Password confirmation is required.")
+        .oneOf([ref("password"), null], "Passwords must match"),
 });
 
 const styles = StyleSheet.create({
@@ -99,5 +132,10 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: RFPercentage(5),
+    },
+    fieldErrorText: {
+        marginTop: 3,
+        color: "#FF7878",
+        fontSize: RFPercentage(1.8),
     },
 });

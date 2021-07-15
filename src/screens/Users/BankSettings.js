@@ -1,5 +1,4 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { useQuery } from "react-query";
@@ -7,20 +6,19 @@ import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppMediumText, AppText, AppTextField, Button } from "../../components";
-import { debugAxiosError, extractResponseErrorAsObject } from "../../utils/request.utils";
+import { extractResponseErrorAsObject } from "../../utils/request.utils";
 
 export const BankSettings = ({ navigation }) => {
     const toast = useToast();
     const { user, refreshUser, authenticatedRequest } = useAuth();
 
     const bankInformation = user.bankInformation || {};
-
-    console.log("bankInformation: ", bankInformation);
 
     const bankResponse = useQuery("banks", async () => {
         try {
@@ -53,8 +51,6 @@ export const BankSettings = ({ navigation }) => {
                 await refreshUser();
             }
         } catch (error) {
-            console.log("The error: ", error);
-            debugAxiosError(error);
             setErrors(extractResponseErrorAsObject(error));
         }
     };
@@ -72,7 +68,7 @@ export const BankSettings = ({ navigation }) => {
                     onSubmit={onSubmit}
                     validationSchema={accountSchema}
                     initialValues={{
-                        bvn: bankInformation.bvn,
+                        BVN: bankInformation.BVN,
                         bank: bankInformation.bank,
                         accountType: bankInformation.accountType,
                         accountName: bankInformation.accountName,
@@ -134,13 +130,13 @@ export const BankSettings = ({ navigation }) => {
 
                                 <AppTextField
                                     label="BVN"
-                                    value={values.bvn}
+                                    value={values.BVN}
                                     style={styles.input}
                                     keyboardType="numeric"
-                                    onBlur={handleBlur("bvn")}
-                                    onChangeText={handleChange("bvn")}
+                                    onBlur={handleBlur("BVN")}
+                                    onChangeText={handleChange("BVN")}
                                 />
-                                {errors.bvn && <AppText style={styles.fieldErrorText}>{errors.bvn}</AppText>}
+                                {errors.BVN && <AppText style={styles.fieldErrorText}>{errors.BVN}</AppText>}
 
                                 <AppText
                                     style={{ fontSize: RFPercentage(2), marginBottom: 5, marginTop: RFPercentage(3) }}>
@@ -187,7 +183,7 @@ const accountSchema = object().shape({
     accountName: string().required("Account name is required."),
     accountNumber: string().required("Account number is required.").length(10),
     accountType: string().required("Account type is required."),
-    bvn: string().required("Bank is required.").length(11),
+    BVN: string().required("BVN is required.").length(11),
 });
 
 const styles = StyleSheet.create({
