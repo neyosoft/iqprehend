@@ -33,7 +33,11 @@ export const Login = ({ navigation }) => {
                 <View style={styles.header}>
                     <AppMediumText style={styles.pageTitle}>Sign In</AppMediumText>
                 </View>
-                <Formik initialValues={{ email: "", password: "" }} onSubmit={onSubmit} validationSchema={loginSchema}>
+                <Formik
+                    onSubmit={onSubmit}
+                    validateOnChange={false}
+                    initialValues={{ email: "", password: "" }}
+                    validationSchema={loginSchema}>
                     {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
                         <>
                             <View style={styles.form}>
@@ -67,7 +71,11 @@ export const Login = ({ navigation }) => {
                                 </TouchableOpacity>
                             </View>
 
-                            <Button disabled={isSubmitting} label="Log In" onPress={handleSubmit} />
+                            <Button
+                                onPress={handleSubmit}
+                                disabled={isSubmitting}
+                                label={isSubmitting ? "Processing..." : "Log In"}
+                            />
                         </>
                     )}
                 </Formik>

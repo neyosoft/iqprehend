@@ -44,6 +44,7 @@ export const Register = ({ navigation }) => {
 
                     <Formik
                         onSubmit={onSubmit}
+                        validateOnChange={false}
                         validationSchema={registrationSchema}
                         initialValues={{ firstName: "", lastName: "", email: "", password: "", phoneNumber: "" }}>
                         {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (

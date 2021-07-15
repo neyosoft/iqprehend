@@ -1,29 +1,29 @@
 import React from "react";
 import Modal from "react-native-modal";
-import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 import { InformationIcon } from "../icons";
-import { AppMediumText, AppText, Button } from "../components";
 import { moneyFormat } from "../utils/money.utils";
+import { AppMediumText, AppText, Button } from "../components";
 
-export const PaymentConfirmationModal = ({ show = false, onClose, onConfirm }) => {
+export const PaymentConfirmationModal = ({ show = false, plan, onClose, onConfirm }) => {
     return (
         <Modal isVisible={show} onBackButtonPress={onClose} onBackdropPress={onClose}>
             <View style={styles.container}>
                 <View style={styles.card}>
                     <View style={styles.content}>
-                        <InformationIcon />
+                        <InformationIcon width={RFPercentage(6)} height={RFPercentage(6)} />
                         <AppText style={styles.description}>Are are about to subscribe to the below plan</AppText>
 
                         <View style={styles.rowItem}>
                             <AppMediumText>Type</AppMediumText>
-                            <AppText style={styles.rowItemValue}>One Month</AppText>
+                            <AppText style={styles.rowItemValue}>{plan?.duration}</AppText>
                         </View>
 
                         <View style={styles.rowItem}>
                             <AppMediumText>Amount</AppMediumText>
-                            <AppText style={styles.rowItemValue}>{moneyFormat(1500)}</AppText>
+                            <AppText style={styles.rowItemValue}>{moneyFormat(plan?.price || 0)}</AppText>
                         </View>
                     </View>
 
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     },
     description: {
         textAlign: "center",
+        marginTop: RFPercentage(3),
         fontSize: RFPercentage(1.8),
         marginVertical: RFPercentage(1),
     },

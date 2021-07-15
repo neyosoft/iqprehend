@@ -11,6 +11,8 @@ import {
     Settings,
     Evaluation,
     MyArticles,
+    MakePayment,
+    PaymentPlans,
     BankSettings,
     ChangePassword,
     EvaluationResult,
@@ -70,6 +72,8 @@ const DrawerNavigation = () => {
 export default function UserNavigation() {
     return (
         <Stack.Navigator headerMode="none" initialRouteName="DrawerNavigation">
+            <Stack.Screen name="MakePayment" component={MakePayment} />
+            <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="BankSettings" component={BankSettings} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />

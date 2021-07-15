@@ -3,6 +3,8 @@ export { Articles } from "./Articles";
 export { Settings } from "./Settings";
 export { MyArticles } from "./MyArticles";
 export { Evaluation } from "./Evaluation";
+export { MakePayment } from "./MakePayment";
+export { PaymentPlans } from "./PaymentPlans";
 export { BankSettings } from "./BankSettings";
 export { ChangePassword } from "./ChangePassword";
 export { EvaluationResult } from "./EvaluationResult";

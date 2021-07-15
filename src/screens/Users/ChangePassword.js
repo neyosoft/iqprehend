@@ -44,7 +44,7 @@ export const ChangePassword = ({ navigation }) => {
                 onSubmit={onSubmit}
                 validateOnChange={false}
                 validationSchema={changePasswordSchema}
-                initialValues={{ password: "", confirmPassword: "" }}>
+                initialValues={{ cardNumber: "", expiryMonth: "", exiryYear: "", cvv: "" }}>
                 {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
                     <View style={styles.container}>
                         <View style={styles.header}>
@@ -60,6 +60,7 @@ export const ChangePassword = ({ navigation }) => {
                                 <AppTextField
                                     style={styles.input}
                                     label="New Password"
+                                    secureTextEntry={true}
                                     value={values.password}
                                     error={!!errors.password}
                                     onBlur={handleBlur("password")}
@@ -69,6 +70,7 @@ export const ChangePassword = ({ navigation }) => {
 
                                 <AppTextField
                                     style={styles.input}
+                                    secureTextEntry={true}
                                     label="Confirm Password"
                                     error={!!errors.password}
                                     value={values.confirmPassword}
