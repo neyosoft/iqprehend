@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: RFPercentage(2),
+        paddingVertical: RFPercentage(3),
     },
 });
