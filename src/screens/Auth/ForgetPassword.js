@@ -1,18 +1,28 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { RFPercentage } from "react-native-responsive-fontsize";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
 
 export const ForgetPassword = ({ navigation }) => {
-    const onSubmit = (values) => {
-        console.log("The values: ", values);
+    const toast = useToast();
 
-        navigation.navigate("PasswordReset");
+    const onSubmit = async (values, { setFieldError }) => {
+        try {
+            const { data } = await baseRequest.post("/auth/request-password-reset", { email: values.email });
+
+            if (data && data.data) {
+                toast.show(data.data.message);
+            }
+        } catch (error) {
+            setFieldError("general", extractResponseErrorMessage(error));
+        }
     };
 
     return (
@@ -21,11 +31,12 @@ export const ForgetPassword = ({ navigation }) => {
                 <View style={styles.header}>
                     <AppMediumText style={styles.pageTitle}>RECOVER PASSWORD</AppMediumText>
                 </View>
+
                 <Formik initialValues={{ email: "" }} onSubmit={onSubmit} validationSchema={forgetPasswordSchema}>
                     {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
                         <>
                             <View style={styles.form}>
-                                <FormErrorMessage label="Something happened" />
+                                {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
                                 <AppText style={styles.description}>
                                     Enter your email address and we'll send you a reset code to reset your password.
@@ -33,11 +44,11 @@ export const ForgetPassword = ({ navigation }) => {
 
                                 <TextField
                                     value={values.email}
-                                    error={!!errors.email}
-                                    onBlur={handleBlur("email")}
                                     autoCapitalize="none"
-                                    keyboardType="email-address"
+                                    error={!!errors.email}
                                     placeholder="Enter Email"
+                                    keyboardType="email-address"
+                                    onBlur={handleBlur("email")}
                                     onChangeText={handleChange("email")}
                                 />
                                 {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}

@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform, StatusBar } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -28,6 +29,12 @@ export const Evaluation = ({ navigation }) => {
             throw new Error();
         }
     });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            articlesResponse.refetch();
+        }, []),
+    );
 
     const renderArticleItem = ({ item }) => (
         <ArticleCard

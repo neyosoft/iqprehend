@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { useQuery } from "react-query";
@@ -7,6 +7,7 @@ import { useToast } from "react-native-fast-toast";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import RNPaystack from "react-native-paystack";
 
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
 
@@ -21,21 +22,24 @@ export const MakePayment = ({ navigation, route }) => {
 
     const { plan } = route.params;
 
-    const onSubmit = async (values, { resetForm }) => {
-        const formData = new FormData();
+    const [accessCode, setAccessCode] = useState("");
 
-        formData.append("password", values.password);
+    const onSubmit = async (values) => {
+        const [expiryMonth, expiryYear] = values.expiryDate.split("/");
 
         try {
-            const { data } = await authenticatedRequest().put("/user/update-user-profile", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
+            const paymentResponse = await RNPaystack.chargeCardWithAccessCode({
+                accessCode,
+                expiryYear,
+                expiryMonth,
+                cvc: values.cvc,
+                cardNumber: values.cardNumber,
             });
 
-            if (data && data.data) {
-                resetForm({ values: { password: "", confirmPassword: "" } });
-                toast.show("Password successfully changed.");
+            console.log("Payment reference: ", paymentResponse.reference);
+
+            if (paymentResponse && paymentResponse.reference) {
+                toast.show("Payment successfully completed.");
             }
         } catch (error) {
             toast.show(extractResponseErrorMessage(error));
@@ -46,6 +50,7 @@ export const MakePayment = ({ navigation, route }) => {
         const { data } = await authenticatedRequest().post("/payment", { plan: plan.id, amount: plan.price });
 
         if (data && data) {
+            setAccessCode(data.data.accessCode);
             return data.data;
         } else {
             throw new Error("There is problem setting up payment at the moment.");
@@ -70,17 +75,13 @@ export const MakePayment = ({ navigation, route }) => {
             );
         }
 
-        const paymentInfo = paymentResponse.data;
-
-        console.log("paymentInfo: ", paymentInfo);
-
         return (
             <Formik
                 onSubmit={onSubmit}
                 validateOnChange={false}
                 validationSchema={paymentSchema}
                 initialValues={{ password: "", confirmPassword: "" }}>
-                {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                {({ handleChange, handleBlur, handleSubmit, isSubmitting, setFieldValue, errors, values }) => (
                     <View style={styles.container}>
                         <View style={styles.header}>
                             <TouchableOpacity onPress={navigation.goBack}>
@@ -95,6 +96,7 @@ export const MakePayment = ({ navigation, route }) => {
                                 <AppTextField
                                     style={styles.input}
                                     label="Card Number"
+                                    keyboardType="number-pad"
                                     value={values.cardNumber}
                                     error={!!errors.cardNumber}
                                     onBlur={handleBlur("cardNumber")}
@@ -112,41 +114,39 @@ export const MakePayment = ({ navigation, route }) => {
                                     }}>
                                     <View style={{ width: "48%" }}>
                                         <AppTextField
+                                            maxLength={5}
                                             label="Exiry date"
                                             placeholder="02/24"
-                                            value={values.expiryMonth}
-                                            error={!!errors.expiryMonth}
-                                            onBlur={handleBlur("expiryMonth")}
-                                            onChangeText={handleChange("expiryMonth")}
+                                            keyboardType="number-pad"
+                                            value={values.expiryDate}
+                                            error={!!errors.expiryDate}
+                                            onBlur={handleBlur("expiryDate")}
+                                            onChangeText={(expiryDate) => {
+                                                if (expiryDate.length === 2 && values.expiryDate.length !== 3) {
+                                                    setFieldValue("expiryDate", `${expiryDate}/`);
+                                                } else {
+                                                    setFieldValue("expiryDate", expiryDate);
+                                                }
+                                            }}
                                         />
-                                        {errors.firstName && (
-                                            <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
+                                        {errors.expiryDate && (
+                                            <AppText style={styles.fieldErrorText}>{errors.expiryDate}</AppText>
                                         )}
                                     </View>
 
                                     <View style={{ width: "48%" }}>
                                         <AppTextField
-                                            label="CVV"
-                                            value={values.cvv}
-                                            error={!!errors.cvv}
-                                            onBlur={handleBlur("cvv")}
-                                            onChangeText={handleChange("cvv")}
+                                            label="CVC"
+                                            maxLength={3}
+                                            value={values.cvc}
+                                            error={!!errors.cvc}
+                                            onBlur={handleBlur("cvc")}
+                                            keyboardType="number-pad"
+                                            onChangeText={handleChange("cvc")}
                                         />
-                                        {errors.cvv && <AppText style={styles.fieldErrorText}>{errors.cvv}</AppText>}
+                                        {errors.cvc && <AppText style={styles.fieldErrorText}>{errors.cvc}</AppText>}
                                     </View>
                                 </View>
-
-                                <AppTextField
-                                    label="Expiry date"
-                                    style={styles.input}
-                                    error={!!errors.password}
-                                    value={values.confirmPassword}
-                                    onBlur={handleBlur("confirmPassword")}
-                                    onChangeText={handleChange("confirmPassword")}
-                                />
-                                {errors.confirmPassword && (
-                                    <AppText style={styles.fieldErrorText}>{errors.confirmPassword}</AppText>
-                                )}
 
                                 <Button
                                     style={styles.button}
@@ -170,10 +170,9 @@ export const MakePayment = ({ navigation, route }) => {
 };
 
 const paymentSchema = object().shape({
+    cvc: string().required("CVC is required.").length(3),
     cardNumber: string().required("Card number is required."),
-    expiryMonth: string().required("Month is required."),
-    expiryYear: string().required("Year is required."),
-    cvv: string().required("CVV is required."),
+    expiryDate: string().required("Month is required.").length(5, "Invalid expiry date"),
 });
 
 const styles = StyleSheet.create({

@@ -1,92 +1,99 @@
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Formik } from "formik";
+import { object, string } from "yup";
+import { useToast } from "react-native-fast-toast";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
 export const PasswordReset = ({ navigation }) => {
-    const {
-        control,
-        errors,
-        handleSubmit,
-        formState: { isSubmitting },
-    } = useForm();
+    const toast = useToast();
 
-    const onSubmit = (values) => {
-        console.log("The values: ", values);
+    const onSubmit = async (values) => {
+        try {
+            const { data } = await baseRequest.post("/auth/reset-password", values);
 
-        navigation.navigate("PasswordResetSuccessful");
+            if (data && data.data) {
+                toast.show(data.data.message);
+
+                navigation.navigate("PasswordResetSuccessful");
+            }
+        } catch (error) {
+            setFieldError("general", extractResponseErrorMessage(error));
+        }
     };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <Page style={styles.page}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.header}>
-                        <AppMediumText style={styles.pageTitle}>Set a new password</AppMediumText>
-                    </View>
-                    <View style={styles.form}>
-                        <FormErrorMessage label="Something happened" />
+                <Formik
+                    onSubmit={onSubmit}
+                    validateOnChange={false}
+                    validationSchema={resetSchema}
+                    initialValues={{ password: "", code: "" }}>
+                    {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View style={styles.header}>
+                                <AppMediumText style={styles.pageTitle}>Set a new password</AppMediumText>
+                            </View>
+                            <View style={styles.form}>
+                                {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
-                        <AppText style={styles.description}>
-                            We recommend using a mix of upper and lower case, special characters and numbers.
-                        </AppText>
+                                <AppText style={styles.description}>
+                                    We recommend using a mix of upper and lower case, special characters and numbers.
+                                </AppText>
 
-                        <Controller
-                            name="code"
-                            defaultValue=""
-                            control={control}
-                            rules={{ required: "Reset code is required." }}
-                            render={({ onChange, onBlur, value, ref }, { invalid }) => (
                                 <TextField
-                                    ref={ref}
-                                    value={value}
-                                    error={invalid}
-                                    onBlur={onBlur}
+                                    maxLength={6}
+                                    value={values.code}
+                                    error={!!errors.code}
                                     keyboardType="number-pad"
+                                    onBlur={handleBlur("code")}
                                     placeholder="Enter reset code"
+                                    onChangeText={handleChange("code")}
                                     style={{ marginTop: RFPercentage(2) }}
-                                    onChangeText={(value) => onChange(value)}
                                 />
-                            )}
-                        />
-                        {errors.code && <AppText style={styles.fieldErrorText}>{errors.code.message}</AppText>}
+                                {errors.code && <AppText style={styles.fieldErrorText}>{errors.code}</AppText>}
 
-                        <Controller
-                            name="password"
-                            defaultValue=""
-                            control={control}
-                            rules={{ required: "Password is required." }}
-                            render={({ onChange, onBlur, value, ref }, { invalid }) => (
                                 <PasswordField
-                                    ref={ref}
-                                    value={value}
-                                    error={invalid}
-                                    onBlur={onBlur}
                                     style={styles.input}
                                     autoCapitalize="none"
+                                    value={values.password}
+                                    error={!!errors.password}
                                     placeholder="New password"
-                                    onChangeText={(value) => onChange(value)}
+                                    onBlur={handleBlur("password")}
+                                    onChangeText={handleChange("password")}
                                 />
-                            )}
-                        />
 
-                        {errors.password && <AppText style={styles.fieldErrorText}>{errors.password.message}</AppText>}
-                    </View>
+                                {errors.password && <AppText style={styles.fieldErrorText}>{errors.password}</AppText>}
+                            </View>
 
-                    <Button disabled={isSubmitting} label="Reset Password" onPress={handleSubmit(onSubmit)} />
-                    <View style={styles.registerActionBox}>
-                        <AppText>Already signed up?</AppText>
-                        <AppMediumText style={styles.singupLink}>Log In</AppMediumText>
-                    </View>
-                </ScrollView>
+                            <Button
+                                disabled={isSubmitting}
+                                onPress={handleSubmit}
+                                label={isSubmitting ? "Processing..." : "Reset Password"}
+                            />
+
+                            <View style={styles.registerActionBox}>
+                                <AppText>Already signed up?</AppText>
+                                <AppMediumText style={styles.singupLink}>Log In</AppMediumText>
+                            </View>
+                        </ScrollView>
+                    )}
+                </Formik>
             </Page>
         </SafeAreaView>
     );
 };
+
+const resetSchema = object().shape({
+    code: string().required("Reset code is required.").length(6),
+    password: string().required("Password is required.").min(6),
+});
 
 const styles = StyleSheet.create({
     header: {
