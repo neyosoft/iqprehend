@@ -3,11 +3,11 @@ import { Formik } from "formik";
 import { object, string } from "yup";
 import { useQuery } from "react-query";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import RNPaystack from "react-native-paystack";
 import { useToast } from "react-native-fast-toast";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import RNPaystack from "react-native-paystack";
 
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
 
@@ -80,7 +80,7 @@ export const MakePayment = ({ navigation, route }) => {
                 onSubmit={onSubmit}
                 validateOnChange={false}
                 validationSchema={paymentSchema}
-                initialValues={{ password: "", confirmPassword: "" }}>
+                initialValues={{ cardName: "", cardNumber: "", cvc: "", expiryDate: "" }}>
                 {({ handleChange, handleBlur, handleSubmit, isSubmitting, setFieldValue, errors, values }) => (
                     <View style={styles.container}>
                         <View style={styles.header}>
@@ -93,6 +93,16 @@ export const MakePayment = ({ navigation, route }) => {
                             <AppMediumText style={styles.title}>Subscription</AppMediumText>
 
                             <View style={{ marginTop: RFPercentage(2) }}>
+                                <AppTextField
+                                    label="Card Name"
+                                    style={styles.input}
+                                    value={values.cardName}
+                                    error={!!errors.cardName}
+                                    onBlur={handleBlur("cardName")}
+                                    onChangeText={handleChange("cardName")}
+                                />
+                                {errors.cardName && <AppText style={styles.fieldErrorText}>{errors.cardName}</AppText>}
+
                                 <AppTextField
                                     style={styles.input}
                                     label="Card Number"
@@ -136,7 +146,7 @@ export const MakePayment = ({ navigation, route }) => {
 
                                     <View style={{ width: "48%" }}>
                                         <AppTextField
-                                            label="CVC"
+                                            label="CVV"
                                             maxLength={3}
                                             value={values.cvc}
                                             error={!!errors.cvc}
@@ -170,7 +180,7 @@ export const MakePayment = ({ navigation, route }) => {
 };
 
 const paymentSchema = object().shape({
-    cvc: string().required("CVC is required.").length(3),
+    cvc: string().required("CVV is required.").length(3),
     cardNumber: string().required("Card number is required."),
     expiryDate: string().required("Month is required.").length(5, "Invalid expiry date"),
 });

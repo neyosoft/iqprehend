@@ -1,5 +1,4 @@
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 import React, { Component, useContext } from "react";
 
 import {
@@ -11,8 +10,7 @@ import {
     removeRefreshToken,
 } from "../utils/storage.utils";
 import Config from "../../config";
-import { isFuture } from "date-fns";
-import { baseRequest, debugAxiosError } from "../utils/request.utils";
+import { baseRequest } from "../utils/request.utils";
 
 const AuthContext = React.createContext();
 
@@ -44,6 +42,7 @@ export default class AuthProvider extends Component {
                     baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                     headers: {
                         Authorization: `Bearer ${this.state.accessToken}`,
+                        "X-Refresh-Token": `Bearer ${this.state.refreshToken}`,
                     },
                 });
             } catch (error) {}
@@ -75,6 +74,9 @@ export default class AuthProvider extends Component {
         authenticatedRequest: () => {
             const { accessToken, refreshToken } = this.state;
 
+            console.log("accessToken: ", accessToken);
+            console.log("refreshToken: ", refreshToken);
+
             const instance = axios.create({
                 baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                 headers: {
@@ -82,38 +84,50 @@ export default class AuthProvider extends Component {
                 },
             });
 
-            instance.interceptors.request.use(async (config) => {
-                const decoded = jwt_decode(accessToken);
+            instance.interceptors.response.use(
+                async (response) => {
+                    return response;
+                },
+                async (error) => {
+                    const originalRequest = error.config;
+                    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+                        originalRequest._retry = true;
 
-                if (isFuture(new Date(decoded.exp * 1000))) {
-                    return config;
-                } else {
-                    const { data } = await axios.post(
-                        "/auth/refresh-token",
-                        {},
-                        {
-                            baseURL:
-                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                            headers: {
-                                Authorization: accessToken,
-                                "X-Refresh-Token": refreshToken,
+                        const { data } = await axios.post(
+                            "/auth/refresh-token",
+                            {},
+                            {
+                                baseURL:
+                                    Config.environment === "production"
+                                        ? Config.PROD_SERVER_URL
+                                        : Config.DEV_SERVER_URL,
+                                headers: {
+                                    Authorization: `Bearer ${accessToken}`,
+                                    "X-Refresh-Token": `Bearer ${refreshToken}`,
+                                },
                             },
-                        },
-                    );
+                        );
 
-                    if (data && data.data && data.data.status) {
-                        const { accessToken, refreshToken } = data.data;
+                        if (data && data.data && data.data.status) {
+                            try {
+                                const { token, refreshToken } = data.data;
 
-                        await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
+                                await Promise.all([saveUserToken(token), saveRefreshToken(refreshToken)]);
 
-                        this.setState({ accessToken, refreshToken });
+                                this.setState({ accessToken: token, refreshToken });
 
-                        config.headers["Authorization"] = "Bearer " + accessToken;
+                                originalRequest.headers["Authorization"] = "Bearer " + token;
 
-                        return config;
+                                return axios(originalRequest);
+                            } catch (tryError) {
+                                return Promise.reject(error);
+                            }
+                        }
+                    } else {
+                        return Promise.reject(error);
                     }
-                }
-            });
+                },
+            );
 
             return instance;
         },
@@ -133,61 +147,58 @@ export default class AuthProvider extends Component {
             refreshToken = await getRefreshToken();
 
             if (accessToken) {
-                const decoded = jwt_decode(accessToken);
+                try {
+                    const { data } = await baseRequest.get("/user/profile", {
+                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
+                        headers: { Authorization: `Bearer ${accessToken}` },
+                    });
 
-                if (isFuture(new Date(decoded.exp * 1000))) {
-                    try {
-                        const { data } = await baseRequest.get("/user/profile", {
-                            baseURL:
-                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`,
-                            },
-                        });
-
-                        if (data && data.status) {
-                            user = data.data;
-                        }
-                    } catch (e) {
-                        debugAxiosError(e);
+                    if (data && data.status) {
+                        user = data.data;
                     }
-                } else {
-                    const { data } = await axios.post(
-                        "/auth/refresh-token",
-                        {},
-                        {
-                            baseURL:
-                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`,
-                                "X-Refresh-Token": `Bearer ${refreshToken}`,
+                } catch (error) {
+                    if (error.response && error.response.status === 401) {
+                        const { data } = await axios.post(
+                            "/auth/refresh-token",
+                            {},
+                            {
+                                baseURL:
+                                    Config.environment === "production"
+                                        ? Config.PROD_SERVER_URL
+                                        : Config.DEV_SERVER_URL,
+                                headers: {
+                                    Authorization: `Bearer ${accessToken}`,
+                                    "X-Refresh-Token": `Bearer ${refreshToken}`,
+                                },
                             },
-                        },
-                    );
+                        );
 
-                    if (data && data.data && data.data.status) {
-                        const { token, refreshToken } = data.data;
+                        if (data && data.data && data.data.status) {
+                            const { token, refreshToken } = data.data;
 
-                        await Promise.all([saveUserToken(token), saveRefreshToken(refreshToken)]);
+                            await Promise.all([saveUserToken(token), saveRefreshToken(refreshToken)]);
 
-                        const { data: userData } = await baseRequest.get("/user/profile", {
-                            baseURL:
-                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        });
+                            const { data: userData } = await baseRequest.get("/user/profile", {
+                                baseURL:
+                                    Config.environment === "production"
+                                        ? Config.PROD_SERVER_URL
+                                        : Config.DEV_SERVER_URL,
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            });
 
-                        if (userData && userData.status) {
-                            user = userData.data;
+                            if (userData && userData.status) {
+                                user = userData.data;
+                            }
+
+                            this.setState({
+                                user,
+                                refreshToken,
+                                isLoading: false,
+                                accessToken: token,
+                            });
                         }
-
-                        this.setState({
-                            user,
-                            refreshToken,
-                            isLoading: false,
-                            accessToken: token,
-                        });
                     }
                 }
             }
