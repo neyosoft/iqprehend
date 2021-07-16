@@ -74,9 +74,6 @@ export default class AuthProvider extends Component {
         authenticatedRequest: () => {
             const { accessToken, refreshToken } = this.state;
 
-            console.log("accessToken: ", accessToken);
-            console.log("refreshToken: ", refreshToken);
-
             const instance = axios.create({
                 baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                 headers: {

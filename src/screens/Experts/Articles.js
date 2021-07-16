@@ -1,67 +1,160 @@
-import React from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import RNPickerSelect from "react-native-picker-select";
+import { useFocusEffect } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { View, StyleSheet, FlatList, TouchableOpacity, Platform, StatusBar } from "react-native";
 
 import theme from "../../theme";
+import { useAuth } from "../../context";
 import { SearchIcon } from "../../icons";
-import { AppText, Button } from "../../components";
 import { ArticleCard } from "../../cards/ArticleCard";
-
-const data = [
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 1." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 2." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 3." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 4." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 5." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 6." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 7." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 8." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 9." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 10." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 11." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 12." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 13." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 14." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 15." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 16." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 17." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 18." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 19." },
-    { title: "Rhoncus arcu massa Rhoncus arcu massa 20." },
-];
+import { AppText, Button, PageLoading } from "../../components";
 
 export const Articles = ({ navigation }) => {
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.openDrawer}>
-                    <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
+    const { authenticatedRequest } = useAuth();
 
-                <AppText style={styles.headerTitle}>All Articles</AppText>
+    const [sector, setSector] = useState("");
+    const [articleType, setArticleType] = useState("");
 
-                <TouchableOpacity>
-                    <SearchIcon />
-                </TouchableOpacity>
-            </View>
+    const sectorResponse = useQuery("sectors", async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/sector");
 
-            <View style={styles.filterArea}>
-                <View style={styles.filterBox} />
-                <Button label="FILTER" style={styles.filterBtn} />
-            </View>
+            if (data && data.data) {
+                return data.data.sectors;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
 
-            <View style={styles.content}>
-                <FlatList
-                    data={data}
-                    keyExtractor={(_, index) => `article${index}`}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    renderItem={({ item }) => (
-                        <ArticleCard article={item} onPress={() => navigation.navigate("SingleArticleView")} />
-                    )}
-                />
-            </View>
+    const articlesResponse = useQuery(["articles", { sector, articleType }], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/articles", { params: { sector, articleType } });
+
+            if (data && data.data) {
+                return data.data;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            articlesResponse.refetch();
+        }, []),
+    );
+
+    const renderArticleItem = ({ item }) => (
+        <ArticleCard article={item} onPress={() => navigation.navigate("SingleArticleView", { articleID: item._id })} />
+    );
+
+    const renderEmptyArticle = () => (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", height: RFPercentage(50) }}>
+            <AppText>No article found.</AppText>
         </View>
+    );
+
+    const ItemSeparatorComponent = () => <View style={styles.separator} />;
+
+    const renderArticles = () => {
+        if (articlesResponse.isLoading || sectorResponse.isLoading) {
+            return <PageLoading />;
+        }
+
+        if (articlesResponse.isError || sectorResponse.isError) {
+            return (
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Icon name="alert" color="red" size={RFPercentage(10)} />
+                    <AppText>There is a problem fetching articles.</AppText>
+
+                    <Button
+                        label="Retry"
+                        style={{ marginTop: RFPercentage(5) }}
+                        onPress={() => {
+                            sectorResponse.refetch();
+                            articlesResponse.refetch();
+                        }}
+                    />
+                </View>
+            );
+        }
+
+        return (
+            <>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.openDrawer}>
+                        <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+
+                    <AppText style={styles.headerTitle}>All Articles</AppText>
+
+                    <TouchableOpacity>
+                        <SearchIcon />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.filterArea}>
+                    <RNPickerSelect
+                        value={sector}
+                        onValueChange={setSector}
+                        useNativeAndroidPickerStyle={false}
+                        placeholder={{ label: "All", value: null }}
+                        Icon={() => <Icon name="chevron-down" size={24} color="#000" />}
+                        items={sectorResponse.data.map((record) => ({ label: record.name, value: record._id }))}
+                        style={{
+                            inputIOS: styles.dropdownInput,
+                            inputAndroid: styles.dropdownInput,
+                            iconContainer: { top: 7, right: 15 },
+                        }}
+                    />
+                    <RNPickerSelect
+                        value={articleType}
+                        onValueChange={setArticleType}
+                        useNativeAndroidPickerStyle={false}
+                        placeholder={{ label: "All", value: null }}
+                        Icon={() => <Icon name="chevron-down" size={24} color="#000" />}
+                        items={[
+                            { label: "Video", value: "VIDEO" },
+                            { label: "Textual", value: "TEXT" },
+                        ]}
+                        style={{
+                            inputIOS: styles.dropdownInput,
+                            inputAndroid: styles.dropdownInput,
+                            iconContainer: { top: 7, right: 15 },
+                        }}
+                    />
+                </View>
+
+                <FlatList
+                    style={styles.flatlist}
+                    renderItem={renderArticleItem}
+                    keyExtractor={(item) => item._id}
+                    onRefresh={articlesResponse.refetch}
+                    data={articlesResponse.data.articles}
+                    refreshing={articlesResponse.isFetching}
+                    ListEmptyComponent={renderEmptyArticle}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                    removeClippedSubviews={Platform.OS === "android"}
+                    contentContainerStyle={styles.contentContainerStyle}
+                />
+            </>
+        );
+    };
+
+    return (
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
+            <View style={styles.container}>{renderArticles()}</View>
+        </SafeAreaView>
     );
 };
 
@@ -84,6 +177,7 @@ const styles = StyleSheet.create({
     },
     filterArea: {
         flexDirection: "row",
+        alignItems: "center",
         justifyContent: "flex-end",
         paddingVertical: RFPercentage(2),
         paddingHorizontal: RFPercentage(3),
@@ -91,18 +185,31 @@ const styles = StyleSheet.create({
     filterBox: {
         borderWidth: 1,
         marginRight: 8,
-        width: RFPercentage(20),
+        width: RFPercentage(14),
         height: RFPercentage(5),
         borderRadius: theme.radius.label,
     },
     filterBtn: {
-        paddingHorizontal: RFPercentage(3),
+        height: RFPercentage(5),
         paddingVertical: RFPercentage(1),
-    },
-    content: {
-        flex: 1,
-        marginTop: RFPercentage(1),
         paddingHorizontal: RFPercentage(3),
+    },
+    dropdownInput: {
+        fontSize: 15,
+        color: "gray",
+        borderWidth: 1,
+        marginRight: 8,
+        borderRadius: 8,
+        paddingRight: 30,
+        paddingLeft: 10,
+        width: RFPercentage(14),
+        height: RFPercentage(5),
+    },
+    flatlist: {
+        marginTop: RFPercentage(1),
+    },
+    contentContainerStyle: {
+        paddingHorizontal: RFPercentage(2),
     },
     separator: {
         height: RFPercentage(3),
