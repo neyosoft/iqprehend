@@ -56,12 +56,12 @@ const styles = StyleSheet.create({
         marginHorizontal: RFPercentage(2),
     },
     content: {
-        padding: RFPercentage(3),
+        paddingVertical: RFPercentage(3),
     },
     option: {
         alignItems: "center",
         flexDirection: "row",
+        padding: RFPercentage(3),
         justifyContent: "space-between",
-        paddingVertical: RFPercentage(3),
     },
 });
