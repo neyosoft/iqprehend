@@ -1,12 +1,146 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
+import format from "date-fns/format";
+import { useQuery } from "react-query";
+import HTML from "react-native-render-html";
+import YoutubePlayer from "react-native-youtube-iframe";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image, useWindowDimensions } from "react-native";
 
 import theme from "../../theme";
-import { AppMediumText, AppText } from "../../components";
+import { useAuth } from "../../context";
+import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 
-export const SingleArticleView = ({ navigation }) => {
+export const SingleArticleView = ({ navigation, route }) => {
+    const { authenticatedRequest } = useAuth();
+
+    const contentWidth = useWindowDimensions().width;
+
+    const { articleID } = route.params;
+
+    const [playing, setPlaying] = useState(false);
+
+    const articlesResponse = useQuery(["article", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/articles/single", { params: { id: articleID } });
+
+            if (data && data.data) {
+                return data.data.article;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const summaryResponse = useQuery(["article-summaries", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/articles/summaries", {
+                params: { id: articleID },
+            });
+
+            if (data && data.data) {
+                return data.data.summaries;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const onStateChange = useCallback((state) => {
+        if (state === "ended") {
+            setPlaying(false);
+        }
+    }, []);
+
+    const renderUserSummaries = ({ item }) => <SummaryCard summary={item} navigation={navigation} />;
+
+    const renderContent = () => {
+        if (articlesResponse.isLoading || summaryResponse.isLoading) {
+            return <PageLoading />;
+        }
+
+        if (articlesResponse.isError || summaryResponse.isError) {
+            return (
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Icon name="alert" color="red" size={RFPercentage(10)} />
+                    <AppText>There is a problem retrieveing article summaries.</AppText>
+
+                    <Button
+                        label="Retry"
+                        style={{ marginTop: RFPercentage(5) }}
+                        onPress={() => {
+                            summaryResponse.refetch();
+                            articlesResponse.refetch();
+                        }}
+                    />
+                </View>
+            );
+        }
+
+        const article = articlesResponse.data;
+        const summaries = summaryResponse.data;
+
+        console.log({ summaries });
+
+        return (
+            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+                <AppMediumText style={styles.title}>{article.title}</AppMediumText>
+
+                <View style={styles.dateBox}>
+                    <View style={styles.postedBox}>
+                        <Icon name="clock-outline" color="#608EC1" size={RFPercentage(3)} />
+                        <AppText style={styles.postedText}>
+                            Posted on {format(new Date(article.createdAt), "MMM dd, yyyy")}
+                        </AppText>
+                    </View>
+                    <View style={[styles.deadlineBox, { marginLeft: RFPercentage(2) }]}>
+                        <Icon name="clock-outline" color="#102F55" size={RFPercentage(3)} />
+                        <AppText style={styles.deadlineText}>
+                            Deadline: {format(new Date(article.deadline), "MMM dd, yyyy")}
+                        </AppText>
+                    </View>
+                </View>
+
+                {article.articleType === "VIDEO" ? (
+                    <>
+                        <YoutubePlayer
+                            play={playing}
+                            height={RFPercentage(30)}
+                            onChangeState={onStateChange}
+                            videoId={article.videoLink.replace("https://www.youtube.com/watch?v=", "")}
+                        />
+                    </>
+                ) : (
+                    <>
+                        {article.featuredImage ? (
+                            <View style={styles.featureImageBox}>
+                                <Image style={styles.featureImage} source={{ uri: article.featuredImage }} />
+                            </View>
+                        ) : null}
+
+                        <AppText style={styles.body}>
+                            <HTML
+                                emSize={16}
+                                contentWidth={contentWidth}
+                                source={{ html: article.content }}
+                                baseFontStyle={{ fontSize: RFPercentage(2.1) }}
+                            />
+                        </AppText>
+                    </>
+                )}
+
+                <View style={styles.summaryUserBox}>
+                    <AppMediumText style={styles.summaryTitle}>Summaries</AppMediumText>
+                    <FlatList data={summaries} keyExtractor={(item) => item._id} renderItem={renderUserSummaries} />
+                </View>
+            </ScrollView>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -15,61 +149,31 @@ export const SingleArticleView = ({ navigation }) => {
                 </TouchableOpacity>
                 <AppText style={styles.headerTitle}>Article</AppText>
             </View>
-            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-                <AppMediumText style={styles.title}>
-                    Perform Graphql Mutation And Query On The Same Screen/Page
-                </AppMediumText>
 
-                <View style={styles.dateBox}>
-                    <View style={styles.postedBox}>
-                        <Icon name="clock-outline" color="#608EC1" size={RFPercentage(3)} />
-                        <AppText style={styles.postedText}>Posted on Feb 2, 2021</AppText>
-                    </View>
-                    <View style={[styles.deadlineBox, { marginLeft: RFPercentage(2) }]}>
-                        <Icon name="clock-outline" color="#102F55" size={RFPercentage(3)} />
-                        <AppText style={styles.deadlineText}>Deadline: Feb 7, 2021</AppText>
-                    </View>
-                </View>
-
-                <AppText style={styles.body}>
-                    GraqhQL has been an amazing technology provided by Facebook. It simplifies the client consumption of
-                    information provided by the server in an incredible way. GraphQL gives clients the power to ask for
-                    exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables
-                    powerful developer tools. We at Herlabytes has adopted the cutting-edge technology and implementing
-                    it into all of our mobile application, web application, personal website and also our server
-                    deployment.
-                </AppText>
-
-                <View style={styles.summaryUserBox}>
-                    <AppMediumText style={styles.summaryTitle}>Summaries</AppMediumText>
-                    <FlatList
-                        data={[1, 2, 3, 4, 5]}
-                        keyExtractor={(item) => item}
-                        renderItem={({ item }) => <SummaryCard item={item} navigation={navigation} />}
-                    />
-                </View>
-            </ScrollView>
+            {renderContent()}
         </View>
     );
 };
 
-const SummaryCard = ({ item, navigation }) => (
-    <TouchableOpacity style={styles.summaryUserCard} onPress={() => navigation.navigate("Summary")}>
+const SummaryCard = ({ summary, navigation }) => (
+    <TouchableOpacity
+        style={styles.summaryUserCard}
+        onPress={() => navigation.navigate("Summary", { summaryID: summary._id })}>
         <View style={styles.summaryUserImageContainer}>
             <Image source={require("../../assets/images/avatar.jpg")} style={styles.summaryUserImage} />
         </View>
         <View style={styles.summaryUserCardRight}>
             <View style={styles.detailRow}>
                 <AppMediumText style={styles.summaryUserCardLabel}>Name</AppMediumText>
-                <AppText>Emmanuel Adeniyi</AppText>
+                <AppText>{`${summary?.user?.lastName} ${summary?.user?.firstName}`}</AppText>
             </View>
             <View style={styles.detailRow}>
                 <AppMediumText style={styles.summaryUserCardLabel}>Email</AppMediumText>
-                <AppText>access2emma@gmail.com</AppText>
+                <AppText>{summary?.user?.email}</AppText>
             </View>
             <View style={styles.detailRow}>
                 <AppMediumText style={styles.summaryUserCardLabel}>Status</AppMediumText>
-                <AppText>Not yet reviewed</AppText>
+                <AppText>{summary?.isEvaluated ? "Reviewed Completed." : "Not yet reviewed"}</AppText>
             </View>
         </View>
     </TouchableOpacity>
@@ -155,10 +259,19 @@ const styles = StyleSheet.create({
         marginLeft: RFPercentage(2),
     },
     detailRow: {
+        marginTop: 5,
         flexDirection: "row",
         alignItems: "center",
     },
     summaryUserCardLabel: {
         width: RFPercentage(7),
+    },
+    featureImageBox: {
+        height: RFPercentage(25),
+    },
+    featureImage: {
+        flex: 1,
+        width: undefined,
+        height: undefined,
     },
 });

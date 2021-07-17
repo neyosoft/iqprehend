@@ -1,12 +1,80 @@
-import React from "react";
+import { useQuery } from "react-query";
+import React, { useState } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
-import { AppMediumText, AppText, AppTextField, Button } from "../../components";
+import { useAuth } from "../../context";
+import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
 
-export const Summary = ({ navigation }) => {
+export const Summary = ({ navigation, route }) => {
+    const { authenticatedRequest } = useAuth();
+
+    const [score, setScore] = useState("");
+
+    const { summaryID } = route.params;
+
+    const summaryResponse = useQuery(["summary", summaryID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/summary/single", { params: { id: summaryID } });
+
+            if (data && data.data) {
+                return data.data.summary;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const handleSubmit = async () => {};
+
+    const renderContent = () => {
+        if (summaryResponse.isLoading) {
+            return <PageLoading />;
+        }
+
+        if (summaryResponse.isError) {
+            return (
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Icon name="alert" color="red" size={RFPercentage(10)} />
+                    <AppText>There is a problem retrieveing summary detail.</AppText>
+
+                    <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={summaryResponse.refetch} />
+                </View>
+            );
+        }
+
+        const summary = summaryResponse.data;
+
+        return (
+            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+                <AppMediumText style={styles.title}>Summary details</AppMediumText>
+
+                <View style={styles.summaryWrapper}>
+                    <AppText style={styles.summary}>{summary.content}</AppText>
+                </View>
+
+                <AppTextField
+                    value={score}
+                    label="Score"
+                    placeholder="20"
+                    onChangeText={setScore}
+                    keyboardType="number-pad"
+                    style={styles.scoreInput}
+                />
+
+                <AppText style={styles.note}>
+                    <AppMediumText>Note:</AppMediumText> Maximum summary score is 35
+                </AppText>
+
+                <Button label="Submit" style={styles.button} onPress={handleSubmit} />
+            </ScrollView>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -15,25 +83,8 @@ export const Summary = ({ navigation }) => {
                 </TouchableOpacity>
                 <AppText style={styles.headerTitle}>Summary</AppText>
             </View>
-            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-                <AppMediumText style={styles.title}>Summary details</AppMediumText>
 
-                <AppText>
-                    GraqhQL has been an amazing technology provided by Facebook. It simplifies the client consumption of
-                    information provided by the server in an incredible way. GraphQL gives clients the power to ask for
-                    exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables
-                    powerful developer tools. We at Herlabytes has adopted the cutting-edge technology and implementing
-                    it into all of our mobile application, web application, personal website and also our server
-                    deployment.
-                </AppText>
-
-                <AppTextField label="Score" keyboardType="number-pad" style={styles.scoreInput} />
-                <AppText style={styles.note}>
-                    <AppMediumText>Note:</AppMediumText> Maximum summary score is 35
-                </AppText>
-
-                <Button label="Submit" style={styles.button} />
-            </ScrollView>
+            {renderContent()}
         </View>
     );
 };
@@ -64,6 +115,16 @@ const styles = StyleSheet.create({
     title: {
         fontSize: RFPercentage(2.5),
         marginBottom: RFPercentage(1),
+    },
+    summaryWrapper: {
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: "#E5E5E5",
+        marginTop: RFPercentage(2),
+        paddingVertical: RFPercentage(2),
+    },
+    summary: {
+        lineHeight: RFPercentage(3),
     },
     scoreInput: {
         marginTop: RFPercentage(3),
