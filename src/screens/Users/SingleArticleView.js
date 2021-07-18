@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { format, isFuture } from "date-fns";
 import { useQuery } from "react-query";
+import { format, isFuture } from "date-fns";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -146,7 +146,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                             style={styles.button}
                             disabled={isSubmitting}
                             onPress={handleSummaryTextSubmission}
-                            label={isSubmitting ? "Submitting..." : "Submit"}
+                            label={isSubmitting ? "Submitting..." : articlesSummaryResponse.data ? "Update" : "Submit"}
                         />
                     </>
                 ) : (
@@ -209,7 +209,6 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
 
         const article = articlesResponse.data;
-        const summary = articlesSummaryResponse.data;
 
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>

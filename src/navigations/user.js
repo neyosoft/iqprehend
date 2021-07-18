@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import TouchableItem from "@react-navigation/drawer/src/views/TouchableItem";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
@@ -72,7 +72,12 @@ const DrawerNavigation = () => {
 
 export default function UserNavigation() {
     return (
-        <Stack.Navigator headerMode="none" initialRouteName="DrawerNavigation">
+        <Stack.Navigator
+            headerMode="none"
+            initialRouteName="DrawerNavigation"
+            screenOptions={{
+                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            }}>
             <Stack.Screen name="MakePayment" component={MakePayment} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="BankSettings" component={BankSettings} />
