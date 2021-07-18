@@ -6,6 +6,7 @@ export { Evaluation } from "./Evaluation";
 export { MakePayment } from "./MakePayment";
 export { PaymentPlans } from "./PaymentPlans";
 export { BankSettings } from "./BankSettings";
+export { SearchArticle } from "./SearchArticle";
 export { ChangePassword } from "./ChangePassword";
 export { EvaluationResult } from "./EvaluationResult";
 export { PersonalSettings } from "./PersonalSettings";

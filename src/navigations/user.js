@@ -14,6 +14,7 @@ import {
     MakePayment,
     PaymentPlans,
     BankSettings,
+    SearchArticle,
     ChangePassword,
     EvaluationResult,
     PersonalSettings,
@@ -75,6 +76,7 @@ export default function UserNavigation() {
             <Stack.Screen name="MakePayment" component={MakePayment} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="BankSettings" component={BankSettings} />
+            <Stack.Screen name="SearchArticle" component={SearchArticle} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="PersonalSettings" component={PersonalSettings} />

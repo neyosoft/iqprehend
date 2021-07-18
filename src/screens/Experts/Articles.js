@@ -97,7 +97,7 @@ export const Articles = ({ navigation }) => {
 
                     <AppText style={styles.headerTitle}>All Articles</AppText>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("SearchArticle")}>
                         <SearchIcon />
                     </TouchableOpacity>
                 </View>

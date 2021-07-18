@@ -9,6 +9,7 @@ import {
     Summary,
     Articles,
     Settings,
+    SearchArticle,
     ChangePassword,
     EvaluationResult,
     PersonalSettings,
@@ -50,6 +51,7 @@ export default function UserNavigation() {
     return (
         <Stack.Navigator headerMode="none" initialRouteName="DrawerNavigation">
             <Stack.Screen name="Summary" component={Summary} />
+            <Stack.Screen name="SearchArticle" component={SearchArticle} />
             <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="PersonalSettings" component={PersonalSettings} />
