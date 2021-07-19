@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { useQuery } from "react-query";
 import { format, isFuture } from "date-fns";
 import HTML from "react-native-render-html";
@@ -8,10 +8,23 @@ import DocumentPicker from "react-native-document-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import AudioRecorderPlayer from "react-native-audio-recorder-player";
-import { View, StyleSheet, TextInput, ScrollView, TouchableOpacity, useWindowDimensions, Image } from "react-native";
-
-const audioRecorderPlayer = new AudioRecorderPlayer();
+import AudioRecorderPlayer, {
+    AVEncodingOption,
+    AudioSourceAndroidType,
+    AudioEncoderAndroidType,
+    AVEncoderAudioQualityIOSType,
+} from "react-native-audio-recorder-player";
+import {
+    View,
+    Image,
+    TextInput,
+    StyleSheet,
+    ScrollView,
+    TouchableOpacity,
+    useWindowDimensions,
+    PermissionsAndroid,
+    Platform,
+} from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -20,18 +33,25 @@ import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 const wordCount = (text) => {
+    if (!text) return 0;
     return text.trim().split(" ").length;
 };
 
 export const SingleArticleView = ({ navigation, route }) => {
+    const audioRef = useRef(new AudioRecorderPlayer());
     const toast = useToast();
     const { authenticatedRequest } = useAuth();
+
     const contentWidth = useWindowDimensions().width;
 
     const [playing, setPlaying] = useState(false);
+    const [duration, setDuration] = useState("00:00:00");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [summaryText, setSummaryText] = useState("");
     const [responseType, setResponseType] = useState("textual");
+    const [audioLink, setAudioLink] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const { articleID } = route.params;
 
@@ -87,53 +107,6 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     });
 
-    const handleAudioPicker = async () => {
-        try {
-            const res = await DocumentPicker.pick({
-                type: [DocumentPicker.types.audio],
-            });
-            console.log("Uploaded file: ", res);
-
-            const maxFileSize = 5 * 1024 * 1024;
-
-            if (res.size > maxFileSize) {
-                return toast.show("File selected exceeded maximum file size.");
-            }
-
-            try {
-                const formData = new FormData();
-
-                formData.append("audio-content", res);
-                formData.append("article", articleID);
-
-                setIsSubmitting(true);
-
-                const { data } = await authenticatedRequest().post("/summary", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                });
-
-                if (data && data.data) {
-                    toast.show(data.data.message, { type: "success" });
-                    navigation.goBack();
-                } else {
-                    throw new Error("There is a problem submitting your summary. Kindly try again");
-                }
-            } catch (error) {
-                debugAxiosError(error);
-                toast.show(extractResponseErrorMessage(error));
-                setIsSubmitting(false);
-            }
-        } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-                // User cancelled the picker, exit any dialogs or menus and move on
-            } else {
-                throw err;
-            }
-        }
-    };
-
     const handleSummaryTextSubmission = async () => {
         if (summaryText.trim().length < 1) {
             return toast.show("Kindly submit content for summary.");
@@ -147,10 +120,58 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         try {
             setIsSubmitting(true);
-            const { data } = await authenticatedRequest().post("/summary", {
-                article: articleID,
-                content: summaryText,
-            });
+            const { data } = articlesSummaryResponse.data
+                ? await authenticatedRequest().put("/summary", {
+                      id: articlesSummaryResponse.data._id,
+                      content: summaryText,
+                  })
+                : await authenticatedRequest().post("/summary", {
+                      article: articleID,
+                      content: summaryText,
+                  });
+
+            console.log("data: ", data);
+
+            if (data && data.data) {
+                toast.show(data.data.message, { type: "success" });
+                navigation.goBack();
+            } else {
+                throw new Error("There is a problem submitting your summary. Kindly try again");
+            }
+        } catch (error) {
+            debugAxiosError(error);
+            toast.show(extractResponseErrorMessage(error));
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleSummaryAudioSubmission = async (file) => {
+        try {
+            const formData = new FormData();
+
+            console.log("The audio file: ", file);
+
+            formData.append("audio-content", file);
+
+            if (articlesSummaryResponse.data) {
+                formData.append("id", articlesSummaryResponse.data._id);
+            } else {
+                formData.append("article", articleID);
+            }
+
+            setIsSubmitting(true);
+
+            const { data } = articlesSummaryResponse.data
+                ? await authenticatedRequest().put("/summary", formData, {
+                      headers: {
+                          "Content-Type": "multipart/form-data",
+                      },
+                  })
+                : await authenticatedRequest().post("/summary", formData, {
+                      headers: {
+                          "Content-Type": "multipart/form-data",
+                      },
+                  });
 
             if (data && data.data) {
                 toast.show(data.data.message, { type: "success" });
@@ -162,6 +183,113 @@ export const SingleArticleView = ({ navigation, route }) => {
             toast.show(extractResponseErrorMessage(error));
             setIsSubmitting(false);
         }
+    };
+
+    const handleAudioPicker = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.audio],
+            });
+
+            const maxFileSize = 5 * 1024 * 1024;
+
+            if (res.size > maxFileSize) {
+                return toast.show("File selected exceeded maximum file size.");
+            }
+
+            await handleSummaryAudioSubmission(res);
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err;
+            }
+        }
+    };
+
+    const startRecording = async () => {
+        if (Platform.OS === "android") {
+            try {
+                const grants = await PermissionsAndroid.requestMultiple([
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                ]);
+
+                console.log("write external stroage", grants);
+
+                if (
+                    grants["android.permission.WRITE_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
+                    grants["android.permission.READ_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
+                    grants["android.permission.RECORD_AUDIO"] === PermissionsAndroid.RESULTS.GRANTED
+                ) {
+                    console.log("permissions granted");
+                } else {
+                    console.log("All required permissions not granted");
+                    return;
+                }
+            } catch (err) {
+                console.warn(err);
+                return;
+            }
+        }
+
+        const audioSet = {
+            AVNumberOfChannelsKeyIOS: 2,
+            AVFormatIDKeyIOS: AVEncodingOption.aac,
+            AudioSourceAndroid: AudioSourceAndroidType.MIC,
+            AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
+            AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
+        };
+
+        setIsRecording(true);
+
+        await audioRef.current.startRecorder(undefined, audioSet);
+
+        audioRef.current.addRecordBackListener((e) => {
+            setDuration(audioRef.current.mmssss(Math.floor(e.currentPosition)));
+        });
+    };
+
+    const stopRecording = async () => {
+        const result = await audioRef.current.stopRecorder();
+        audioRef.current.removeRecordBackListener();
+
+        setIsRecording(false);
+
+        await handleSummaryAudioSubmission({
+            uri: result,
+            type: Platform.OS === "android" ? "audio/mp4" : "audio/m4a",
+            name: Platform.OS === "android" ? "summary.mp4" : "summary.m4a",
+        });
+    };
+
+    const startPlaying = async () => {
+        console.log("onStartPlay");
+
+        setIsPlaying(true);
+
+        await audioRef.current.startPlayer(articlesSummaryResponse.data.audioContent);
+        await audioRef.current.setVolume(1.0);
+
+        audioRef.current.addPlayBackListener((e) => {
+            setDuration(audioRef.current.mmssss(Math.floor(e.currentPosition)));
+
+            if (e.currentPosition === e.duration) {
+                setIsPlaying(false);
+            }
+        });
+    };
+
+    const stopPlaying = () => {
+        setIsPlaying(false);
+
+        console.log("onStopPlay");
+
+        audioRef.current.stopPlayer();
+        audioRef.current.removePlayBackListener();
+
+        setDuration(audioRef.current.mmssss(0));
     };
 
     const renderSummaryForm = () => {
@@ -216,12 +344,33 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     const renderAudioForm = () => (
         <View style={styles.audiobox}>
-            <RecordIcon />
+            <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
 
-            <Button label="START" style={styles.startBtn} />
+            <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
+
+            <Button
+                style={styles.startBtn}
+                label={isRecording ? "STOP RECORDING" : "RECORD"}
+                onPress={() => {
+                    if (isRecording) {
+                        stopRecording();
+                    } else {
+                        startRecording();
+                    }
+                }}
+            />
+            {articlesSummaryResponse.data.audioContent ? (
+                <Button
+                    label={isPlaying ? "STOP" : "PLAY"}
+                    style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
+                    onPress={() => {
+                        isPlaying ? stopPlaying() : startPlaying();
+                    }}
+                />
+            ) : null}
 
             <AppText style={styles.note}>
-                <AppMediumText>Note:</AppMediumText> Accepted Format: mp3,Wav,aac, ogg (up to 5mb)
+                <AppMediumText>Note:</AppMediumText> Accepted file format: mp3, wav, aac,ogg. Maximum file is 5MB
             </AppText>
 
             <Button
@@ -230,11 +379,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                 onPress={handleAudioPicker}
                 label={isSubmitting ? "UPLOADING..." : "UPLOAD"}
             />
-
-            <AppText style={[styles.note, { textAlign: "center" }]}>
-                <AppMediumText>Note:</AppMediumText> Summarize in audio by clicking the START button or UPLOAD button to
-                upload from your device
-            </AppText>
         </View>
     );
 
@@ -450,7 +594,6 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     startBtn: {
-        marginTop: RFPercentage(3),
         backgroundColor: "#05B54B",
         paddingVertical: RFPercentage(1),
         marginBottom: RFPercentage(2),
