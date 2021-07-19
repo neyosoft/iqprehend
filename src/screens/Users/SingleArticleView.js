@@ -17,13 +17,13 @@ import AudioRecorderPlayer, {
 import {
     View,
     Image,
+    Platform,
     TextInput,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
     useWindowDimensions,
     PermissionsAndroid,
-    Platform,
 } from "react-native";
 
 import theme from "../../theme";
@@ -31,6 +31,7 @@ import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { useFocusEffect } from "@react-navigation/native";
 
 const wordCount = (text) => {
     if (!text) return 0;
@@ -45,13 +46,12 @@ export const SingleArticleView = ({ navigation, route }) => {
     const contentWidth = useWindowDimensions().width;
 
     const [playing, setPlaying] = useState(false);
-    const [duration, setDuration] = useState("00:00:00");
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [summaryText, setSummaryText] = useState("");
-    const [responseType, setResponseType] = useState("textual");
-    const [audioLink, setAudioLink] = useState(null);
-    const [isRecording, setIsRecording] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [duration, setDuration] = useState("00:00:00");
+    const [isRecording, setIsRecording] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [responseType, setResponseType] = useState("textual");
 
     const { articleID } = route.params;
 
@@ -65,13 +65,12 @@ export const SingleArticleView = ({ navigation, route }) => {
         try {
             const { data } = await authenticatedRequest().get("/articles/single", { params: { id: articleID } });
 
-            if (data && data.data) {
+            if (data && data.data && data.data.article) {
                 return data.data.article;
             } else {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -81,14 +80,18 @@ export const SingleArticleView = ({ navigation, route }) => {
             const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
 
             if (data && data.data) {
-                if (data.data.summary) {
-                    setSummaryText(data.data.summary.content);
+                setSummaryText(data.data?.summary?.content || "");
+
+                if (data.data?.summary?.audioContent) {
+                    setResponseType("audio");
                 }
+
                 return data.data.summary;
             } else {
                 throw new Error();
             }
         } catch (error) {
+            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -106,6 +109,14 @@ export const SingleArticleView = ({ navigation, route }) => {
             throw new Error();
         }
     });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            articlesResponse.refetch();
+            articlesSummaryResponse.refetch();
+            settingsResponse.refetch();
+        }, []),
+    );
 
     const handleSummaryTextSubmission = async () => {
         if (summaryText.trim().length < 1) {
@@ -139,7 +150,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                 throw new Error("There is a problem submitting your summary. Kindly try again");
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
             setIsSubmitting(false);
         }
@@ -148,8 +158,6 @@ export const SingleArticleView = ({ navigation, route }) => {
     const handleSummaryAudioSubmission = async (file) => {
         try {
             const formData = new FormData();
-
-            console.log("The audio file: ", file);
 
             formData.append("audio-content", file);
 
@@ -265,8 +273,6 @@ export const SingleArticleView = ({ navigation, route }) => {
     };
 
     const startPlaying = async () => {
-        console.log("onStartPlay");
-
         setIsPlaying(true);
 
         await audioRef.current.startPlayer(articlesSummaryResponse.data.audioContent);
@@ -283,8 +289,6 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     const stopPlaying = () => {
         setIsPlaying(false);
-
-        console.log("onStopPlay");
 
         audioRef.current.stopPlayer();
         audioRef.current.removePlayBackListener();
@@ -350,6 +354,7 @@ export const SingleArticleView = ({ navigation, route }) => {
 
             <Button
                 style={styles.startBtn}
+                disabled={isSubmitting}
                 label={isRecording ? "STOP RECORDING" : "RECORD"}
                 onPress={() => {
                     if (isRecording) {
@@ -359,8 +364,9 @@ export const SingleArticleView = ({ navigation, route }) => {
                     }
                 }}
             />
-            {articlesSummaryResponse.data.audioContent ? (
+            {articlesSummaryResponse.data?.audioContent ? (
                 <Button
+                    disabled={isSubmitting}
                     label={isPlaying ? "STOP" : "PLAY"}
                     style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
                     onPress={() => {
