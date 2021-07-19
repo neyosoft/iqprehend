@@ -6660,6 +6660,11 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
+react-native-document-picker@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-5.2.0.tgz#1fb2185a56ba6b2509acdc418a8a75906c31e58e"
+  integrity sha512-zXK34hW6fM0gXoo6v7edZZxKvLT7DyjOdBXi7WrxbKqZchDokTEQ/tNTeZxky+7oI8sVz8T3uXBBEW0sp+VfXQ==
+
 react-native-fast-toast@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/react-native-fast-toast/-/react-native-fast-toast-3.0.1.tgz#087a30c0fe77a5b3bd30bfea43edcd8928c7fd8e"

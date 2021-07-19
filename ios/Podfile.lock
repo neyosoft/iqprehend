@@ -255,6 +255,8 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
+  - react-native-document-picker (5.2.0):
+    - React-Core
   - react-native-image-picker (4.0.5):
     - React-Core
   - react-native-paystack (3.4.0):
@@ -416,6 +418,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-paystack (from `../node_modules/react-native-paystack`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -491,6 +494,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-paystack:
@@ -574,6 +579,7 @@ SPEC CHECKSUMS:
   React-jsi: 67747b9722f6dab2ffe15b011bcf6b3f2c3f1427
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
+  react-native-document-picker: f1b5398801b332c77bc62ae0eae2116f49bdff26
   react-native-image-picker: d3bc6cbedd641c5ecf0981a29d4ea013a39e03e5
   react-native-paystack: 90e74a1b5ff17bb4d9bd1cc35f0ff2d5ad442f87
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79

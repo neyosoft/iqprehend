@@ -4,6 +4,7 @@ import { format, isFuture } from "date-fns";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
+import DocumentPicker from "react-native-document-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -85,6 +86,53 @@ export const SingleArticleView = ({ navigation, route }) => {
             throw new Error();
         }
     });
+
+    const handleAudioPicker = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.audio],
+            });
+            console.log("Uploaded file: ", res);
+
+            const maxFileSize = 5 * 1024 * 1024;
+
+            if (res.size > maxFileSize) {
+                return toast.show("File selected exceeded maximum file size.");
+            }
+
+            try {
+                const formData = new FormData();
+
+                formData.append("audio-content", res);
+                formData.append("article", articleID);
+
+                setIsSubmitting(true);
+
+                const { data } = await authenticatedRequest().post("/summary", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+
+                if (data && data.data) {
+                    toast.show(data.data.message, { type: "success" });
+                    navigation.goBack();
+                } else {
+                    throw new Error("There is a problem submitting your summary. Kindly try again");
+                }
+            } catch (error) {
+                debugAxiosError(error);
+                toast.show(extractResponseErrorMessage(error));
+                setIsSubmitting(false);
+            }
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err;
+            }
+        }
+    };
 
     const handleSummaryTextSubmission = async () => {
         if (summaryText.trim().length < 1) {
@@ -173,10 +221,15 @@ export const SingleArticleView = ({ navigation, route }) => {
             <Button label="START" style={styles.startBtn} />
 
             <AppText style={styles.note}>
-                <AppMediumText>Note:</AppMediumText> Accepted Format:Mp 3,Wav,AAC (up to 4mb)
+                <AppMediumText>Note:</AppMediumText> Accepted Format: mp3,Wav,aac, ogg (up to 5mb)
             </AppText>
 
-            <Button label="UPLOAD" style={styles.uploadBtn} />
+            <Button
+                disabled={isSubmitting}
+                style={styles.uploadBtn}
+                onPress={handleAudioPicker}
+                label={isSubmitting ? "UPLOADING..." : "UPLOAD"}
+            />
 
             <AppText style={[styles.note, { textAlign: "center" }]}>
                 <AppMediumText>Note:</AppMediumText> Summarize in audio by clicking the START button or UPLOAD button to
