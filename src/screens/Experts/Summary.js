@@ -1,5 +1,7 @@
 import { useQuery } from "react-query";
 import React, { useState } from "react";
+import { useToast } from "react-native-fast-toast";
+import { useFocusEffect } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
@@ -7,11 +9,14 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const Summary = ({ navigation, route }) => {
+    const toast = useToast();
     const { authenticatedRequest } = useAuth();
 
     const [score, setScore] = useState("");
+    const [maxScore, setMaxScore] = useState(0);
 
     const { summaryID } = route.params;
 
@@ -29,25 +34,79 @@ export const Summary = ({ navigation, route }) => {
         }
     });
 
-    const handleSubmit = async () => {};
+    const settingsResponse = useQuery(["settings"], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/settings");
+
+            if (data && data.data) {
+                if (data.data?.scoring?.expertCheck) {
+                    setMaxScore(data.data.scoring.expertCheck);
+                }
+                return data.data;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            summaryResponse.refetch();
+            settingsResponse.refetch();
+        }, []),
+    );
+
+    const handleSubmit = async () => {
+        if (parseInt(score) > parseInt(maxScore)) {
+            return toast.show("Score exceeds maximum possible score.");
+        }
+
+        try {
+            const { data } = await authenticatedRequest().put("/summary/expert-review", {
+                id: summaryID,
+                score: parseInt(score),
+            });
+
+            if (data && data.data) {
+                toast.show(data.data.message);
+
+                navigation.goBack();
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            debugAxiosError(error);
+            toast.show(extractResponseErrorMessage(error));
+        }
+    };
 
     const renderContent = () => {
-        if (summaryResponse.isLoading) {
+        if (summaryResponse.isLoading || settingsResponse.isLoading) {
             return <PageLoading />;
         }
 
-        if (summaryResponse.isError) {
+        if (summaryResponse.isError || settingsResponse.isError) {
             return (
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
                     <AppText>There is a problem retrieveing summary detail.</AppText>
 
-                    <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={summaryResponse.refetch} />
+                    <Button
+                        label="Retry"
+                        style={{ marginTop: RFPercentage(5) }}
+                        onPress={() => {
+                            summaryResponse.refetch();
+                            settingsResponse.refetch();
+                        }}
+                    />
                 </View>
             );
         }
 
         const summary = summaryResponse.data;
+        const settings = settingsResponse.data;
 
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>
@@ -67,7 +126,7 @@ export const Summary = ({ navigation, route }) => {
                 />
 
                 <AppText style={styles.note}>
-                    <AppMediumText>Note:</AppMediumText> Maximum summary score is 35
+                    <AppMediumText>Note:</AppMediumText> Maximum summary score is {settings?.scoring?.expertCheck}
                 </AppText>
 
                 <Button label="Submit" style={styles.button} onPress={handleSubmit} />

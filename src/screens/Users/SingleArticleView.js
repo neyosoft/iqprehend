@@ -80,6 +80,8 @@ export const SingleArticleView = ({ navigation, route }) => {
             const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
 
             if (data && data.data) {
+                console.log("summary: ", data.data.summary);
+
                 setSummaryText(data.data?.summary?.content || "");
 
                 if (data.data?.summary?.audioContent) {
@@ -91,7 +93,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -112,9 +113,9 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
+            settingsResponse.refetch();
             articlesResponse.refetch();
             articlesSummaryResponse.refetch();
-            settingsResponse.refetch();
         }, []),
     );
 
@@ -301,7 +302,7 @@ export const SingleArticleView = ({ navigation, route }) => {
         const summaryMaxWordCount = settingsConfig?.summary?.count || 200;
 
         return (
-            <>
+            <View>
                 {isFuture(new Date(articlesResponse.data.deadline)) ? (
                     <>
                         <AppText style={styles.wordCountText}>
@@ -330,61 +331,99 @@ export const SingleArticleView = ({ navigation, route }) => {
                         />
                     </>
                 ) : (
-                    <View
-                        style={{
-                            borderColor: "gray",
-                            marginTop: RFPercentage(3),
-                            paddingBottom: RFPercentage(2),
-                            borderTopWidth: StyleSheet.hairlineWidth,
-                            borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
-                        <AppText style={styles.note}>{summaryText}</AppText>
+                    <View>
+                        <View
+                            style={{
+                                borderColor: "gray",
+                                marginTop: RFPercentage(3),
+                                paddingBottom: RFPercentage(2),
+                                borderTopWidth: StyleSheet.hairlineWidth,
+                                borderBottomWidth: StyleSheet.hairlineWidth,
+                            }}>
+                            <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
+                            <AppText style={styles.note}>{summaryText}</AppText>
+                        </View>
+                        {articlesSummaryResponse.data?.isExpertReviewed ? (
+                            <View>
+                                <AppText>Sharable Link</AppText>
+                                <View>
+                                    <AppText>http://www.iqprehend.com/v/384848</AppText>
+                                </View>
+                            </View>
+                        ) : null}
                     </View>
                 )}
-            </>
+            </View>
         );
     };
 
     const renderAudioForm = () => (
-        <View style={styles.audiobox}>
-            <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
+        <View>
+            {isFuture(new Date(articlesResponse.data.deadline)) ? (
+                <View style={styles.audiobox}>
+                    <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
 
-            <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
+                    <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
 
-            <Button
-                style={styles.startBtn}
-                disabled={isSubmitting}
-                label={isRecording ? "STOP RECORDING" : "RECORD"}
-                onPress={() => {
-                    if (isRecording) {
-                        stopRecording();
-                    } else {
-                        startRecording();
-                    }
-                }}
-            />
-            {articlesSummaryResponse.data?.audioContent ? (
-                <Button
-                    disabled={isSubmitting}
-                    label={isPlaying ? "STOP" : "PLAY"}
-                    style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
-                    onPress={() => {
-                        isPlaying ? stopPlaying() : startPlaying();
-                    }}
-                />
-            ) : null}
+                    <Button
+                        style={styles.startBtn}
+                        disabled={isSubmitting}
+                        label={isRecording ? "STOP RECORDING" : "RECORD"}
+                        onPress={() => {
+                            if (isRecording) {
+                                stopRecording();
+                            } else {
+                                startRecording();
+                            }
+                        }}
+                    />
+                    {articlesSummaryResponse.data?.audioContent ? (
+                        <Button
+                            disabled={isSubmitting}
+                            label={isPlaying ? "STOP" : "PLAY"}
+                            style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
+                            onPress={() => {
+                                isPlaying ? stopPlaying() : startPlaying();
+                            }}
+                        />
+                    ) : null}
 
-            <AppText style={styles.note}>
-                <AppMediumText>Note:</AppMediumText> Accepted file format: mp3, wav, aac,ogg. Maximum file is 5MB
-            </AppText>
+                    <AppText style={styles.note}>
+                        <AppMediumText>Note:</AppMediumText> Accepted file format: mp3, wav, aac,ogg. Maximum file is
+                        5MB
+                    </AppText>
 
-            <Button
-                disabled={isSubmitting}
-                style={styles.uploadBtn}
-                onPress={handleAudioPicker}
-                label={isSubmitting ? "UPLOADING..." : "UPLOAD"}
-            />
+                    <Button
+                        disabled={isSubmitting}
+                        style={styles.uploadBtn}
+                        onPress={handleAudioPicker}
+                        label={isSubmitting ? "UPLOADING..." : "UPLOAD"}
+                    />
+                </View>
+            ) : (
+                <View style={styles.audiobox}>
+                    <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
+
+                    <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
+
+                    <Button
+                        label={isPlaying ? "STOP" : "PLAY"}
+                        style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
+                        onPress={() => {
+                            isPlaying ? stopPlaying() : startPlaying();
+                        }}
+                    />
+
+                    {articlesSummaryResponse.data?.isExpertReviewed ? (
+                        <View>
+                            <AppText>Sharable Link</AppText>
+                            <View>
+                                <AppText>http://www.iqprehend.com/v/384848</AppText>
+                            </View>
+                        </View>
+                    ) : null}
+                </View>
+            )}
         </View>
     );
 

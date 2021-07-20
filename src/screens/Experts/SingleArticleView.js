@@ -3,6 +3,7 @@ import format from "date-fns/format";
 import { useQuery } from "react-query";
 import HTML from "react-native-render-html";
 import YoutubePlayer from "react-native-youtube-iframe";
+import { useFocusEffect } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image, useWindowDimensions } from "react-native";
@@ -12,11 +13,10 @@ import { useAuth } from "../../context";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 export const SingleArticleView = ({ navigation, route }) => {
-    const { authenticatedRequest } = useAuth();
-
-    const contentWidth = useWindowDimensions().width;
-
     const { articleID } = route.params;
+
+    const { authenticatedRequest } = useAuth();
+    const contentWidth = useWindowDimensions().width;
 
     const [playing, setPlaying] = useState(false);
 
@@ -49,6 +49,13 @@ export const SingleArticleView = ({ navigation, route }) => {
             throw new Error();
         }
     });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            summaryResponse.refetch();
+            articlesResponse.refetch();
+        }, []),
+    );
 
     const onStateChange = useCallback((state) => {
         if (state === "ended") {
@@ -147,7 +154,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                 <TouchableOpacity onPress={navigation.goBack}>
                     <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
                 </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Article</AppText>
+                <AppText style={styles.headerTitle}>Article summaries</AppText>
             </View>
 
             {renderContent()}
@@ -155,29 +162,40 @@ export const SingleArticleView = ({ navigation, route }) => {
     );
 };
 
-const SummaryCard = ({ summary, navigation }) => (
-    <TouchableOpacity
-        style={styles.summaryUserCard}
-        onPress={() => navigation.navigate("Summary", { summaryID: summary._id })}>
-        <View style={styles.summaryUserImageContainer}>
-            <Image source={require("../../assets/images/avatar.jpg")} style={styles.summaryUserImage} />
-        </View>
-        <View style={styles.summaryUserCardRight}>
-            <View style={styles.detailRow}>
-                <AppMediumText style={styles.summaryUserCardLabel}>Name</AppMediumText>
-                <AppText>{`${summary?.user?.lastName} ${summary?.user?.firstName}`}</AppText>
+const SummaryCard = ({ summary, navigation }) => {
+    console.log("summary info: ", summary);
+
+    return (
+        <TouchableOpacity
+            style={styles.summaryUserCard}
+            onPress={() => navigation.navigate("Summary", { summaryID: summary._id })}>
+            <View style={styles.summaryUserImageContainer}>
+                <Image
+                    style={styles.summaryUserImage}
+                    source={
+                        summary?.user?.profilePicture
+                            ? { uri: summary.user.profilePicture }
+                            : require("../../assets/images/avatar.jpg")
+                    }
+                />
             </View>
-            <View style={styles.detailRow}>
-                <AppMediumText style={styles.summaryUserCardLabel}>Email</AppMediumText>
-                <AppText>{summary?.user?.email}</AppText>
+            <View style={styles.summaryUserCardRight}>
+                <View style={styles.detailRow}>
+                    <AppMediumText style={styles.summaryUserCardLabel}>Name</AppMediumText>
+                    <AppText>{`${summary?.user?.lastName} ${summary?.user?.firstName}`}</AppText>
+                </View>
+                <View style={styles.detailRow}>
+                    <AppMediumText style={styles.summaryUserCardLabel}>Email</AppMediumText>
+                    <AppText>{summary?.user?.email}</AppText>
+                </View>
+                <View style={styles.detailRow}>
+                    <AppMediumText style={styles.summaryUserCardLabel}>Status</AppMediumText>
+                    <AppText>{summary?.isExpertReviewed ? "Reviewed completed." : "Not yet reviewed"}</AppText>
+                </View>
             </View>
-            <View style={styles.detailRow}>
-                <AppMediumText style={styles.summaryUserCardLabel}>Status</AppMediumText>
-                <AppText>{summary?.isEvaluated ? "Reviewed Completed." : "Not yet reviewed"}</AppText>
-            </View>
-        </View>
-    </TouchableOpacity>
-);
+        </TouchableOpacity>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
