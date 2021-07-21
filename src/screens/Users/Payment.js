@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
+import format from "date-fns/format";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -11,6 +12,7 @@ import { useAuth } from "../../context";
 import { PaymentSuccessfulModal } from "../../modals/PaymentSuccessfulModal";
 import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
 import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
+import { isPast } from "date-fns";
 
 export const Payment = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
@@ -21,6 +23,7 @@ export const Payment = ({ navigation }) => {
         const { data } = await authenticatedRequest().get("/payment/current-subscription");
 
         if (data && data.data) {
+            console.log("Payment info: ", data.data);
             return data.data;
         } else {
             throw new Error("Unable to retreive payment information");
@@ -51,7 +54,7 @@ export const Payment = ({ navigation }) => {
             );
         }
 
-        if (!paymentResponse.data?.planDetails) {
+        if (!paymentResponse.data?.planDetails || isPast(new Date(paymentResponse.data?.planDetails?.endDate))) {
             return (
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <Image source={require("../../assets/images/information.png")} />
@@ -67,6 +70,8 @@ export const Payment = ({ navigation }) => {
             );
         }
 
+        const plan = paymentResponse.data.planDetails;
+
         return (
             <ScrollView style={styles.content}>
                 <AppMediumText style={styles.title}>Active Subscription</AppMediumText>
@@ -74,23 +79,21 @@ export const Payment = ({ navigation }) => {
                 <View style={styles.boxContainer}>
                     <View style={styles.itemRow}>
                         <AppMediumText style={[styles.item, { color: theme.colors.primary }]}>Type</AppMediumText>
-                        <AppText style={styles.item}>Yearly</AppText>
+                        <AppText style={styles.item}>{plan.name}</AppText>
                     </View>
                     <View style={styles.itemRow}>
                         <AppMediumText style={[styles.item, { color: theme.colors.primary }]}>Duration</AppMediumText>
-                        <AppText style={styles.item}>1 Year</AppText>
+                        <AppText style={styles.item}>{plan.duration}</AppText>
                     </View>
                     <View style={styles.itemRow}>
                         <AppMediumText style={[styles.item, { color: theme.colors.primary }]}>Start Date</AppMediumText>
-                        <AppText style={styles.item}>June 27, 2020</AppText>
+                        <AppText style={styles.item}>{format(new Date(plan.startDate), "MMM dd, yyyy")}</AppText>
                     </View>
                     <View style={styles.itemRow}>
                         <AppMediumText style={[styles.item, { color: theme.colors.primary }]}>End Date</AppMediumText>
-                        <AppText style={styles.item}>June 27, 2021</AppText>
+                        <AppText style={styles.item}>{format(new Date(plan.endDate), "MMM dd, yyyy")}</AppText>
                     </View>
                 </View>
-
-                <Button style={styles.button} onPress={() => setModal("list")} label="Subscribe" />
             </ScrollView>
         );
     };

@@ -163,8 +163,6 @@ export const SingleArticleView = ({ navigation, route }) => {
 };
 
 const SummaryCard = ({ summary, navigation }) => {
-    console.log("summary info: ", summary);
-
     return (
         <TouchableOpacity
             style={styles.summaryUserCard}

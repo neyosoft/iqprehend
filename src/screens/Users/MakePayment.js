@@ -40,6 +40,8 @@ export const MakePayment = ({ navigation, route }) => {
 
             if (paymentResponse && paymentResponse.reference) {
                 toast.show("Payment successfully completed.");
+
+                navigation.navigate("Payment");
             }
         } catch (error) {
             toast.show(extractResponseErrorMessage(error));

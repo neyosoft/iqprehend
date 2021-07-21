@@ -8,8 +8,8 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const Summary = ({ navigation, route }) => {
     const toast = useToast();
@@ -17,6 +17,7 @@ export const Summary = ({ navigation, route }) => {
 
     const [score, setScore] = useState("");
     const [maxScore, setMaxScore] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
 
     const { summaryID } = route.params;
 
@@ -25,6 +26,8 @@ export const Summary = ({ navigation, route }) => {
             const { data } = await authenticatedRequest().get("/summary/single", { params: { id: summaryID } });
 
             if (data && data.data) {
+                setScore(data.data?.summary?.expert?.score ? `${data.data.summary.expert.score}` : "");
+
                 return data.data.summary;
             } else {
                 throw new Error();
@@ -59,11 +62,17 @@ export const Summary = ({ navigation, route }) => {
     );
 
     const handleSubmit = async () => {
+        if (!score) {
+            return toast.show("Score is required.");
+        }
+
         if (parseInt(score) > parseInt(maxScore)) {
             return toast.show("Score exceeds maximum possible score.");
         }
 
         try {
+            setSubmitting(true);
+
             const { data } = await authenticatedRequest().put("/summary/expert-review", {
                 id: summaryID,
                 score: parseInt(score),
@@ -77,8 +86,9 @@ export const Summary = ({ navigation, route }) => {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
+
+            setSubmitting(false);
         }
     };
 
@@ -129,7 +139,12 @@ export const Summary = ({ navigation, route }) => {
                     <AppMediumText>Note:</AppMediumText> Maximum summary score is {settings?.scoring?.expertCheck}
                 </AppText>
 
-                <Button label="Submit" style={styles.button} onPress={handleSubmit} />
+                <Button
+                    style={styles.button}
+                    onPress={handleSubmit}
+                    disabled={submitting || summary?.expert}
+                    label={submitting ? "Processing..." : "Submit"}
+                />
             </ScrollView>
         );
     };
