@@ -89,7 +89,7 @@ export const Articles = ({ navigation }) => {
         }
 
         return (
-            <>
+            <View>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={navigation.openDrawer}>
                         <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
@@ -146,7 +146,7 @@ export const Articles = ({ navigation }) => {
                     removeClippedSubviews={Platform.OS === "android"}
                     contentContainerStyle={styles.contentContainerStyle}
                 />
-            </>
+            </View>
         );
     };
 

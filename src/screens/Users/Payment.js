@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import format from "date-fns/format";
+import { isPast } from "date-fns";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -12,7 +13,6 @@ import { useAuth } from "../../context";
 import { PaymentSuccessfulModal } from "../../modals/PaymentSuccessfulModal";
 import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
 import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
-import { isPast } from "date-fns";
 
 export const Payment = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
@@ -23,7 +23,6 @@ export const Payment = ({ navigation }) => {
         const { data } = await authenticatedRequest().get("/payment/current-subscription");
 
         if (data && data.data) {
-            console.log("Payment info: ", data.data);
             return data.data;
         } else {
             throw new Error("Unable to retreive payment information");

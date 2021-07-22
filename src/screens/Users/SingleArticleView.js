@@ -30,7 +30,7 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { useFocusEffect } from "@react-navigation/native";
 
 const wordCount = (text) => {
@@ -337,18 +337,25 @@ export const SingleArticleView = ({ navigation, route }) => {
                                 borderColor: "gray",
                                 marginTop: RFPercentage(3),
                                 paddingBottom: RFPercentage(2),
+                                marginBottom: RFPercentage(2),
                                 borderTopWidth: StyleSheet.hairlineWidth,
                                 borderBottomWidth: StyleSheet.hairlineWidth,
                             }}>
                             <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
                             <AppText style={styles.note}>{summaryText}</AppText>
                         </View>
-                        {articlesSummaryResponse.data?.isExpertReviewed ? (
+                        {articlesSummaryResponse.data?.isExpertReviewed && articlesSummaryResponse.data?.linkId ? (
                             <View>
                                 <AppText>Sharable Link</AppText>
-                                <View>
-                                    <AppText>http://www.iqprehend.com/v/384848</AppText>
-                                </View>
+                                <TouchableOpacity
+                                    style={styles.linkWrapper}
+                                    onPress={() =>
+                                        navigation.navigate("Voting", { linkId: articlesSummaryResponse.data.linkId })
+                                    }>
+                                    <AppText style={styles.link}>
+                                        http://www.iqprehend.com/{articlesSummaryResponse.data.linkId}
+                                    </AppText>
+                                </TouchableOpacity>
                             </View>
                         ) : null}
                     </View>
@@ -654,5 +661,11 @@ const styles = StyleSheet.create({
         flex: 1,
         width: undefined,
         height: undefined,
+    },
+    link: {
+        color: "blue",
+        lineHeight: 25,
+        fontSize: RFPercentage(1.8),
+        textDecorationLine: "underline",
     },
 });

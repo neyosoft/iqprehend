@@ -1,3 +1,4 @@
+export { Voting } from "./Voting";
 export { Payment } from "./Payment";
 export { Articles } from "./Articles";
 export { Settings } from "./Settings";

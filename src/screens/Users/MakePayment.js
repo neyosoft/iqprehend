@@ -36,8 +36,6 @@ export const MakePayment = ({ navigation, route }) => {
                 cardNumber: values.cardNumber,
             });
 
-            console.log("Payment reference: ", paymentResponse.reference);
-
             if (paymentResponse && paymentResponse.reference) {
                 toast.show("Payment successfully completed.");
 

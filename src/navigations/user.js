@@ -6,6 +6,7 @@ import TouchableItem from "@react-navigation/drawer/src/views/TouchableItem";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 
 import {
+    Voting,
     Payment,
     Articles,
     Settings,
@@ -78,6 +79,7 @@ export default function UserNavigation() {
             screenOptions={{
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             }}>
+            <Stack.Screen name="Voting" component={Voting} />
             <Stack.Screen name="MakePayment" component={MakePayment} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="BankSettings" component={BankSettings} />
