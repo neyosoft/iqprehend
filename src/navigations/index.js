@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import RNBootSplash from "react-native-bootsplash";
+import { NavigationContainer, getStateFromPath } from "@react-navigation/native";
 
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
@@ -20,7 +20,28 @@ export default function AppNavigation() {
         );
     }
 
-    return <NavigationContainer onReady={() => RNBootSplash.hide()}>{switchNavigator(user)}</NavigationContainer>;
+    const linking = {
+        prefixes: ["https://iqprehend.com", "iqprehend://"],
+        config: {
+            initialRouteName: "DrawerNavigation",
+            screens: {
+                Voting: "voting/:linkId",
+            },
+        },
+        getStateFromPath: (path, options) => {
+            console.log({ path, options });
+            // Return a state object here
+            // You can also reuse the default logic by importing `getStateFromPath` from `@react-navigation/native`
+
+            return getStateFromPath(path, options);
+        },
+    };
+
+    return (
+        <NavigationContainer linking={linking} onReady={() => RNBootSplash.hide()}>
+            {switchNavigator(user)}
+        </NavigationContainer>
+    );
 }
 
 const switchNavigator = (user) => {
