@@ -58,6 +58,7 @@
 		1A20350E269F33F100B1F2AB /* Quartenion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quartenion-Bridging-Header.h"; sourceTree = "<group>"; };
 		1A20350F269F33F200B1F2AB /* BridgeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeHeader.swift; sourceTree = "<group>"; };
 		1A251A2A269DF7B2006D5D84 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = Quartenion/BootSplash.storyboard; sourceTree = "<group>"; };
+		1AE68E3726A9B448007705A3 /* QuartenionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = QuartenionRelease.entitlements; path = Quartenion/QuartenionRelease.entitlements; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Quartenion-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quartenion-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Quartenion-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Quartenion-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EC7235CA1294657B52B2118 /* Baloo2-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Baloo2-Bold.ttf"; path = "../src/assets/fonts/Baloo2-Bold.ttf"; sourceTree = "<group>"; };
@@ -128,6 +129,7 @@
 		13B07FAE1A68108700A75B9A /* Quartenion */ = {
 			isa = PBXGroup;
 			children = (
+				1AE68E3726A9B448007705A3 /* QuartenionRelease.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				1A251A2A269DF7B2006D5D84 /* BootSplash.storyboard */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -891,6 +893,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Quartenion/QuartenionRelease.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = Quartenion/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

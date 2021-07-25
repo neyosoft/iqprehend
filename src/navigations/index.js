@@ -28,13 +28,6 @@ export default function AppNavigation() {
                 Voting: "voting/:linkId",
             },
         },
-        getStateFromPath: (path, options) => {
-            console.log({ path, options });
-            // Return a state object here
-            // You can also reuse the default logic by importing `getStateFromPath` from `@react-navigation/native`
-
-            return getStateFromPath(path, options);
-        },
     };
 
     return (
