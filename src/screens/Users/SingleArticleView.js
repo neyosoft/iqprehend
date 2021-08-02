@@ -525,14 +525,14 @@ export const SingleArticleView = ({ navigation, route }) => {
                             </View>
                         ) : null}
 
-                        <AppText style={styles.body}>
+                        <View style={styles.body}>
                             <HTML
                                 emSize={16}
                                 contentWidth={contentWidth}
                                 source={{ html: article.content }}
-                                baseFontStyle={{ fontSize: RFPercentage(2.1) }}
+                                baseFontStyle={{ fontSize: RFPercentage(2.1), lineHeight: RFPercentage(3.3) }}
                             />
-                        </AppText>
+                        </View>
 
                         {renderSummaryForm()}
                     </>

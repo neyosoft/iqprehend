@@ -89,7 +89,7 @@ export const Articles = ({ navigation }) => {
         }
 
         return (
-            <View>
+            <View style={{ flex: 1 }}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={navigation.openDrawer}>
                         <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
