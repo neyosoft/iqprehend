@@ -80,8 +80,6 @@ export const SingleArticleView = ({ navigation, route }) => {
             const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
 
             if (data && data.data) {
-                console.log("summary: ", data.data.summary);
-
                 setSummaryText(data.data?.summary?.content || "");
 
                 if (data.data?.summary?.audioContent) {
@@ -301,67 +299,74 @@ export const SingleArticleView = ({ navigation, route }) => {
         const settingsConfig = settingsResponse.data;
         const summaryMaxWordCount = settingsConfig?.summary?.count || 200;
 
-        return (
-            <View>
-                {isFuture(new Date(articlesResponse.data.deadline)) ? (
-                    <>
-                        <AppText style={styles.wordCountText}>
-                            Summary words: {wordCount(summaryText)}/<AppMediumText>{summaryMaxWordCount}</AppMediumText>
-                        </AppText>
+        if (isFuture(new Date(articlesResponse.data.deadline))) {
+            return (
+                <View>
+                    <AppText style={styles.wordCountText}>
+                        Summary words: {wordCount(summaryText)}/<AppMediumText>{summaryMaxWordCount}</AppMediumText>
+                    </AppText>
 
-                        <TextInput
-                            multiline={true}
-                            value={summaryText}
-                            textAlignVertical="top"
-                            style={styles.summaryInput}
-                            onChangeText={setSummaryText}
-                            placeholder="Enter summary here..."
-                        />
+                    <TextInput
+                        multiline={true}
+                        value={summaryText}
+                        textAlignVertical="top"
+                        style={styles.summaryInput}
+                        onChangeText={setSummaryText}
+                        placeholder="Enter summary here..."
+                    />
 
-                        <AppText style={styles.note}>
-                            <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have
-                            active paid subscription
-                        </AppText>
+                    <AppText style={styles.note}>
+                        <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have
+                        active paid subscription
+                    </AppText>
 
-                        <Button
-                            style={styles.button}
-                            disabled={isSubmitting}
-                            onPress={handleSummaryTextSubmission}
-                            label={isSubmitting ? "Submitting..." : articlesSummaryResponse.data ? "Update" : "Submit"}
-                        />
-                    </>
-                ) : (
-                    <View>
-                        <View
-                            style={{
-                                borderColor: "gray",
-                                marginTop: RFPercentage(3),
-                                paddingBottom: RFPercentage(2),
-                                marginBottom: RFPercentage(2),
-                                borderTopWidth: StyleSheet.hairlineWidth,
-                                borderBottomWidth: StyleSheet.hairlineWidth,
-                            }}>
-                            <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
-                            <AppText style={styles.note}>{summaryText}</AppText>
-                        </View>
-                        {articlesSummaryResponse.data?.isExpertReviewed && articlesSummaryResponse.data?.linkId ? (
-                            <View>
-                                <AppText>Sharable Link</AppText>
-                                <TouchableOpacity
-                                    style={styles.linkWrapper}
-                                    onPress={() =>
-                                        navigation.navigate("Voting", { linkId: articlesSummaryResponse.data.linkId })
-                                    }>
-                                    <AppText style={styles.link}>
-                                        http://www.iqprehend.com/{articlesSummaryResponse.data.linkId}
-                                    </AppText>
-                                </TouchableOpacity>
-                            </View>
-                        ) : null}
+                    <Button
+                        style={styles.button}
+                        disabled={isSubmitting}
+                        onPress={handleSummaryTextSubmission}
+                        label={isSubmitting ? "Submitting..." : articlesSummaryResponse.data ? "Update" : "Submit"}
+                    />
+                </View>
+            );
+        } else {
+            const summary = articlesSummaryResponse.data;
+
+            return (
+                <View>
+                    <View style={styles.summaryArea}>
+                        <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
+                        <AppText style={styles.summaryText}>{summaryText}</AppText>
                     </View>
-                )}
-            </View>
-        );
+
+                    {summary?.isEvaluated && summary?.isFreeSummary === false && summary?.isFailed === false && (
+                        <>
+                            {summary?.isExpertReviewed && summary?.linkId ? (
+                                <View>
+                                    <AppText>Sharable Link</AppText>
+                                    <TouchableOpacity
+                                        style={styles.linkWrapper}
+                                        onPress={() => navigation.navigate("Voting", { linkId: summary.linkId })}>
+                                        <AppText style={styles.link}>http://www.iqprehend.com/{summary.linkId}</AppText>
+                                    </TouchableOpacity>
+                                </View>
+                            ) : null}
+
+                            {summary?.voting ? (
+                                <Button
+                                    label="View Result"
+                                    style={styles.viewResultBtn}
+                                    onPress={() =>
+                                        navigation.navigate("EvaluationResult", {
+                                            summaryId: summary._id,
+                                        })
+                                    }
+                                />
+                            ) : null}
+                        </>
+                    )}
+                </View>
+            );
+        }
     };
 
     const renderAudioForm = () => (
@@ -450,6 +455,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                         style={{ marginTop: RFPercentage(5) }}
                         onPress={() => {
                             articlesResponse.refetch();
+                            settingsResponse.refetch();
                             articlesSummaryResponse.refetch();
                         }}
                     />
@@ -616,6 +622,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingVertical: RFPercentage(1.7),
     },
+    summaryArea: {
+        borderColor: "gray",
+        marginTop: RFPercentage(3),
+        paddingBottom: RFPercentage(2),
+        marginBottom: RFPercentage(2),
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+    },
     wordCountText: {
         marginBottom: 5,
         marginTop: RFPercentage(2),
@@ -630,10 +644,15 @@ const styles = StyleSheet.create({
         padding: RFPercentage(1.5),
         fontFamily: "Baloo2-Regular",
     },
+    summaryText: {
+        marginTop: RFPercentage(2),
+        fontSize: RFPercentage(1.8),
+        lineHeight: RFPercentage(2.7),
+    },
     note: {
         marginTop: RFPercentage(2),
-        lineHeight: RFPercentage(2.2),
         fontSize: RFPercentage(1.8),
+        lineHeight: RFPercentage(2.2),
     },
     button: {
         alignSelf: "flex-end",
@@ -667,5 +686,8 @@ const styles = StyleSheet.create({
         lineHeight: 25,
         fontSize: RFPercentage(1.8),
         textDecorationLine: "underline",
+    },
+    viewResultBtn: {
+        marginTop: 15,
     },
 });

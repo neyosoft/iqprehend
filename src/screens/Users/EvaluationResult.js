@@ -1,33 +1,59 @@
 import React from "react";
+import { useQuery } from "react-query";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import theme from "../../theme";
-import { AppMediumText, AppText } from "../../components";
+import { useAuth } from "../../context";
+import { AppMediumText, AppText, PageLoading, Button } from "../../components";
 import { PlagiarismIcon, GrammarIcon, ExpertIcon, VoteIcon } from "../../icons";
 
-export const EvaluationResult = ({ navigation }) => {
-    return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Evaluation</AppText>
-            </View>
-            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+export const EvaluationResult = ({ navigation, route }) => {
+    const { articleID } = route.params;
+
+    const { authenticatedRequest } = useAuth();
+
+    const summaryResponse = useQuery(["articles-summary", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
+
+            if (data && data.data) {
+                return data.data.summary;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const renderSummaryResult = () => {
+        if (summaryResponse.isLoading) {
+            return <PageLoading />;
+        }
+
+        if (summaryResponse.isError) {
+            return (
+                <View style={styles.center}>
+                    <Icon name="alert" color="red" size={RFPercentage(10)} />
+                    <AppText>There is a problem retrieveing result.</AppText>
+
+                    <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={summaryResponse.refetch} />
+                </View>
+            );
+        }
+
+        const summary = summaryResponse.data;
+
+        console.log("summary: ", summary);
+
+        return (
+            <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
                 <AppMediumText style={styles.title}>
                     Perform Graphql Mutation And Query On The Same Screen/Page
                 </AppMediumText>
-
-                <AppText style={styles.body}>
-                    GraqhQL has been an amazing technology provided by Facebook. It simplifies the client consumption of
-                    information provided by the server in an incredible way. GraphQL gives clients the power to ask for
-                    exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables
-                    powerful developer tools.
-                </AppText>
 
                 <View>
                     <View style={styles.sectionHead}>
@@ -74,6 +100,19 @@ export const EvaluationResult = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
+        );
+    };
+
+    return (
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={navigation.goBack}>
+                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                </TouchableOpacity>
+                <AppText style={styles.headerTitle}>Evaluation</AppText>
+            </View>
+
+            {renderSummaryResult()}
         </SafeAreaView>
     );
 };
@@ -95,8 +134,18 @@ const styles = StyleSheet.create({
         fontSize: RFPercentage(2.4),
         marginHorizontal: RFPercentage(2),
     },
+    center: {
+        flex: 1,
+        alignItems: "center",
+        backgroundColor: "#fff",
+        justifyContent: "center",
+    },
     content: {
         padding: RFPercentage(3),
+    },
+    scrollview: {
+        flex: 1,
+        backgroundColor: "#fff",
     },
     contentContainerStyle: {
         padding: RFPercentage(3),
@@ -112,9 +161,10 @@ const styles = StyleSheet.create({
         borderBottomColor: "#EAEAEA",
     },
     sectionText: {
-        fontSize: RFPercentage(2.7),
+        fontSize: RFPercentage(2),
     },
     box: {
+        marginTop: 10,
         flexDirection: "row",
         justifyContent: "space-between",
     },

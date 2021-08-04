@@ -87,9 +87,9 @@ export const Voting = ({ navigation, route }) => {
         console.log("info: ", JSON.stringify(info, null, 4));
 
         return (
-            <ScrollView style={styles.content}>
+            <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
                 <View>
-                    <AppMediumText style={styles.title}>Summary Author</AppMediumText>
+                    <AppMediumText style={styles.authorTitle}>Summary Author</AppMediumText>
                     <View style={styles.authorbox}>
                         <View style={styles.imageBox}>
                             <Image
@@ -105,7 +105,7 @@ export const Voting = ({ navigation, route }) => {
                             <AppText style={styles.authorName}>
                                 {info.user?.lastName} {info.user?.firstName}
                             </AppText>
-                            <AppText>{info.user?.email}</AppText>
+                            <AppText style={styles.authorEmail}>{info.user?.email}</AppText>
                         </View>
                     </View>
                 </View>
@@ -176,10 +176,17 @@ const styles = StyleSheet.create({
         marginHorizontal: RFPercentage(2),
     },
     content: {
+        flex: 1,
+    },
+    contentContainerStyle: {
         padding: RFPercentage(3),
     },
     title: {
+        color: theme.colors.primary,
         fontSize: RFPercentage(2.7),
+    },
+    authorTitle: {
+        fontSize: RFPercentage(2.3),
     },
     authorbox: {
         flexDirection: "row",
@@ -204,6 +211,10 @@ const styles = StyleSheet.create({
     },
     authorName: {
         fontSize: RFPercentage(2.5),
+    },
+    authorEmail: {
+        fontSize: RFPercentage(1.8),
+        color: theme.colors.diabledBtn,
     },
     articleBody: {
         lineHeight: 25,

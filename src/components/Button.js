@@ -7,18 +7,18 @@ import theme from "../theme";
 import Theme from "../theme";
 import { AppText } from "./AppText";
 
-export const Button = ({ style, label, labelStyle, children, ...rest }) => {
+export const Button = ({ style, label, labelStyle, children, disabled, onPress, ...rest }) => {
     const buttonStyle = [styles.button, style];
     const buttonTextStyle = [styles.buttonText];
 
-    if (rest.disabled) {
+    if (disabled) {
         buttonStyle.push(styles.disabledBtn);
         buttonTextStyle.push(styles.disabledBtnText);
     }
     buttonTextStyle.push(labelStyle);
 
     return (
-        <RectButton testID="theButton" style={buttonStyle} {...rest}>
+        <RectButton onPress={disabled ? () => {} : onPress} testID="theButton" style={buttonStyle} {...rest}>
             {children ? children : <AppText style={buttonTextStyle}>{label}</AppText>}
         </RectButton>
     );
