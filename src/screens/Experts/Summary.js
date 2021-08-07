@@ -101,7 +101,7 @@ export const Summary = ({ navigation, route }) => {
             return (
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
-                    <AppText>There is a problem retrieveing summary detail.</AppText>
+                    <AppText>There is a problem retrieving summary detail.</AppText>
 
                     <Button
                         label="Retry"

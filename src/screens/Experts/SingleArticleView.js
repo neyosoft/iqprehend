@@ -74,7 +74,7 @@ export const SingleArticleView = ({ navigation, route }) => {
             return (
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
-                    <AppText>There is a problem retrieveing article summaries.</AppText>
+                    <AppText>There is a problem retrieving article summaries.</AppText>
 
                     <Button
                         label="Retry"

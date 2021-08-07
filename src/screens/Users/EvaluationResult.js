@@ -38,7 +38,7 @@ export const EvaluationResult = ({ navigation, route }) => {
             return (
                 <View style={styles.center}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
-                    <AppText>There is a problem retrieveing result.</AppText>
+                    <AppText>There is a problem retrieving result.</AppText>
 
                     <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={summaryResponse.refetch} />
                 </View>
