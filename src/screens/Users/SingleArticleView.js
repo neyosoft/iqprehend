@@ -358,6 +358,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                                     onPress={() =>
                                         navigation.navigate("EvaluationResult", {
                                             summaryId: summary._id,
+                                            articleID: summary.article._id,
                                         })
                                     }
                                 />
@@ -527,7 +528,11 @@ export const SingleArticleView = ({ navigation, route }) => {
                     <>
                         {article.featuredImage ? (
                             <View style={styles.featureImageBox}>
-                                <Image style={styles.featureImage} source={{ uri: article.featuredImage }} />
+                                <Image
+                                    resizeMode="contain"
+                                    style={styles.featureImage}
+                                    source={{ uri: article.featuredImage }}
+                                />
                             </View>
                         ) : null}
 

@@ -3,10 +3,11 @@ import { useQuery } from "react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
+import { debugAxiosError } from "../../utils/request.utils";
 import { AppMediumText, AppText, PageLoading, Button } from "../../components";
 import { PlagiarismIcon, GrammarIcon, ExpertIcon, VoteIcon } from "../../icons";
 
@@ -25,16 +26,33 @@ export const EvaluationResult = ({ navigation, route }) => {
                 throw new Error();
             }
         } catch (error) {
+            debugAxiosError(error);
+            throw new Error();
+        }
+    });
+
+    const resultResponse = useQuery(["result", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/articles/leaderboard", {
+                params: { id: articleID },
+            });
+
+            if (data && data.data) {
+                return data.data.leaderboard;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
             throw new Error();
         }
     });
 
     const renderSummaryResult = () => {
-        if (summaryResponse.isLoading) {
+        if (summaryResponse.isLoading || resultResponse.isLoading) {
             return <PageLoading />;
         }
 
-        if (summaryResponse.isError) {
+        if (summaryResponse.isError || resultResponse.isError) {
             return (
                 <View style={styles.center}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
@@ -45,15 +63,12 @@ export const EvaluationResult = ({ navigation, route }) => {
             );
         }
 
+        const results = resultResponse.data;
         const summary = summaryResponse.data;
-
-        console.log("summary: ", summary);
 
         return (
             <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
-                <AppMediumText style={styles.title}>
-                    Perform Graphql Mutation And Query On The Same Screen/Page
-                </AppMediumText>
+                <AppMediumText style={styles.title}>{summary.article.title}</AppMediumText>
 
                 <View>
                     <View style={styles.sectionHead}>
@@ -66,14 +81,18 @@ export const EvaluationResult = ({ navigation, route }) => {
                                 <AppText style={[styles.sectionTitle, { color: "#CF2A2A" }]}>Plagiarism</AppText>
                                 <PlagiarismIcon />
                             </View>
-                            <AppMediumText style={[styles.sectionPercentage, { color: "#CF2A2A" }]}>25%</AppMediumText>
+                            <AppMediumText style={[styles.sectionPercentage, { color: "#CF2A2A" }]}>
+                                {summary?.plagiarism?.score}
+                            </AppMediumText>
                         </View>
                         <View style={[styles.eachBox, { backgroundColor: "#E6F8E8" }]}>
                             <View style={styles.titleRow}>
                                 <AppText style={[styles.sectionTitle, { color: "#07BA" }]}>Grammar</AppText>
                                 <GrammarIcon />
                             </View>
-                            <AppMediumText style={[styles.sectionPercentage, { color: "#07BA" }]}>25%</AppMediumText>
+                            <AppMediumText style={[styles.sectionPercentage, { color: "#07BA" }]}>
+                                {summary?.grammar?.score}
+                            </AppMediumText>
                         </View>
                     </View>
 
@@ -83,21 +102,59 @@ export const EvaluationResult = ({ navigation, route }) => {
                                 <AppText style={[styles.sectionTitle, { color: "#3050B9" }]}>Expert</AppText>
                                 <ExpertIcon />
                             </View>
-                            <AppMediumText style={[styles.sectionPercentage, { color: "#3050B9" }]}>35%</AppMediumText>
+                            <AppMediumText style={[styles.sectionPercentage, { color: "#3050B9" }]}>
+                                {summary?.expert?.score}
+                            </AppMediumText>
                         </View>
                         <View style={[styles.eachBox, { backgroundColor: "#FFF7EA" }]}>
                             <View style={styles.titleRow}>
                                 <AppText style={[styles.sectionTitle, { color: "#FFAC30" }]}>Votes</AppText>
                                 <VoteIcon />
                             </View>
-                            <AppMediumText style={[styles.sectionPercentage, { color: "#FFAC30" }]}>25%</AppMediumText>
+                            <AppMediumText style={[styles.sectionPercentage, { color: "#FFAC30" }]}>
+                                {summary?.voting?.score}
+                            </AppMediumText>
                         </View>
                     </View>
 
                     <View style={styles.totalRow}>
                         <AppMediumText style={[styles.totalRowText]}>Total</AppMediumText>
-                        <AppMediumText style={[styles.totalRowText]}>85%</AppMediumText>
+                        <AppMediumText style={[styles.totalRowText]}>
+                            {summary?.plagiarism?.score +
+                                summary?.grammar?.score +
+                                summary?.expert?.score +
+                                summary?.voting?.score}
+                            %
+                        </AppMediumText>
                     </View>
+                </View>
+
+                <View>
+                    <View style={styles.sectionHead}>
+                        <AppText style={styles.sectionText}>Leaders Board</AppText>
+                    </View>
+
+                    {results.map((record) => {
+                        return (
+                            <View style={styles.leaderRow}>
+                                <View style={styles.leaderImageWrapper}>
+                                    <Image
+                                        style={styles.leaderImage}
+                                        source={
+                                            record.profilePicture
+                                                ? { uri: record.profilePicture }
+                                                : require("../../assets/images/avatar.jpg")
+                                        }
+                                    />
+                                </View>
+
+                                <AppText style={styles.leaderName}>
+                                    {record.firstName} {record.lastName}
+                                </AppText>
+                                <AppText>{record.score}%</AppText>
+                            </View>
+                        );
+                    })}
                 </View>
             </ScrollView>
         );
@@ -155,12 +212,13 @@ const styles = StyleSheet.create({
         marginBottom: RFPercentage(1),
     },
     sectionHead: {
-        borderWidth: 1,
-        borderColor: "transparent",
+        padding: RFPercentage(1),
         marginTop: RFPercentage(3),
-        borderBottomColor: "#EAEAEA",
+        paddingHorizontal: RFPercentage(2),
+        backgroundColor: theme.colors.primary,
     },
     sectionText: {
+        color: "#fff",
         fontSize: RFPercentage(2),
     },
     box: {
@@ -188,11 +246,33 @@ const styles = StyleSheet.create({
         marginTop: RFPercentage(3),
         justifyContent: "space-between",
         paddingVertical: RFPercentage(1),
-        backgroundColor: theme.colors.primary,
+        backgroundColor: "gray",
         paddingHorizontal: RFPercentage(2),
     },
     totalRowText: {
         color: "#fff",
         fontSize: RFPercentage(3),
+    },
+    leaderRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        borderBottomWidth: 1,
+        borderBottomColor: "#7787",
+        paddingVertical: RFPercentage(1),
+    },
+    leaderImageWrapper: {
+        overflow: "hidden",
+        width: RFPercentage(6),
+        height: RFPercentage(6),
+        borderRadius: RFPercentage(4),
+    },
+    leaderImage: {
+        flex: 1,
+        width: undefined,
+        height: undefined,
+    },
+    leaderName: {
+        flex: 1,
+        marginLeft: RFPercentage(2),
     },
 });
