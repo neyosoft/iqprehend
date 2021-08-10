@@ -1,34 +1,36 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { AppMediumText, AppText } from "../../components";
-
 import theme from "../../theme";
+import { AppMediumText, AppText } from "../../components";
 
 export const Settings = ({ navigation }) => {
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.openDrawer}>
-                    <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Settings</AppText>
-            </View>
-            <View style={styles.content}>
-                <RectButton style={styles.option} onPress={() => navigation.navigate("PersonalSettings")}>
-                    <AppMediumText>Personal Information</AppMediumText>
-                    <Icon name="chevron-right" size={RFPercentage(3)} />
-                </RectButton>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.openDrawer}>
+                        <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+                    <AppText style={styles.headerTitle}>Settings</AppText>
+                </View>
+                <View style={styles.content}>
+                    <RectButton style={styles.option} onPress={() => navigation.navigate("PersonalSettings")}>
+                        <AppMediumText>Personal Information</AppMediumText>
+                        <Icon name="chevron-right" size={RFPercentage(3)} />
+                    </RectButton>
 
-                <RectButton style={styles.option} onPress={() => navigation.navigate("ChangePassword")}>
-                    <AppMediumText>Change Password</AppMediumText>
-                    <Icon name="chevron-right" size={RFPercentage(3)} />
-                </RectButton>
+                    <RectButton style={styles.option} onPress={() => navigation.navigate("ChangePassword")}>
+                        <AppMediumText>Change Password</AppMediumText>
+                        <Icon name="chevron-right" size={RFPercentage(3)} />
+                    </RectButton>
+                </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

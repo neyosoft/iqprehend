@@ -1,9 +1,9 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { RFPercentage } from "react-native-responsive-fontsize";
 import { AppMediumText, AppText } from "../components";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { RectButton } from "react-native-gesture-handler";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import theme from "../theme";
 import { VideoArticleIcon } from "../icons";
@@ -12,7 +12,7 @@ export const ArticleCard = ({ style, article, onPress }) => (
     <RectButton style={[styles.card, style]} onPress={onPress}>
         <View style={styles.leftSide}>
             <AppMediumText style={styles.title}>{article.title}</AppMediumText>
-            <AppText style={styles.postedDate}>{article.excerpt}</AppText>
+            <AppText style={styles.postedDate}>{article.excerpt.split(" ", 15).join(" ")}...</AppText>
             <View style={styles.viewRow}>
                 <AppMediumText style={styles.readText}>Read Article</AppMediumText>
                 <Icon name="menu-right" size={RFPercentage(3)} />

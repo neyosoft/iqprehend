@@ -2,6 +2,7 @@ import { useQuery } from "react-query";
 import React, { useState } from "react";
 import { useToast } from "react-native-fast-toast";
 import { useFocusEffect } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
@@ -150,16 +151,18 @@ export const Summary = ({ navigation, route }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Summary</AppText>
-            </View>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.goBack}>
+                        <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+                    <AppText style={styles.headerTitle}>Summary</AppText>
+                </View>
 
-            {renderContent()}
-        </View>
+                {renderContent()}
+            </View>
+        </SafeAreaView>
     );
 };
 

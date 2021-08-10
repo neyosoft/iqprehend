@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import HTML from "react-native-render-html";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { useFocusEffect } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image, useWindowDimensions } from "react-native";
@@ -91,10 +92,8 @@ export const SingleArticleView = ({ navigation, route }) => {
         const article = articlesResponse.data;
         const summaries = summaryResponse.data;
 
-        console.log({ summaries });
-
         return (
-            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+            <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>
                 <AppMediumText style={styles.title}>{article.title}</AppMediumText>
 
                 <View style={styles.dateBox}>
@@ -141,24 +140,35 @@ export const SingleArticleView = ({ navigation, route }) => {
                 )}
 
                 <View style={styles.summaryUserBox}>
-                    <AppMediumText style={styles.summaryTitle}>Summaries</AppMediumText>
-                    <FlatList data={summaries} keyExtractor={(item) => item._id} renderItem={renderUserSummaries} />
+                    <View style={styles.summaryBox}>
+                        <AppMediumText style={styles.summaryTitle}>Article summaries</AppMediumText>
+                    </View>
+
+                    <FlatList
+                        data={summaries}
+                        renderItem={renderUserSummaries}
+                        keyExtractor={(item) => item._id}
+                        showsVerticalScrollIndicator={false}
+                        ListEmptyComponent={() => <AppText style={styles.noSummaries}>No summaries submitted.</AppText>}
+                    />
                 </View>
             </ScrollView>
         );
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-                <AppText style={styles.headerTitle}>Article summaries</AppText>
-            </View>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={navigation.goBack}>
+                        <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
+                    </TouchableOpacity>
+                    <AppText style={styles.headerTitle}>Article summaries</AppText>
+                </View>
 
-            {renderContent()}
-        </View>
+                {renderContent()}
+            </View>
+        </SafeAreaView>
     );
 };
 
@@ -245,11 +255,21 @@ const styles = StyleSheet.create({
         marginLeft: 4,
         fontSize: RFPercentage(1.8),
     },
+    summaryBox: {
+        padding: RFPercentage(2),
+        paddingVertical: RFPercentage(1),
+        backgroundColor: theme.colors.primary,
+    },
+    summaryTitle: {
+        color: "#fff",
+        fontSize: RFPercentage(2.1),
+    },
     summaryUserBox: {
         marginTop: RFPercentage(3),
     },
-    summaryTitle: {
-        fontSize: RFPercentage(2.3),
+    noSummaries: {
+        marginTop: 2,
+        fontSize: RFPercentage(2),
     },
     summaryUserCard: {
         elevation: 3,
