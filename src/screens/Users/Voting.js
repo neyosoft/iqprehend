@@ -87,7 +87,10 @@ export const Voting = ({ navigation, route }) => {
         console.log("info: ", JSON.stringify(info, null, 4));
 
         return (
-            <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
+            <ScrollView
+                style={styles.content}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainerStyle}>
                 <View>
                     <AppMediumText style={styles.authorTitle}>Summary Author</AppMediumText>
                     <View style={styles.authorbox}>

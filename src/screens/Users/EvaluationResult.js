@@ -134,9 +134,9 @@ export const EvaluationResult = ({ navigation, route }) => {
                         <AppText style={styles.sectionText}>Leaders Board</AppText>
                     </View>
 
-                    {results.map((record) => {
+                    {results.map((record, index) => {
                         return (
-                            <View style={styles.leaderRow}>
+                            <View style={styles.leaderRow} key={`index-${index}`}>
                                 <View style={styles.leaderImageWrapper}>
                                     <Image
                                         style={styles.leaderImage}
