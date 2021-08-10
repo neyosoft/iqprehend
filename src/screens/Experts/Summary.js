@@ -119,6 +119,8 @@ export const Summary = ({ navigation, route }) => {
         const summary = summaryResponse.data;
         const settings = settingsResponse.data;
 
+        console.log("summary: ", summary);
+
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>
                 <AppMediumText style={styles.title}>Summary details</AppMediumText>
