@@ -45,7 +45,7 @@ export const MyArticles = ({ navigation }) => {
 
     const renderEmptyArticle = () => (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", height: RFPercentage(50) }}>
-            <AppText>No article found.</AppText>
+            <AppText>No record found.</AppText>
         </View>
     );
 

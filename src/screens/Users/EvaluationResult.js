@@ -26,7 +26,6 @@ export const EvaluationResult = ({ navigation, route }) => {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             throw new Error();
         }
     });
@@ -40,10 +39,11 @@ export const EvaluationResult = ({ navigation, route }) => {
             if (data && data.data) {
                 return data.data.leaderboard;
             } else {
-                throw new Error();
+                return null;
             }
         } catch (error) {
-            throw new Error();
+            debugAxiosError(error);
+            return null;
         }
     });
 
@@ -70,7 +70,7 @@ export const EvaluationResult = ({ navigation, route }) => {
             );
         }
 
-        const results = resultResponse.data;
+        const leadersboard = resultResponse.data;
         const summary = summaryResponse.data;
 
         return (
@@ -89,7 +89,7 @@ export const EvaluationResult = ({ navigation, route }) => {
                                 <PlagiarismIcon />
                             </View>
                             <AppMediumText style={[styles.sectionPercentage, { color: "#CF2A2A" }]}>
-                                {summary?.plagiarism?.score}
+                                {Number(summary?.plagiarism?.score || 0)}
                             </AppMediumText>
                         </View>
                         <View style={[styles.eachBox, { backgroundColor: "#E6F8E8" }]}>
@@ -98,7 +98,7 @@ export const EvaluationResult = ({ navigation, route }) => {
                                 <GrammarIcon />
                             </View>
                             <AppMediumText style={[styles.sectionPercentage, { color: "#07BA" }]}>
-                                {summary?.grammar?.score}
+                                {Number(summary?.grammar?.score || 0)}
                             </AppMediumText>
                         </View>
                     </View>
@@ -110,7 +110,7 @@ export const EvaluationResult = ({ navigation, route }) => {
                                 <ExpertIcon />
                             </View>
                             <AppMediumText style={[styles.sectionPercentage, { color: "#3050B9" }]}>
-                                {summary?.expert?.score}
+                                {Number(summary?.expert?.score || 0)}
                             </AppMediumText>
                         </View>
                         <View style={[styles.eachBox, { backgroundColor: "#FFF7EA" }]}>
@@ -119,7 +119,7 @@ export const EvaluationResult = ({ navigation, route }) => {
                                 <VoteIcon />
                             </View>
                             <AppMediumText style={[styles.sectionPercentage, { color: "#FFAC30" }]}>
-                                {summary?.voting?.score}
+                                {Number(summary?.voting?.score || 0)}
                             </AppMediumText>
                         </View>
                     </View>
@@ -127,42 +127,44 @@ export const EvaluationResult = ({ navigation, route }) => {
                     <View style={styles.totalRow}>
                         <AppMediumText style={[styles.totalRowText]}>Total</AppMediumText>
                         <AppMediumText style={[styles.totalRowText]}>
-                            {summary?.plagiarism?.score +
-                                summary?.grammar?.score +
-                                summary?.expert?.score +
-                                summary?.voting?.score}
+                            {Number(summary?.plagiarism?.score || 0) +
+                                Number(summary?.grammar?.score || 0) +
+                                Number(summary?.expert?.score || 0) +
+                                Number(summary?.voting?.score || 0)}
                             %
                         </AppMediumText>
                     </View>
                 </View>
 
-                <View>
-                    <View style={styles.sectionHead}>
-                        <AppText style={styles.sectionText}>Leaders Board</AppText>
-                    </View>
+                {leadersboard ? (
+                    <View>
+                        <View style={styles.sectionHead}>
+                            <AppText style={styles.sectionText}>Leaders Board</AppText>
+                        </View>
 
-                    {results.map((record, index) => {
-                        return (
-                            <View style={styles.leaderRow} key={`index-${index}`}>
-                                <View style={styles.leaderImageWrapper}>
-                                    <Image
-                                        style={styles.leaderImage}
-                                        source={
-                                            record.profilePicture
-                                                ? { uri: record.profilePicture }
-                                                : require("../../assets/images/avatar.jpg")
-                                        }
-                                    />
+                        {leadersboard?.map((record, index) => {
+                            return (
+                                <View style={styles.leaderRow} key={`index-${index}`}>
+                                    <View style={styles.leaderImageWrapper}>
+                                        <Image
+                                            style={styles.leaderImage}
+                                            source={
+                                                record.profilePicture
+                                                    ? { uri: record.profilePicture }
+                                                    : require("../../assets/images/avatar.jpg")
+                                            }
+                                        />
+                                    </View>
+
+                                    <AppText style={styles.leaderName}>
+                                        {record.firstName} {record.lastName}
+                                    </AppText>
+                                    <AppText>{Number(record.score)}%</AppText>
                                 </View>
-
-                                <AppText style={styles.leaderName}>
-                                    {record.firstName} {record.lastName}
-                                </AppText>
-                                <AppText>{record.score}%</AppText>
-                            </View>
-                        );
-                    })}
-                </View>
+                            );
+                        })}
+                    </View>
+                ) : null}
             </ScrollView>
         );
     };
@@ -219,10 +221,10 @@ const styles = StyleSheet.create({
         marginBottom: RFPercentage(1),
     },
     sectionHead: {
+        backgroundColor: "gray",
         padding: RFPercentage(1),
         marginTop: RFPercentage(3),
         paddingHorizontal: RFPercentage(2),
-        backgroundColor: theme.colors.primary,
     },
     sectionText: {
         color: "#fff",
@@ -253,8 +255,8 @@ const styles = StyleSheet.create({
         marginTop: RFPercentage(3),
         justifyContent: "space-between",
         paddingVertical: RFPercentage(1),
-        backgroundColor: "gray",
         paddingHorizontal: RFPercentage(2),
+        backgroundColor: theme.colors.primary,
     },
     totalRowText: {
         color: "#fff",

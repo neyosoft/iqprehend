@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useQuery } from "react-query";
-import { format, isFuture } from "date-fns";
+import { endOfDay, format, isFuture } from "date-fns";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -29,9 +29,9 @@ import {
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
-import { AppMediumText, AppText, Button, PageLoading } from "../../components";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { useFocusEffect } from "@react-navigation/native";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 const wordCount = (text) => {
     if (!text) return 0;
@@ -130,6 +130,7 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         try {
             setIsSubmitting(true);
+
             const { data } = articlesSummaryResponse.data
                 ? await authenticatedRequest().put("/summary", {
                       id: articlesSummaryResponse.data._id,
@@ -139,8 +140,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                       article: articleID,
                       content: summaryText,
                   });
-
-            console.log("data: ", data);
 
             if (data && data.data) {
                 toast.show(data.data.message, { type: "success" });
@@ -295,11 +294,93 @@ export const SingleArticleView = ({ navigation, route }) => {
         setDuration(audioRef.current.mmssss(0));
     };
 
-    const renderSummaryForm = () => {
+    const renderUserSummaryResponse = (summary) => {
+        if (!summary?.isEvaluated) {
+            return (
+                <View>
+                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
+                    <AppText style={styles.statusDescription}>Evaluation in progress...</AppText>
+                </View>
+            );
+        }
+
+        if (summary?.isFreeSummary) {
+            return (
+                <View>
+                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
+                    <AppText style={styles.statusDescription}>
+                        Your summary can not be evaluated because you do not have active subscription when summary was
+                        submitted..
+                    </AppText>
+                </View>
+            );
+        }
+
+        if (summary?.isFailed) {
+            return (
+                <View>
+                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
+                    <AppText style={styles.statusDescription}>
+                        You failed the preliminary stage of the summary review. Thank you!
+                    </AppText>
+                    <Button
+                        label="View Result"
+                        style={styles.viewResultBtn}
+                        onPress={() =>
+                            navigation.navigate("EvaluationResult", {
+                                summaryId: summary._id,
+                                articleID: summary.article._id,
+                            })
+                        }
+                    />
+                </View>
+            );
+        }
+
+        if (summary?.isExpertReviewed && summary?.linkId) {
+            return (
+                <View>
+                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
+                    <TouchableOpacity
+                        style={styles.linkWrapper}
+                        onPress={() => navigation.navigate("Voting", { linkId: summary.linkId })}>
+                        <AppText style={styles.link}>http://www.iqprehend.com/{summary.linkId}</AppText>
+                    </TouchableOpacity>
+                    <Button
+                        label="View Result"
+                        style={styles.viewResultBtn}
+                        onPress={() =>
+                            navigation.navigate("EvaluationResult", {
+                                summaryId: summary._id,
+                                articleID: summary.article._id,
+                            })
+                        }
+                    />
+                </View>
+            );
+        }
+
+        if (summary?.voting) {
+            return (
+                <Button
+                    label="View Result"
+                    style={styles.viewResultBtn}
+                    onPress={() =>
+                        navigation.navigate("EvaluationResult", {
+                            summaryId: summary._id,
+                            articleID: summary.article._id,
+                        })
+                    }
+                />
+            );
+        }
+    };
+
+    const renderTextSummaryForm = () => {
         const settingsConfig = settingsResponse.data;
         const summaryMaxWordCount = settingsConfig?.summary?.count || 200;
 
-        if (isFuture(new Date(articlesResponse.data.deadline))) {
+        if (isFuture(endOfDay(new Date(articlesResponse.data.deadline)))) {
             return (
                 <View>
                     <AppText style={styles.wordCountText}>
@@ -331,48 +412,33 @@ export const SingleArticleView = ({ navigation, route }) => {
         } else {
             const summary = articlesSummaryResponse.data;
 
+            if (!summary) {
+                return (
+                    <View style={styles.summaryArea}>
+                        <AppMediumText style={styles.statusTitle}>Summary</AppMediumText>
+                        <AppText style={styles.summaryText}>
+                            You can no longer submit summary. Article deadline already exceeded.
+                        </AppText>
+                    </View>
+                );
+            }
+
             return (
                 <View>
                     <View style={styles.summaryArea}>
-                        <AppMediumText style={styles.wordCountText}>Your Summary</AppMediumText>
+                        <AppMediumText style={styles.statusTitle}>Summary</AppMediumText>
                         <AppText style={styles.summaryText}>{summaryText}</AppText>
                     </View>
 
-                    {summary?.isEvaluated && summary?.isFreeSummary === false && summary?.isFailed === false && (
-                        <>
-                            {summary?.isExpertReviewed && summary?.linkId ? (
-                                <View>
-                                    <AppText>Sharable Link</AppText>
-                                    <TouchableOpacity
-                                        style={styles.linkWrapper}
-                                        onPress={() => navigation.navigate("Voting", { linkId: summary.linkId })}>
-                                        <AppText style={styles.link}>http://www.iqprehend.com/{summary.linkId}</AppText>
-                                    </TouchableOpacity>
-                                </View>
-                            ) : null}
-
-                            {summary?.voting ? (
-                                <Button
-                                    label="View Result"
-                                    style={styles.viewResultBtn}
-                                    onPress={() =>
-                                        navigation.navigate("EvaluationResult", {
-                                            summaryId: summary._id,
-                                            articleID: summary.article._id,
-                                        })
-                                    }
-                                />
-                            ) : null}
-                        </>
-                    )}
+                    {renderUserSummaryResponse(summary)}
                 </View>
             );
         }
     };
 
-    const renderAudioForm = () => (
+    const renderAudioSummaryForm = () => (
         <View>
-            {isFuture(new Date(articlesResponse.data.deadline)) ? (
+            {isFuture(endOfDay(new Date(articlesResponse.data.deadline))) ? (
                 <View style={styles.audiobox}>
                     <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
 
@@ -522,7 +588,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                             </TouchableOpacity>
                         </View>
 
-                        {responseType === "textual" ? renderSummaryForm() : renderAudioForm()}
+                        {responseType === "textual" ? renderTextSummaryForm() : renderAudioSummaryForm()}
                     </>
                 ) : (
                     <>
@@ -545,7 +611,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                             />
                         </View>
 
-                        {renderSummaryForm()}
+                        {renderTextSummaryForm()}
                     </>
                 )}
             </ScrollView>
@@ -628,12 +694,12 @@ const styles = StyleSheet.create({
         paddingVertical: RFPercentage(1.7),
     },
     summaryArea: {
-        borderColor: "gray",
+        backgroundColor: "#ccc",
         marginTop: RFPercentage(3),
-        paddingBottom: RFPercentage(2),
+        padding: RFPercentage(2),
         marginBottom: RFPercentage(2),
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginHorizontal: -RFPercentage(3),
+        paddingHorizontal: RFPercentage(3),
     },
     wordCountText: {
         marginBottom: 5,
@@ -650,8 +716,8 @@ const styles = StyleSheet.create({
         fontFamily: "Baloo2-Regular",
     },
     summaryText: {
+        fontSize: RFPercentage(2),
         marginTop: RFPercentage(2),
-        fontSize: RFPercentage(1.8),
         lineHeight: RFPercentage(2.7),
     },
     note: {
@@ -685,6 +751,13 @@ const styles = StyleSheet.create({
         flex: 1,
         width: undefined,
         height: undefined,
+    },
+    statusTitle: {
+        fontSize: RFPercentage(2.3),
+    },
+    statusDescription: {
+        color: "#333",
+        fontSize: RFPercentage(2),
     },
     link: {
         color: "blue",

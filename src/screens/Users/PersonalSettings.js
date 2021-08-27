@@ -118,7 +118,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     label="Last Name"
                                     style={styles.input}
                                     placeholder="Last Name"
-                                    value={values.firstName}
+                                    value={values.lastName}
                                     onBlur={handleBlur("lastName")}
                                     onChangeText={handleChange("lastName")}
                                 />
@@ -155,10 +155,10 @@ export const PersonalSettings = ({ navigation }) => {
 };
 
 const personalInformationSchema = object().shape({
+    profileImage: mixed(),
     lastName: string().required("Last name is required."),
     firstName: string().required("First name is required."),
     phoneNumber: string().required("Phone number is required."),
-    profileImage: mixed(),
 });
 
 const styles = StyleSheet.create({

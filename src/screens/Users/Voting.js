@@ -12,7 +12,7 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { VotingSuccessfulModal } from "../../modals";
 import { AppMediumText, AppText, Button, PageLoading } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const Voting = ({ navigation, route }) => {
     const toast = useToast();
@@ -57,7 +57,6 @@ export const Voting = ({ navigation, route }) => {
                 throw new Error("There is a problem casting vote.");
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setIsSubmitting(false);

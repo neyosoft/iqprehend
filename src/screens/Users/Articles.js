@@ -197,13 +197,13 @@ const styles = StyleSheet.create({
     dropdownInput: {
         fontSize: 15,
         color: "gray",
-        borderWidth: 1,
         marginRight: 8,
         borderRadius: 8,
         paddingRight: 30,
         paddingLeft: 10,
         width: RFPercentage(14),
         height: RFPercentage(5),
+        borderWidth: StyleSheet.hairlineWidth,
     },
     flatlist: {
         marginTop: RFPercentage(1),

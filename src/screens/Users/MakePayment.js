@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import RNPaystack from "react-native-paystack";
 import { useToast } from "react-native-fast-toast";
@@ -18,6 +18,7 @@ import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const MakePayment = ({ navigation, route }) => {
     const toast = useToast();
+    const queryClient = useQueryClient();
     const { authenticatedRequest } = useAuth();
 
     const { plan } = route.params;
@@ -37,6 +38,8 @@ export const MakePayment = ({ navigation, route }) => {
             });
 
             if (paymentResponse && paymentResponse.reference) {
+                queryClient.invalidateQueries("payment");
+
                 toast.show("Payment successfully completed.");
 
                 navigation.navigate("Payment");
