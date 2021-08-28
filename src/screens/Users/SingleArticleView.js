@@ -321,7 +321,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                 <View>
                     <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
                     <AppText style={styles.statusDescription}>
-                        You failed the preliminary stage of the summary review. Thank you!
+                        Thank you for your participation. You failed the preliminary stage of the summary review.
                     </AppText>
                     <Button
                         label="View Result"

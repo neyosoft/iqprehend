@@ -17,6 +17,7 @@ import {
     BankSettings,
     SearchArticle,
     ChangePassword,
+    PaymentHistory,
     EvaluationResult,
     PersonalSettings,
     SingleArticleView,
@@ -84,6 +85,7 @@ export default function UserNavigation() {
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="BankSettings" component={BankSettings} />
             <Stack.Screen name="SearchArticle" component={SearchArticle} />
+            <Stack.Screen name="PaymentHistory" component={PaymentHistory} />
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
             <Stack.Screen name="PersonalSettings" component={PersonalSettings} />

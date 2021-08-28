@@ -93,6 +93,12 @@ export const Payment = ({ navigation }) => {
                         <AppText style={styles.item}>{format(new Date(plan.endDate), "MMM dd, yyyy")}</AppText>
                     </View>
                 </View>
+
+                <Button
+                    style={styles.button}
+                    label="View payment history"
+                    onPress={() => navigation.navigate("PaymentHistory")}
+                />
             </ScrollView>
         );
     };
