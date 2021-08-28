@@ -11,8 +11,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { PaymentSuccessfulModal } from "../../modals/PaymentSuccessfulModal";
-import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
 import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
+import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 export const Payment = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();

@@ -361,11 +361,15 @@ export const SingleArticleView = ({ navigation, route }) => {
         if (summary?.isExpertReviewed && summary?.linkId) {
             return (
                 <View>
-                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
+                    <AppMediumText style={styles.statusTitle}>Voting Link</AppMediumText>
+                    <AppText style={styles.summaryDescription}>
+                        You can share the link below with your friends and family. Their votes can boost our summary
+                        score.
+                    </AppText>
                     <TouchableOpacity
                         style={styles.linkWrapper}
                         onPress={() => navigation.navigate("Voting", { linkId: summary.linkId })}>
-                        <AppText style={styles.link}>http://www.iqprehend.com/{summary.linkId}</AppText>
+                        <AppText style={styles.link}>http://www.iqprehend.com/voting/{summary.linkId}</AppText>
                     </TouchableOpacity>
                     <Button
                         label="View Result"
@@ -780,10 +784,14 @@ const styles = StyleSheet.create({
         color: "#333",
         fontSize: RFPercentage(2),
     },
+    summaryDescription: {
+        color: "#333",
+        fontSize: RFPercentage(1.8),
+    },
     link: {
         color: "blue",
         lineHeight: 25,
-        fontSize: RFPercentage(1.8),
+        fontSize: RFPercentage(2.2),
         textDecorationLine: "underline",
     },
     viewResultBtn: {
