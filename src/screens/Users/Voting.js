@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
@@ -45,6 +45,13 @@ export const Voting = ({ navigation, route }) => {
         }, []),
     );
 
+    useEffect(() => {
+        if (!(user && user?.role === "USER")) {
+            toast.show("You are not permitted to vote.");
+            return navigation.goBack();
+        }
+    }, []);
+
     const submitVoting = async () => {
         try {
             setIsSubmitting(true);
@@ -82,8 +89,6 @@ export const Voting = ({ navigation, route }) => {
         }
 
         const info = votingResponse.data;
-
-        console.log("info: ", JSON.stringify(info, null, 4));
 
         return (
             <ScrollView
