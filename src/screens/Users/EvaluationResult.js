@@ -7,7 +7,6 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-nat
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { debugAxiosError } from "../../utils/request.utils";
 import { AppMediumText, AppText, PageLoading, Button } from "../../components";
 import { PlagiarismIcon, GrammarIcon, ExpertIcon, VoteIcon } from "../../icons";
 
@@ -42,7 +41,6 @@ export const EvaluationResult = ({ navigation, route }) => {
                 return null;
             }
         } catch (error) {
-            debugAxiosError(error);
             return null;
         }
     });

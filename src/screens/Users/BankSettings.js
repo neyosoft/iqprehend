@@ -55,6 +55,8 @@ export const BankSettings = ({ navigation }) => {
         }
     };
 
+    console.log("bankInformation: ", bankInformation);
+
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
@@ -69,7 +71,7 @@ export const BankSettings = ({ navigation }) => {
                     validationSchema={accountSchema}
                     initialValues={{
                         BVN: bankInformation.BVN,
-                        bank: bankInformation.bank,
+                        bank: bankInformation?.bank?._id,
                         accountType: bankInformation.accountType,
                         accountName: bankInformation.accountName,
                         accountNumber: bankInformation.accountNumber,
