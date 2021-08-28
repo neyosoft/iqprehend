@@ -337,6 +337,27 @@ export const SingleArticleView = ({ navigation, route }) => {
             );
         }
 
+        if (!summary?.isExpertReviewed) {
+            return (
+                <View>
+                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
+                    <AppText style={styles.statusDescription}>
+                        Thank you for your participation. Your summary is currently under review.
+                    </AppText>
+                    <Button
+                        label="View Result"
+                        style={styles.viewResultBtn}
+                        onPress={() =>
+                            navigation.navigate("EvaluationResult", {
+                                summaryId: summary._id,
+                                articleID: summary.article._id,
+                            })
+                        }
+                    />
+                </View>
+            );
+        }
+
         if (summary?.isExpertReviewed && summary?.linkId) {
             return (
                 <View>
