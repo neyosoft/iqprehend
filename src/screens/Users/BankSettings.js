@@ -55,8 +55,6 @@ export const BankSettings = ({ navigation }) => {
         }
     };
 
-    console.log("bankInformation: ", bankInformation);
-
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>

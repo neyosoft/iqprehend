@@ -41,13 +41,11 @@ export const SearchArticle = ({ navigation }) => {
     );
 
     useEffect(() => {
-        console.log("search text: ", search);
         if (timer?.current) {
             clearTimeout(timer?.current);
         }
 
         timer.current = setTimeout(() => {
-            console.log("setting search text: ", searchText);
             setSearch(searchText);
 
             return () => clearTimeout(timer?.current);

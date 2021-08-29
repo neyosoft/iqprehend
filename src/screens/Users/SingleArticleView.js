@@ -222,7 +222,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                 ]);
 
-                console.log("write external stroage", grants);
 
                 if (
                     grants["android.permission.WRITE_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
