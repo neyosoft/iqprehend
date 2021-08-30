@@ -1,4 +1,5 @@
 import React from "react";
+import format from "date-fns/format";
 import { useQuery } from "react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -7,8 +8,8 @@ import { View, StyleSheet, TouchableOpacity, StatusBar, ScrollView } from "react
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { AppText, Button, PageLoading } from "../../components";
-import format from "date-fns/format";
+import { moneyFormat } from "../../utils/money.utils";
+import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 export const PaymentHistory = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
@@ -48,16 +49,27 @@ export const PaymentHistory = ({ navigation }) => {
         const history = historyResponse.data;
 
         return (
-            <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
+            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
                 {history.map((record) => (
-                    <View style={[styles.card, { marginTop: RFPercentage(4) }]}>
+                    <View key={record._id} style={[styles.card, { marginTop: RFPercentage(2) }]}>
                         <View style={styles.cardHeader}>
                             <AppText style={styles.cardHeaderText}>
                                 {format(new Date(record.updatedAt), "MMM do, yyyy")}
                             </AppText>
                         </View>
                         <View style={styles.cardContent}>
-                            <AppText>Plan</AppText>
+                            <View style={styles.cardContentRow}>
+                                <AppText>Plan</AppText>
+                                <AppMediumText>{record?.plan?.name}</AppMediumText>
+                            </View>
+                            <View style={styles.cardContentRow}>
+                                <AppText>Duration</AppText>
+                                <AppMediumText>{record?.plan?.duration}</AppMediumText>
+                            </View>
+                            <View style={styles.cardContentRow}>
+                                <AppText>Amount</AppText>
+                                <AppMediumText>{moneyFormat(record.amount)}</AppMediumText>
+                            </View>
                         </View>
                     </View>
                 ))}
@@ -100,9 +112,6 @@ const styles = StyleSheet.create({
         fontSize: RFPercentage(2.4),
         marginHorizontal: RFPercentage(2),
     },
-    scrollview: {
-        marginTop: RFPercentage(2),
-    },
     contentContainerStyle: {
         padding: RFPercentage(3),
     },
@@ -110,7 +119,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         overflow: "hidden",
         backgroundColor: "#fff",
-        paddingBottom: RFPercentage(3),
+        paddingBottom: RFPercentage(2),
     },
     cardHeader: {
         alignItems: "center",
@@ -121,9 +130,14 @@ const styles = StyleSheet.create({
         color: "#fff",
     },
     cardContent: {
-        width: "70%",
-        marginTop: 10,
-        alignSelf: "center",
+        paddingTop: RFPercentage(2),
+        paddingHorizontal: RFPercentage(2),
+    },
+    cardContentRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: RFPercentage(1),
+        justifyContent: "space-between",
     },
     checkbox: {
         paddingVertical: 4,

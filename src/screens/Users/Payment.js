@@ -5,8 +5,8 @@ import { isPast } from "date-fns";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { View, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { View, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
