@@ -61,6 +61,21 @@ export const Payment = ({ navigation }) => {
                     <AppText style={styles.description}>You do not have an active subscription.</AppText>
 
                     <Button
+                        label="Try again."
+                        style={[
+                            styles.button,
+                            {
+                                borderWidth: 1,
+                                backgroundColor: "#fff",
+                                marginTop: RFPercentage(5),
+                                borderColor: theme.colors.primary,
+                                borderRadius: theme.radius.small,
+                            },
+                        ]}
+                        labelStyle={{ color: theme.colors.primary }}
+                        onPress={paymentResponse.refetch}
+                    />
+                    <Button
                         label="Subscribe"
                         style={styles.button}
                         onPress={() => navigation.navigate("PaymentPlans")}
@@ -168,6 +183,6 @@ const styles = StyleSheet.create({
         width: "50%",
     },
     button: {
-        marginTop: RFPercentage(10),
+        marginTop: RFPercentage(2),
     },
 });

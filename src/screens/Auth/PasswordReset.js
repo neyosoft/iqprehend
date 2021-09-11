@@ -10,12 +10,28 @@ import { baseRequest, extractResponseErrorMessage } from "../../utils/request.ut
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
-export const PasswordReset = ({ navigation }) => {
+export const PasswordReset = ({ navigation, route }) => {
+    const { code } = route.params;
+
     const toast = useToast();
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, { setFieldError }) => {
         try {
-            const { data } = await baseRequest.post("/auth/reset-password", values);
+            const { data: linkVerificationData, headers } = await baseRequest.get("/auth/verify-link", {
+                params: { resetLink: values.code },
+            });
+
+            console.log({ linkVerificationData });
+
+            if (!(linkVerificationData && linkVerificationData.data)) {
+                throw new Error();
+            }
+
+            const { data } = await baseRequest.put(
+                "/auth/reset-password",
+                { password: values.password },
+                { headers: { "X-Submission-Token": headers["x-submission-token"] } },
+            );
 
             if (data && data.data) {
                 toast.show(data.data.message);
@@ -42,6 +58,10 @@ export const PasswordReset = ({ navigation }) => {
                             </View>
                             <View style={styles.form}>
                                 {errors.general ? <FormErrorMessage label={errors.general} /> : null}
+
+                                <View>
+                                    <AppText>Verification code: {code}</AppText>
+                                </View>
 
                                 <AppText style={styles.description}>
                                     We recommend using a mix of upper and lower case, special characters and numbers.
@@ -80,7 +100,9 @@ export const PasswordReset = ({ navigation }) => {
 
                             <View style={styles.registerActionBox}>
                                 <AppText>Already signed up?</AppText>
-                                <AppMediumText style={styles.singupLink}>Log In</AppMediumText>
+                                <AppMediumText style={styles.singupLink} onPress={() => navigation.navigate("Login")}>
+                                    Log In
+                                </AppMediumText>
                             </View>
                         </ScrollView>
                     )}

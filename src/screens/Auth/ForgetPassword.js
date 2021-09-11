@@ -19,6 +19,10 @@ export const ForgetPassword = ({ navigation }) => {
 
             if (data && data.data) {
                 toast.show(data.data.message);
+
+                navigation.navigate("PasswordReset", { code: data.data.code });
+            } else {
+                throw new Error();
             }
         } catch (error) {
             setFieldError("general", extractResponseErrorMessage(error));
