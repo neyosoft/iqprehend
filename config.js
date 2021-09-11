@@ -1,6 +1,6 @@
 export default {
     appName: "iQprehend",
-    appVersion: "0.1.3",
+    appVersion: "0.1.5",
     environment: "development",
     DEV_SERVER_URL: "https://server.iqprehend.herlabytes.com/api",
     PROD_SERVER_URL: "https://server.iqprehend.herlabytes.com/api",
