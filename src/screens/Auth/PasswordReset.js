@@ -21,8 +21,6 @@ export const PasswordReset = ({ navigation, route }) => {
                 params: { resetLink: values.code },
             });
 
-            console.log({ linkVerificationData });
-
             if (!(linkVerificationData && linkVerificationData.data)) {
                 throw new Error();
             }

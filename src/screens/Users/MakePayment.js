@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
-import { useQuery, useQueryClient } from "react-query";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import RNPaystack from "react-native-paystack";
 import { useToast } from "react-native-fast-toast";
-import { RFPercentage } from "react-native-responsive-fontsize";
+import { useQuery, useQueryClient } from "react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const MakePayment = ({ navigation, route }) => {
     const toast = useToast();
@@ -45,7 +44,7 @@ export const MakePayment = ({ navigation, route }) => {
                 navigation.navigate("Payment");
             }
         } catch (error) {
-            toast.show(extractResponseErrorMessage(error));
+            toast.show("Payment failed. Kindly try again!");
         }
     };
 
