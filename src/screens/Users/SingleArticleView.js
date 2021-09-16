@@ -17,6 +17,7 @@ import AudioRecorderPlayer, {
 import {
     View,
     Image,
+    Share,
     Platform,
     TextInput,
     StyleSheet,
@@ -222,7 +223,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                 ]);
 
-
                 if (
                     grants["android.permission.WRITE_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
                     grants["android.permission.READ_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
@@ -365,11 +365,13 @@ export const SingleArticleView = ({ navigation, route }) => {
                         You can share the link below with your friends and family. Their votes can boost our summary
                         score.
                     </AppText>
+
                     <TouchableOpacity
                         style={styles.linkWrapper}
-                        onPress={() => navigation.navigate("Voting", { linkId: summary.linkId })}>
+                        onPress={() => handleInvitationShare(`http://www.iqprehend.com/voting/${summary.linkId}`)}>
                         <AppText style={styles.link}>http://www.iqprehend.com/voting/{summary.linkId}</AppText>
                     </TouchableOpacity>
+
                     <Button
                         label="View Result"
                         style={styles.viewResultBtn}
@@ -631,7 +633,11 @@ export const SingleArticleView = ({ navigation, route }) => {
                                 emSize={16}
                                 contentWidth={contentWidth}
                                 source={{ html: article.content }}
-                                baseFontStyle={{ fontSize: RFPercentage(2.1), lineHeight: RFPercentage(3.3) }}
+                                baseFontStyle={{
+                                    fontSize: RFPercentage(2.1),
+                                    fontFamily: "Baloo2-Regular",
+                                    lineHeight: RFPercentage(3.3),
+                                }}
                             />
                         </View>
 
@@ -639,6 +645,17 @@ export const SingleArticleView = ({ navigation, route }) => {
                     </>
                 )}
             </ScrollView>
+        );
+    };
+
+    const handleInvitationShare = (URL) => {
+        Share.share(
+            {
+                uri: URL,
+                message: URL,
+                title: "Share with your friends and family",
+            },
+            { dialogTitle: "Share with your friends and family", subject: "Share with your friends and family" },
         );
     };
 

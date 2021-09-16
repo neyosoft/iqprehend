@@ -118,7 +118,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     label="Last Name"
                                     style={styles.input}
                                     placeholder="Last Name"
-                                    value={values.firstName}
+                                    value={values.lastName}
                                     onBlur={handleBlur("lastName")}
                                     onChangeText={handleChange("lastName")}
                                 />

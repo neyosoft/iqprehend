@@ -10,9 +10,9 @@ import AudioRecorderPlayer from "react-native-audio-recorder-player";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
+import { RecordIcon } from "../../icons";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
-import { RecordIcon } from "../../icons";
 
 export const Summary = ({ navigation, route }) => {
     const toast = useToast();
