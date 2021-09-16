@@ -9,6 +9,7 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { AppMediumText, AppText, PageLoading, Button } from "../../components";
 import { PlagiarismIcon, GrammarIcon, ExpertIcon, VoteIcon } from "../../icons";
+import { moneyFormatWS } from "../../utils/money.utils";
 
 export const EvaluationResult = ({ navigation, route }) => {
     const { articleID } = route.params;
@@ -125,10 +126,13 @@ export const EvaluationResult = ({ navigation, route }) => {
                     <View style={styles.totalRow}>
                         <AppMediumText style={[styles.totalRowText]}>Total</AppMediumText>
                         <AppMediumText style={[styles.totalRowText]}>
-                            {Number(summary?.plagiarism?.score || 0) +
-                                Number(summary?.grammar?.score || 0) +
-                                Number(summary?.expert?.score || 0) +
-                                Number(summary?.voting?.score || 0)}
+                            {moneyFormatWS(
+                                Number(summary?.plagiarism?.score || 0) +
+                                    Number(summary?.grammar?.score || 0) +
+                                    Number(summary?.expert?.score || 0) +
+                                    Number(summary?.voting?.score || 0),
+                                2,
+                            )}
                             %
                         </AppMediumText>
                     </View>
