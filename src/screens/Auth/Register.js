@@ -47,7 +47,7 @@ export const Register = ({ navigation }) => {
                         validateOnChange={false}
                         validationSchema={registrationSchema}
                         initialValues={{ firstName: "", lastName: "", email: "", password: "", phoneNumber: "" }}>
-                        {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                        {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values, touched }) => (
                             <>
                                 <View style={styles.form}>
                                     {errors.general ? <FormErrorMessage label={errors.general} /> : null}
@@ -59,12 +59,12 @@ export const Register = ({ navigation }) => {
                                                 returnKeyType="next"
                                                 placeholder="First Name"
                                                 value={values.firstName}
-                                                error={!!errors.firstName}
                                                 onBlur={handleBlur("firstName")}
                                                 onChangeText={handleChange("firstName")}
-                                                onEndEditing={() => lastNameRef?.current?.focus()}
+                                                error={errors.firstName && touched.firstName}
+                                                // onEndEditing={() => lastNameRef?.current?.focus()}
                                             />
-                                            {errors.firstName && (
+                                            {errors.firstName && touched.firstName && (
                                                 <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
                                             )}
                                         </View>
@@ -72,15 +72,15 @@ export const Register = ({ navigation }) => {
                                         <View style={{ width: "48%" }}>
                                             <TextField
                                                 ref={lastNameRef}
-                                                value={values.lastName}
-                                                error={!!errors.lastName}
-                                                onBlur={handleBlur("lastName")}
                                                 returnKeyType="next"
-                                                onChangeText={handleChange("lastName")}
                                                 placeholder="Last Name"
-                                                onEndEditing={() => emailRef?.current?.focus()}
+                                                value={values.lastName}
+                                                onBlur={handleBlur("lastName")}
+                                                onChangeText={handleChange("lastName")}
+                                                error={errors.lastName && touched.lastName}
+                                                // onEndEditing={() => emailRef?.current?.focus()}
                                             />
-                                            {errors.lastName && (
+                                            {errors.lastName && touched.lastName && (
                                                 <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>
                                             )}
                                         </View>
@@ -90,30 +90,32 @@ export const Register = ({ navigation }) => {
                                         ref={emailRef}
                                         returnKeyType="next"
                                         value={values.email}
-                                        error={!!errors.email}
                                         autoCapitalize="none"
                                         placeholder="Enter Email"
                                         onBlur={handleBlur("email")}
                                         keyboardType="email-address"
                                         onChangeText={handleChange("email")}
+                                        error={touched.email && errors.email}
                                         style={{ marginTop: RFPercentage(2) }}
-                                        onEndEditing={() => phoneNumberRef?.current?.focus()}
+                                        // onEndEditing={() => phoneNumberRef?.current?.focus()}
                                     />
-                                    {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
+                                    {touched.email && errors.email && (
+                                        <AppText style={styles.fieldErrorText}>{errors.email}</AppText>
+                                    )}
 
                                     <TextField
                                         ref={phoneNumberRef}
                                         returnKeyType="next"
                                         keyboardType="numeric"
                                         value={values.phoneNumber}
-                                        error={!!errors.phoneNumber}
                                         placeholder="Enter Phone Number"
                                         onBlur={handleBlur("phoneNumber")}
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("phoneNumber")}
-                                        onEndEditing={() => passwordRef?.current?.focus()}
+                                        error={errors.phoneNumber && touched.phoneNumber}
+                                        // onEndEditing={() => passwordRef?.current?.focus()}
                                     />
-                                    {errors.phoneNumber && (
+                                    {errors.phoneNumber && touched.phoneNumber && (
                                         <AppText style={styles.fieldErrorText}>{errors.phoneNumber}</AppText>
                                     )}
 
@@ -122,13 +124,13 @@ export const Register = ({ navigation }) => {
                                         style={styles.input}
                                         autoCapitalize="none"
                                         value={values.password}
-                                        error={!!errors.password}
                                         placeholder="Enter Password"
                                         onBlur={handleBlur("password")}
                                         onChangeText={handleChange("password")}
+                                        error={errors.password && touched.password}
                                     />
 
-                                    {errors.password && (
+                                    {errors.password && touched.password && (
                                         <AppText style={styles.fieldErrorText}>{errors.password}</AppText>
                                     )}
                                 </View>
@@ -154,8 +156,12 @@ export const Register = ({ navigation }) => {
 };
 
 const registrationSchema = object().shape({
-    firstName: string().required("First name is required"),
-    lastName: string().required("Last name is required"),
+    firstName: string()
+        .required("First name is required")
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
+    lastName: string()
+        .required("Last name is required")
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
     phoneNumber: string().required("Phone number is required"),
     email: string().required("Email is required.").email("Enter valid email address").lowercase(),
     password: string().required("Password is required.").min(6),
