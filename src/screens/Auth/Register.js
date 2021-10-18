@@ -162,7 +162,9 @@ const registrationSchema = object().shape({
     lastName: string()
         .required("Last name is required")
         .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
-    phoneNumber: string().required("Phone number is required"),
+    phoneNumber: string()
+        .required("Phone number is required")
+        .length(11, "Invalid Phone number. Phone number must be 11 Characters"),
     email: string().required("Email is required.").email("Enter valid email address").lowercase(),
     password: string().required("Password is required.").min(6),
 });

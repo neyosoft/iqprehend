@@ -38,33 +38,37 @@ export const Login = ({ navigation }) => {
                     validateOnChange={false}
                     initialValues={{ email: "", password: "" }}
                     validationSchema={loginSchema}>
-                    {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values }) => (
+                    {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values, touched }) => (
                         <>
                             <View style={styles.form}>
                                 {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
                                 <TextField
                                     value={values.email}
-                                    error={!!errors.email}
                                     autoCapitalize="none"
                                     placeholder="Enter Email"
                                     onBlur={handleBlur("email")}
                                     keyboardType="email-address"
                                     onChangeText={handleChange("email")}
+                                    error={errors.email && touched.email}
                                 />
-                                {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
+                                {errors.email && touched.email && (
+                                    <AppText style={styles.fieldErrorText}>{errors.email}</AppText>
+                                )}
 
                                 <PasswordField
                                     style={styles.input}
                                     autoCapitalize="none"
                                     value={values.password}
-                                    error={!!errors.password}
                                     placeholder="Enter Password"
                                     onBlur={handleBlur("password")}
                                     onChangeText={handleChange("password")}
+                                    error={errors.password && touched.password}
                                 />
 
-                                {errors.password && <AppText style={styles.fieldErrorText}>{errors.password}</AppText>}
+                                {errors.password && touched.password && (
+                                    <AppText style={styles.fieldErrorText}>{errors.password}</AppText>
+                                )}
 
                                 <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
                                     <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
