@@ -164,6 +164,7 @@ const registrationSchema = object().shape({
         .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
     phoneNumber: string()
         .required("Phone number is required")
+        .matches(/^[0-9]+$/, "Only digits are allowed for this field ")
         .length(11, "Invalid Phone number. Phone number must be 11 Characters"),
     email: string().required("Email is required.").email("Enter valid email address").lowercase(),
     password: string().required("Password is required.").min(6),
