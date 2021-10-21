@@ -5,7 +5,7 @@ import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
@@ -25,6 +25,7 @@ export const ForgetPassword = ({ navigation }) => {
                 throw new Error();
             }
         } catch (error) {
+            debugAxiosError(error);
             setFieldError("general", extractResponseErrorMessage(error));
         }
     };

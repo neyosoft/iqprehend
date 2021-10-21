@@ -5,7 +5,7 @@ import { useToast } from "react-native-fast-toast";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
@@ -37,7 +37,8 @@ export const PasswordReset = ({ navigation, route }) => {
                 navigation.navigate("PasswordResetSuccessful");
             }
         } catch (error) {
-            setFieldError("general", extractResponseErrorMessage(error));
+            debugAxiosError(error);
+            setFieldError("general", extractResponseErrorMessage(error, "Password reset failed."));
         }
     };
 

@@ -7,7 +7,7 @@ import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError, extractResponseErrorAsObject } from "../../utils/request.utils";
+import { baseRequest, extractResponseErrorAsObject } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
 export const Register = ({ navigation }) => {
@@ -19,7 +19,7 @@ export const Register = ({ navigation }) => {
 
     const { authenticate } = useAuth();
 
-    const onSubmit = async (values, setErrors) => {
+    const onSubmit = async (values, { setErrors }) => {
         try {
             const { data } = await baseRequest.post("/user", values);
 
@@ -29,7 +29,6 @@ export const Register = ({ navigation }) => {
                 authenticate({ accessToken: token, refreshToken, user: entity });
             }
         } catch (error) {
-            debugAxiosError(error);
             setErrors(extractResponseErrorAsObject(error));
         }
     };
@@ -166,7 +165,13 @@ const registrationSchema = object().shape({
         .required("Phone number is required")
         .matches(/^[0-9]+$/, "Only digits are allowed for this field ")
         .length(11, "Invalid Phone number. Phone number must be 11 Characters"),
-    email: string().required("Email is required.").email("Enter valid email address").lowercase(),
+    email: string()
+        .required("Email is required.")
+        .matches(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            "You provided invalid email.",
+        )
+        .lowercase(),
     password: string().required("Password is required.").min(6),
 });
 

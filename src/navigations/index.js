@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
-import { NavigationContainer, getStateFromPath } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
@@ -24,9 +24,7 @@ export default function AppNavigation() {
         prefixes: ["https://iqprehend.com", "iqprehend://"],
         config: {
             initialRouteName: "DrawerNavigation",
-            screens: {
-                Voting: "voting/:linkId",
-            },
+            screens: { Voting: "voting/:linkId" },
         },
     };
 

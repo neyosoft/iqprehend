@@ -25,8 +25,9 @@ export const extractResponseErrorMessage = (
     defaultMessage = "Unable to process the request. Kindly check your internet connectivity.",
 ) => {
     if (error.response) {
-        if (error.response.data && error.response.data.message) {
-            return error.response.data.message;
+        const { response } = error;
+        if (response.data && response.data.data && response.data.data.message) {
+            return response.data.data.message;
         } else {
             return defaultMessage;
         }
@@ -42,10 +43,11 @@ export const extractResponseErrorAsObject = (
     defaultMessage = "Unable to process the request. Kindly check your internet connectivity.",
 ) => {
     if (error.response) {
-        if (error.response.data && error.response.data.errors) {
-            return error.response.data.errors;
-        } else if (error.response.data && error.response.data.message) {
-            return { general: error.response.data.message };
+        const { response } = error;
+        if (response.data && response.data.errors) {
+            return response.data.errors;
+        } else if (response.data && response.data.data && response.data.data.message) {
+            return { general: response.data.data.message };
         } else {
             return { general: defaultMessage };
         }

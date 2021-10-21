@@ -36,8 +36,8 @@ export const Login = ({ navigation }) => {
                 <Formik
                     onSubmit={onSubmit}
                     validateOnChange={false}
-                    initialValues={{ email: "", password: "" }}
-                    validationSchema={loginSchema}>
+                    validationSchema={loginSchema}
+                    initialValues={{ email: "", password: "" }}>
                     {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values, touched }) => (
                         <>
                             <View style={styles.form}>
@@ -52,6 +52,7 @@ export const Login = ({ navigation }) => {
                                     onChangeText={handleChange("email")}
                                     error={errors.email && touched.email}
                                 />
+
                                 {errors.email && touched.email && (
                                     <AppText style={styles.fieldErrorText}>{errors.email}</AppText>
                                 )}

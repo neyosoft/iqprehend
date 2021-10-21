@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
         marginBottom: RFPercentage(2),
     },
     label: {
+        flex: 1,
         color: "#fff",
         marginLeft: RFPercentage(1),
         fontSize: RFPercentage(1.8),
