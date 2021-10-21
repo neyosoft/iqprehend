@@ -72,8 +72,8 @@ export const Payment = ({ navigation }) => {
                                 borderRadius: theme.radius.small,
                             },
                         ]}
-                        labelStyle={{ color: theme.colors.primary }}
                         onPress={paymentResponse.refetch}
+                        labelStyle={{ color: theme.colors.primary }}
                     />
                     <Button
                         label="Subscribe"

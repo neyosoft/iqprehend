@@ -44,7 +44,7 @@ export const MakePayment = ({ navigation, route }) => {
                 navigation.navigate("Payment");
             }
         } catch (error) {
-            toast.show("Payment failed. Kindly try again!");
+            toast.show("Payment failed: ", error);
         }
     };
 

@@ -7,9 +7,9 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-nat
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
+import { moneyFormatWS } from "../../utils/money.utils";
 import { AppMediumText, AppText, PageLoading, Button } from "../../components";
 import { PlagiarismIcon, GrammarIcon, ExpertIcon, VoteIcon } from "../../icons";
-import { moneyFormatWS } from "../../utils/money.utils";
 
 export const EvaluationResult = ({ navigation, route }) => {
     const { articleID } = route.params;
@@ -161,7 +161,7 @@ export const EvaluationResult = ({ navigation, route }) => {
                                     <AppText style={styles.leaderName}>
                                         {record.firstName} {record.lastName}
                                     </AppText>
-                                    <AppText>{Number(record.score)}%</AppText>
+                                    <AppText>{Number.parseFloat(record.score).toFixed(2)}%</AppText>
                                 </View>
                             );
                         })}

@@ -14,7 +14,7 @@ export const PaymentConfirmationModal = ({ show = false, plan, onClose, onConfir
                 <View style={styles.card}>
                     <View style={styles.content}>
                         <InformationIcon width={RFPercentage(6)} height={RFPercentage(6)} />
-                        <AppText style={styles.description}>Are are about to subscribe to the below plan</AppText>
+                        <AppText style={styles.description}>You are about to subscribe to the below plan</AppText>
 
                         <View style={styles.rowItem}>
                             <AppMediumText>Type</AppMediumText>
