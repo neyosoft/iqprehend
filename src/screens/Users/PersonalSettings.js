@@ -22,6 +22,7 @@ export const PersonalSettings = ({ navigation }) => {
 
         formData.append("lastName", values.lastName);
         formData.append("firstName", values.firstName);
+        formData.append("phoneNumber", values.phoneNumber);
 
         if (values.profilePicture && typeof values.profilePicture !== "string") {
             formData.append("profilePicture", values.profilePicture);
@@ -156,9 +157,16 @@ export const PersonalSettings = ({ navigation }) => {
 
 const personalInformationSchema = object().shape({
     profileImage: mixed(),
-    lastName: string().required("Last name is required."),
-    firstName: string().required("First name is required."),
-    phoneNumber: string().required("Phone number is required."),
+    lastName: string()
+        .required("Last name is required.")
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
+    firstName: string()
+        .required("First name is required.")
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
+    phoneNumber: string()
+        .required("Phone number is required.")
+        .matches(/^[0-9]+$/, "Only digits are allowed for this field ")
+        .length(11, "Invalid Phone number. Phone number must be 11 Characters"),
 });
 
 const styles = StyleSheet.create({
