@@ -32,7 +32,7 @@ import { useAuth } from "../../context";
 import { RecordIcon } from "../../icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
-import { AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 const wordCount = (text) => {
     if (!text) return 0;
@@ -569,9 +569,16 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         const article = articlesResponse.data;
 
+        console.log("article: ", article);
+
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>
                 <AppMediumText style={styles.title}>{article.title}</AppMediumText>
+
+                <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                    <AppBoldText>Article Sector: </AppBoldText>
+                    <AppText>{article?.sector?.name}</AppText>
+                </View>
 
                 <View style={styles.dateBox}>
                     <View style={styles.postedBox}>
@@ -668,7 +675,8 @@ const styles = StyleSheet.create({
         padding: RFPercentage(3),
     },
     title: {
-        fontSize: RFPercentage(2.5),
+        textAlign: "center",
+        fontSize: RFPercentage(2.7),
     },
     dateBox: {
         alignItems: "center",
