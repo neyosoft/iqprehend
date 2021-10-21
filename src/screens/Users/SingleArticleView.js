@@ -52,7 +52,6 @@ export const SingleArticleView = ({ navigation, route }) => {
     const [duration, setDuration] = useState("00:00:00");
     const [isRecording, setIsRecording] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [responseType, setResponseType] = useState("textual");
 
     const { articleID } = route.params;
 
@@ -82,10 +81,6 @@ export const SingleArticleView = ({ navigation, route }) => {
 
             if (data && data.data) {
                 setSummaryText(data.data?.summary?.content || "");
-
-                if (data.data?.summary?.audioContent) {
-                    setResponseType("audio");
-                }
 
                 return data.data.summary;
             } else {
@@ -357,7 +352,7 @@ export const SingleArticleView = ({ navigation, route }) => {
             );
         }
 
-        if (summary?.isExpertReviewed && summary?.linkId) {
+        if (summary?.isExpertReviewed && summary?.linkId && !summary?.voting) {
             return (
                 <View>
                     <AppMediumText style={styles.statusTitle}>Voting Link</AppMediumText>
@@ -568,8 +563,6 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
 
         const article = articlesResponse.data;
-
-        console.log("article: ", article);
 
         return (
             <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>
