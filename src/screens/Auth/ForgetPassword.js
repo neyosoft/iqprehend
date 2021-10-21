@@ -25,7 +25,6 @@ export const ForgetPassword = ({ navigation }) => {
                 throw new Error();
             }
         } catch (error) {
-            debugAxiosError(error);
             setFieldError("general", extractResponseErrorMessage(error));
         }
     };

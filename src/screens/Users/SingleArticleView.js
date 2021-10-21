@@ -532,6 +532,17 @@ export const SingleArticleView = ({ navigation, route }) => {
         </View>
     );
 
+    const handleInvitationShare = (URL) => {
+        Share.share(
+            {
+                uri: URL,
+                message: URL,
+                title: "Share with your friends and family",
+            },
+            { dialogTitle: "Share with your friends and family", subject: "Share with your friends and family" },
+        );
+    };
+
     const renderContent = () => {
         if (articlesResponse.isLoading || articlesSummaryResponse.isLoading || settingsResponse.isLoading) {
             return <PageLoading />;
@@ -585,36 +596,6 @@ export const SingleArticleView = ({ navigation, route }) => {
                             onChangeState={onStateChange}
                             videoId={article.videoLink.replace("https://www.youtube.com/watch?v=", "")}
                         />
-
-                        <View style={styles.responseRow}>
-                            <TouchableOpacity
-                                onPress={() => setResponseType("textual")}
-                                style={[
-                                    styles.responseOption,
-                                    { backgroundColor: responseType === "textual" ? theme.colors.primary : "#D8D8D8" },
-                                ]}>
-                                <AppMediumText
-                                    style={[
-                                        styles.optionText,
-                                        { color: responseType === "textual" ? "#fff" : "#333" },
-                                    ]}>
-                                    Textual
-                                </AppMediumText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => setResponseType("audio")}
-                                style={[
-                                    styles.responseOption,
-                                    { backgroundColor: responseType === "audio" ? theme.colors.primary : "#D8D8D8" },
-                                ]}>
-                                <AppMediumText
-                                    style={[styles.optionText, { color: responseType === "audio" ? "#fff" : "#333" }]}>
-                                    Audio
-                                </AppMediumText>
-                            </TouchableOpacity>
-                        </View>
-
-                        {responseType === "textual" ? renderTextSummaryForm() : renderAudioSummaryForm()}
                     </>
                 ) : (
                     <>
@@ -640,22 +621,11 @@ export const SingleArticleView = ({ navigation, route }) => {
                                 }}
                             />
                         </View>
-
-                        {renderTextSummaryForm()}
                     </>
                 )}
-            </ScrollView>
-        );
-    };
 
-    const handleInvitationShare = (URL) => {
-        Share.share(
-            {
-                uri: URL,
-                message: URL,
-                title: "Share with your friends and family",
-            },
-            { dialogTitle: "Share with your friends and family", subject: "Share with your friends and family" },
+                {renderTextSummaryForm()}
+            </ScrollView>
         );
     };
 

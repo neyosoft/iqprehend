@@ -22,6 +22,7 @@ export const PersonalSettings = ({ navigation }) => {
 
         formData.append("lastName", values.lastName);
         formData.append("firstName", values.firstName);
+        formData.append("phoneNumber", values.phoneNumber);
 
         if (values.profilePicture && typeof values.profilePicture !== "string") {
             formData.append("profilePicture", values.profilePicture);
@@ -76,7 +77,16 @@ export const PersonalSettings = ({ navigation }) => {
                             phoneNumber: user.phoneNumber,
                             profilePicture: user.profilePicture || null,
                         }}>
-                        {({ handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, errors, values }) => (
+                        {({
+                            errors,
+                            values,
+                            touched,
+                            handleChange,
+                            handleBlur,
+                            handleSubmit,
+                            setFieldValue,
+                            isSubmitting,
+                        }) => (
                             <View>
                                 <AppMediumText style={styles.title}>Personal information</AppMediumText>
 
@@ -110,7 +120,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     onBlur={handleBlur("firstName")}
                                     onChangeText={handleChange("firstName")}
                                 />
-                                {errors.firstName && (
+                                {errors.firstName && touched.firstName && (
                                     <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
                                 )}
 
@@ -123,7 +133,9 @@ export const PersonalSettings = ({ navigation }) => {
                                     onChangeText={handleChange("lastName")}
                                 />
 
-                                {errors.lastName && <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>}
+                                {errors.lastName && touched.lastName && (
+                                    <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>
+                                )}
 
                                 <AppTextField
                                     style={styles.input}
@@ -135,7 +147,7 @@ export const PersonalSettings = ({ navigation }) => {
                                     onChangeText={handleChange("phoneNumber")}
                                 />
 
-                                {errors.phoneNumber && (
+                                {errors.phoneNumber && touched.phoneNumber && (
                                     <AppText style={styles.fieldErrorText}>{errors.phoneNumber}</AppText>
                                 )}
 
@@ -156,9 +168,16 @@ export const PersonalSettings = ({ navigation }) => {
 
 const personalInformationSchema = object().shape({
     profileImage: mixed(),
-    lastName: string().required("Last name is required."),
-    firstName: string().required("First name is required."),
-    phoneNumber: string().required("Phone number is required."),
+    lastName: string()
+        .required("Last name is required.")
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
+    firstName: string()
+        .required("First name is required.")
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets are allowed for this field "),
+    phoneNumber: string()
+        .required("Phone number is required.")
+        .matches(/^[0-9]+$/, "Only digits are allowed for this field ")
+        .length(11, "Invalid Phone number. Phone number must be 11 Characters"),
 });
 
 const styles = StyleSheet.create({
