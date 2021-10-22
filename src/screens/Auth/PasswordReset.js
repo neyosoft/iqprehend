@@ -5,7 +5,7 @@ import { useToast } from "react-native-fast-toast";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
@@ -37,7 +37,6 @@ export const PasswordReset = ({ navigation, route }) => {
                 navigation.navigate("PasswordResetSuccessful");
             }
         } catch (error) {
-            debugAxiosError(error);
             setFieldError("general", extractResponseErrorMessage(error, "Password reset failed."));
         }
     };
@@ -50,7 +49,7 @@ export const PasswordReset = ({ navigation, route }) => {
                     validateOnChange={false}
                     validationSchema={resetSchema}
                     initialValues={{ password: "", code: "" }}>
-                    {({ handleSubmit, handleBlur, handleChange, values, errors, isSubmitting }) => (
+                    {({ handleSubmit, handleBlur, handleChange, values, errors, touched, isSubmitting }) => (
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.header}>
                                 <AppMediumText style={styles.pageTitle}>Set a new password</AppMediumText>
@@ -69,26 +68,30 @@ export const PasswordReset = ({ navigation, route }) => {
                                 <TextField
                                     maxLength={6}
                                     value={values.code}
-                                    error={!!errors.code}
                                     keyboardType="number-pad"
                                     onBlur={handleBlur("code")}
                                     placeholder="Enter reset code"
+                                    error={touched.code && errors.code}
                                     onChangeText={handleChange("code")}
                                     style={{ marginTop: RFPercentage(2) }}
                                 />
-                                {errors.code && <AppText style={styles.fieldErrorText}>{errors.code}</AppText>}
+                                {touched.code && errors.code && (
+                                    <AppText style={styles.fieldErrorText}>{errors.code}</AppText>
+                                )}
 
                                 <PasswordField
                                     style={styles.input}
                                     autoCapitalize="none"
                                     value={values.password}
-                                    error={!!errors.password}
                                     placeholder="New password"
                                     onBlur={handleBlur("password")}
                                     onChangeText={handleChange("password")}
+                                    error={touched.password && errors.password}
                                 />
 
-                                {errors.password && <AppText style={styles.fieldErrorText}>{errors.password}</AppText>}
+                                {touched.password && errors.password && (
+                                    <AppText style={styles.fieldErrorText}>{errors.password}</AppText>
+                                )}
                             </View>
 
                             <Button
@@ -112,7 +115,10 @@ export const PasswordReset = ({ navigation, route }) => {
 };
 
 const resetSchema = object().shape({
-    code: string().required("Reset code is required.").length(6),
+    code: string()
+        .length(6)
+        .required("Reset code is required.")
+        .matches(/^[0-9]+$/, "Only digits are allowed for this field "),
     password: string().required("Password is required.").min(6),
 });
 
