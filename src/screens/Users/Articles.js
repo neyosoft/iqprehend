@@ -35,7 +35,9 @@ export const Articles = ({ navigation }) => {
 
     const articlesResponse = useQuery(["articles", { sector, articleType }], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/articles", { params: { sector, articleType } });
+            const { data } = await authenticatedRequest().get("/articles/published", {
+                params: { sector, articleType },
+            });
 
             if (data && data.data) {
                 return data.data;

@@ -22,7 +22,7 @@ export const SearchArticle = ({ navigation }) => {
 
     const articlesResponse = useQuery(["articles", search], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/articles", { params: { search } });
+            const { data } = await authenticatedRequest().get("/articles/published", { params: { search } });
 
             if (data && data.data) {
                 return data.data;
