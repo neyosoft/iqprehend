@@ -594,7 +594,11 @@ export const SingleArticleView = ({ navigation, route }) => {
                             play={playing}
                             height={RFPercentage(30)}
                             onChangeState={onStateChange}
-                            videoId={article.videoLink.replace("https://www.youtube.com/watch?v=", "")}
+                            videoId={
+                                article.videoLink.includes("youtube")
+                                    ? article.videoLink.replace("https://www.youtube.com/watch?v=", "")
+                                    : article?.videoLink?.replace("https://youtu.be/", "")
+                            }
                         />
                     </>
                 ) : (
