@@ -4,7 +4,7 @@ import { object, string } from "yup";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView, Linking } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -154,7 +154,20 @@ export const Register = ({ navigation }) => {
                                 <View style={styles.termContainer}>
                                     <Checkbox checked={agreement} onPress={() => setAgreement(!agreement)} />
                                     <AppText style={styles.agreementText} onPress={() => setAgreement(!agreement)}>
-                                        By signing up, you agree to our Privicy Policy and terms of service
+                                        By signing up, you agree to our{" "}
+                                        <AppMediumText
+                                            onPress={() =>
+                                                Linking.openURL("https://web.iqprehend.herlabytes.com/privacy")
+                                            }>
+                                            Privacy Policy
+                                        </AppMediumText>{" "}
+                                        and{" "}
+                                        <AppMediumText
+                                            onPress={() =>
+                                                Linking.openURL("https://web.iqprehend.herlabytes.com/terms")
+                                            }>
+                                            terms of service
+                                        </AppMediumText>
                                     </AppText>
                                 </View>
 
