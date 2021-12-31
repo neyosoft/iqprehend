@@ -8,6 +8,8 @@ import {
     removeUserToken,
     saveRefreshToken,
     removeRefreshToken,
+    getOnboardingStatus,
+    onboardingCompleted,
 } from "../utils/storage.utils";
 import Config from "../../config";
 import { baseRequest } from "../utils/request.utils";
@@ -22,6 +24,7 @@ export default class AuthProvider extends Component {
         isLoading: true,
         accessToken: null,
         refreshToken: null,
+        isOnboardingCompleted: false,
 
         authenticate: async ({ accessToken, refreshToken, user }) => {
             await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
@@ -69,8 +72,10 @@ export default class AuthProvider extends Component {
                 }
             } catch (e) {}
         },
-        setupCompleted: () => this.setState({ accountSetupCompleted: true }),
-        setupNotCompleted: () => this.setState({ accountSetupCompleted: false }),
+        completeOnboarding: async () => {
+            await onboardingCompleted();
+            this.setState({ isOnboardingCompleted: true });
+        },
         authenticatedRequest: () => {
             const { accessToken, refreshToken } = this.state;
 
@@ -137,9 +142,12 @@ export default class AuthProvider extends Component {
     boostrapApp = async () => {
         let user = null,
             accessToken = null,
-            refreshToken = null;
+            refreshToken = null,
+            isOnboardingCompleted = false;
 
         try {
+            isOnboardingCompleted = await getOnboardingStatus();
+
             accessToken = await getUserToken();
             refreshToken = await getRefreshToken();
 
@@ -201,7 +209,7 @@ export default class AuthProvider extends Component {
             }
         } catch (e) {}
 
-        const stateUpdate = { accessToken, refreshToken, user, isLoading: false };
+        const stateUpdate = { accessToken, refreshToken, user, isOnboardingCompleted, isLoading: false };
 
         this.setState(stateUpdate);
     };

@@ -8,9 +8,10 @@ import AuthNavigation from "./auth";
 import { useAuth } from "../context";
 import ExpertNavigation from "./expert";
 import { AppText } from "../components";
+import { Onboarding } from "../screens/Onboarding";
 
 export default function AppNavigation() {
-    const { isLoading, user } = useAuth();
+    const { isLoading, user, isOnboardingCompleted } = useAuth();
 
     if (isLoading) {
         return (
@@ -19,6 +20,8 @@ export default function AppNavigation() {
             </View>
         );
     }
+
+    if (!isOnboardingCompleted) return <Onboarding />;
 
     const linking = {
         prefixes: ["https://iqprehend.com", "iqprehend://"],
