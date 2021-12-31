@@ -156,6 +156,7 @@ export const Register = ({ navigation }) => {
                                     <AppText style={styles.agreementText} onPress={() => setAgreement(!agreement)}>
                                         By signing up, you agree to our{" "}
                                         <AppMediumText
+                                            style={styles.agreementLink}
                                             onPress={() =>
                                                 Linking.openURL("https://web.iqprehend.herlabytes.com/privacy")
                                             }>
@@ -163,6 +164,7 @@ export const Register = ({ navigation }) => {
                                         </AppMediumText>{" "}
                                         and{" "}
                                         <AppMediumText
+                                            style={styles.agreementLink}
                                             onPress={() =>
                                                 Linking.openURL("https://web.iqprehend.herlabytes.com/terms")
                                             }>
@@ -256,8 +258,12 @@ const styles = StyleSheet.create({
         marginVertical: RFPercentage(2),
     },
     agreementText: {
+        flex: 1,
         marginLeft: 10,
         color: "#6A6A6A",
+    },
+    agreementLink: {
+        color: theme.colors.blue,
     },
     button: {
         marginTop: RFPercentage(2),
