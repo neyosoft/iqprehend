@@ -1,7 +1,7 @@
+import theme from "../theme";
 import React, { forwardRef } from "react";
 import { TextInput, StyleSheet } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import theme from "../theme";
 
 export const TextField = forwardRef(({ style, error, ...rest }, ref) => {
     const inputStyles = [styles.input, style];
@@ -24,6 +24,8 @@ export const TextField = forwardRef(({ style, error, ...rest }, ref) => {
 
 const styles = StyleSheet.create({
     input: {
+        borderWidth: 0.5,
+        borderColor: "#060169",
         height: RFPercentage(7),
         backgroundColor: "#F2F2F2",
         fontSize: RFPercentage(2.1),

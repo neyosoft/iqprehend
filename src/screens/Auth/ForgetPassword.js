@@ -5,7 +5,9 @@ import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
@@ -33,7 +35,16 @@ export const ForgetPassword = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
             <Page>
                 <View style={styles.header}>
-                    <AppMediumText style={styles.pageTitle}>RECOVER PASSWORD</AppMediumText>
+                    <Icon
+                        color="#060169"
+                        name="arrow-left"
+                        size={RFPercentage(3.5)}
+                        onPress={() => navigation.navigate("Login")}
+                    />
+                    <AppMediumText style={styles.pageTitle}>Forget Password</AppMediumText>
+                    <AppText style={styles.pageDescription}>
+                        Please enter your registered email address and we’ll send a link to reset your password
+                    </AppText>
                 </View>
 
                 <Formik initialValues={{ email: "" }} onSubmit={onSubmit} validationSchema={forgetPasswordSchema}>
@@ -42,31 +53,27 @@ export const ForgetPassword = ({ navigation }) => {
                             <View style={styles.form}>
                                 {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
-                                <AppText style={styles.description}>
-                                    Enter your email address and we'll send you a reset code to reset your password.
-                                </AppText>
-
                                 <TextField
                                     value={values.email}
                                     autoCapitalize="none"
                                     error={!!errors.email}
-                                    placeholder="Enter Email"
                                     keyboardType="email-address"
                                     onBlur={handleBlur("email")}
+                                    placeholder="johndoe@yahoo.com"
                                     onChangeText={handleChange("email")}
                                 />
                                 {errors.email && <AppText style={styles.fieldErrorText}>{errors.email}</AppText>}
                             </View>
 
-                            <Button disabled={isSubmitting} label="Send Reset Code" onPress={handleSubmit} />
+                            <Button
+                                label="Reset Password"
+                                onPress={handleSubmit}
+                                disabled={isSubmitting}
+                                style={{ marginTop: RFPercentage(3) }}
+                            />
                         </>
                     )}
                 </Formik>
-
-                <TouchableOpacity style={styles.loginBtnLink} onPress={() => navigation.navigate("Login")}>
-                    <AppText>Back to </AppText>
-                    <AppMediumText style={styles.loginLink}>Log In</AppMediumText>
-                </TouchableOpacity>
             </Page>
         </SafeAreaView>
     );
@@ -78,24 +85,30 @@ const forgetPasswordSchema = () =>
     });
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
     header: {
-        marginTop: RFPercentage(1),
+        marginTop: RFPercentage(4),
         marginVertical: RFPercentage(2),
     },
     pageTitle: {
-        fontSize: RFPercentage(3),
-        color: theme.colors.primary,
+        color: theme.colors.blue,
+        fontSize: RFPercentage(4),
+        marginTop: RFPercentage(2),
+    },
+    pageDescription: {
+        width: "80%",
+        color: "#6A6A6A",
+        lineHeight: RFPercentage(2.5),
+        marginTop: 10,
     },
     input: {
         marginTop: RFPercentage(2),
     },
-    description: {
-        color: "#787878",
-        fontSize: RFPercentage(2),
-        marginBottom: RFPercentage(3),
-    },
     form: {
-        marginVertical: RFPercentage(6),
+        marginVertical: RFPercentage(2),
     },
     loginBtnLink: {
         marginTop: RFPercentage(2),

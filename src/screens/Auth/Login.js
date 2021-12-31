@@ -28,10 +28,11 @@ export const Login = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <SafeAreaView style={styles.container}>
             <Page>
                 <View style={styles.header}>
-                    <AppMediumText style={styles.pageTitle}>Sign In</AppMediumText>
+                    <AppMediumText style={styles.pageTitle}>Login</AppMediumText>
+                    <AppText style={styles.pageDescription}>Please log in to continue</AppText>
                 </View>
                 <Formik
                     onSubmit={onSubmit}
@@ -43,6 +44,7 @@ export const Login = ({ navigation }) => {
                             <View style={styles.form}>
                                 {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
+                                <AppText style={styles.formFieldLabel}>Email Address</AppText>
                                 <TextField
                                     value={values.email}
                                     autoCapitalize="none"
@@ -57,8 +59,10 @@ export const Login = ({ navigation }) => {
                                     <AppText style={styles.fieldErrorText}>{errors.email}</AppText>
                                 )}
 
+                                <AppText style={[styles.formFieldLabel, { marginTop: RFPercentage(3) }]}>
+                                    Password
+                                </AppText>
                                 <PasswordField
-                                    style={styles.input}
                                     autoCapitalize="none"
                                     value={values.password}
                                     placeholder="Enter Password"
@@ -71,9 +75,11 @@ export const Login = ({ navigation }) => {
                                     <AppText style={styles.fieldErrorText}>{errors.password}</AppText>
                                 )}
 
-                                <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
-                                    <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
-                                </TouchableOpacity>
+                                <View style={styles.centerView}>
+                                    <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                        <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
 
                             <Button
@@ -86,9 +92,9 @@ export const Login = ({ navigation }) => {
                 </Formik>
 
                 <View style={styles.registerActionBox}>
-                    <AppText>Don't have an account?</AppText>
+                    <AppText>New User? </AppText>
                     <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                        <AppMediumText style={styles.singupLink}>Sign Up</AppMediumText>
+                        <AppMediumText style={styles.singupLink}>Create a New Account</AppMediumText>
                     </TouchableOpacity>
                 </View>
             </Page>
@@ -102,33 +108,46 @@ const loginSchema = object().shape({
 });
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
     header: {
-        marginTop: RFPercentage(1),
+        marginTop: RFPercentage(8),
         marginVertical: RFPercentage(2),
     },
     pageTitle: {
-        fontSize: RFPercentage(3),
+        fontSize: RFPercentage(4),
         color: theme.colors.primary,
     },
-    input: {
-        marginTop: RFPercentage(2),
+    pageDescription: {
+        color: "#6A6A6A",
+    },
+    formFieldLabel: {
+        marginBottom: 10,
+        color: theme.colors.blue,
+        fontSize: RFPercentage(2.3),
     },
     form: {
-        marginVertical: RFPercentage(6),
+        marginVertical: RFPercentage(4),
+    },
+    centerView: {
+        alignItems: "center",
     },
     forgetPassword: {
-        color: "#000",
-        fontSize: RFPercentage(2),
+        color: theme.colors.blue,
+        fontSize: RFPercentage(2.3),
         marginTop: RFPercentage(2),
     },
     registerActionBox: {
-        marginTop: RFPercentage(2),
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
+        marginTop: RFPercentage(2),
     },
     singupLink: {
         marginLeft: RFPercentage(1),
-        color: theme.colors.primary,
+        color: theme.colors.blue,
     },
     fieldErrorText: {
         marginTop: 3,

@@ -1,14 +1,24 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { baseRequest, extractResponseErrorAsObject } from "../../utils/request.utils";
-import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
+import {
+    Page,
+    Button,
+    AppText,
+    Checkbox,
+    TextField,
+    AppMediumText,
+    PasswordField,
+    FormErrorMessage,
+} from "../../components";
 
 export const Register = ({ navigation }) => {
     const firstNameRef = useRef();
@@ -18,6 +28,8 @@ export const Register = ({ navigation }) => {
     const phoneNumberRef = useRef();
 
     const { authenticate } = useAuth();
+
+    const [agreement, setAgreement] = useState(false);
 
     const onSubmit = async (values, { setErrors }) => {
         try {
@@ -34,11 +46,20 @@ export const Register = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <SafeAreaView style={styles.container}>
             <Page>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.header}>
-                        <AppMediumText style={styles.pageTitle}>Create Account</AppMediumText>
+                        <Icon
+                            name="arrow-left"
+                            color="#060169"
+                            size={RFPercentage(3.5)}
+                            onPress={() => navigation.navigate("Login")}
+                        />
+                        <AppMediumText style={styles.pageTitle}>Create New Account</AppMediumText>
+                        <AppText style={styles.pageDescription}>
+                            Please fill the following field to create a new account
+                        </AppText>
                     </View>
 
                     <Formik
@@ -48,55 +69,51 @@ export const Register = ({ navigation }) => {
                         initialValues={{ firstName: "", lastName: "", email: "", password: "", phoneNumber: "" }}>
                         {({ handleChange, handleBlur, handleSubmit, isSubmitting, errors, values, touched }) => (
                             <>
-                                <View style={styles.form}>
+                                <View>
                                     {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                        <View style={{ width: "48%" }}>
-                                            <TextField
-                                                ref={firstNameRef}
-                                                returnKeyType="next"
-                                                placeholder="First Name"
-                                                value={values.firstName}
-                                                onBlur={handleBlur("firstName")}
-                                                onChangeText={handleChange("firstName")}
-                                                error={errors.firstName && touched.firstName}
-                                                // onEndEditing={() => lastNameRef?.current?.focus()}
-                                            />
-                                            {errors.firstName && touched.firstName && (
-                                                <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
-                                            )}
-                                        </View>
+                                    <TextField
+                                        ref={firstNameRef}
+                                        returnKeyType="next"
+                                        placeholder="First Name"
+                                        value={values.firstName}
+                                        onBlur={handleBlur("firstName")}
+                                        style={{ marginTop: RFPercentage(2) }}
+                                        onChangeText={handleChange("firstName")}
+                                        error={errors.firstName && touched.firstName}
+                                        onEndEditing={() => lastNameRef?.current?.focus()}
+                                    />
+                                    {errors.firstName && touched.firstName && (
+                                        <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
+                                    )}
 
-                                        <View style={{ width: "48%" }}>
-                                            <TextField
-                                                ref={lastNameRef}
-                                                returnKeyType="next"
-                                                placeholder="Last Name"
-                                                value={values.lastName}
-                                                onBlur={handleBlur("lastName")}
-                                                onChangeText={handleChange("lastName")}
-                                                error={errors.lastName && touched.lastName}
-                                                // onEndEditing={() => emailRef?.current?.focus()}
-                                            />
-                                            {errors.lastName && touched.lastName && (
-                                                <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>
-                                            )}
-                                        </View>
-                                    </View>
+                                    <TextField
+                                        ref={lastNameRef}
+                                        returnKeyType="next"
+                                        placeholder="Last Name"
+                                        value={values.lastName}
+                                        onBlur={handleBlur("lastName")}
+                                        style={{ marginTop: RFPercentage(2) }}
+                                        onChangeText={handleChange("lastName")}
+                                        error={errors.lastName && touched.lastName}
+                                        onEndEditing={() => emailRef?.current?.focus()}
+                                    />
+                                    {errors.lastName && touched.lastName && (
+                                        <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>
+                                    )}
 
                                     <TextField
                                         ref={emailRef}
                                         returnKeyType="next"
                                         value={values.email}
                                         autoCapitalize="none"
-                                        placeholder="Enter Email"
+                                        placeholder="Email Address"
                                         onBlur={handleBlur("email")}
                                         keyboardType="email-address"
                                         onChangeText={handleChange("email")}
                                         error={touched.email && errors.email}
                                         style={{ marginTop: RFPercentage(2) }}
-                                        // onEndEditing={() => phoneNumberRef?.current?.focus()}
+                                        onEndEditing={() => phoneNumberRef?.current?.focus()}
                                     />
                                     {touched.email && errors.email && (
                                         <AppText style={styles.fieldErrorText}>{errors.email}</AppText>
@@ -107,12 +124,12 @@ export const Register = ({ navigation }) => {
                                         returnKeyType="next"
                                         keyboardType="numeric"
                                         value={values.phoneNumber}
-                                        placeholder="Enter Phone Number"
+                                        placeholder="Phone Number"
                                         onBlur={handleBlur("phoneNumber")}
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("phoneNumber")}
                                         error={errors.phoneNumber && touched.phoneNumber}
-                                        // onEndEditing={() => passwordRef?.current?.focus()}
+                                        onEndEditing={() => passwordRef?.current?.focus()}
                                     />
                                     {errors.phoneNumber && touched.phoneNumber && (
                                         <AppText style={styles.fieldErrorText}>{errors.phoneNumber}</AppText>
@@ -134,18 +151,26 @@ export const Register = ({ navigation }) => {
                                     )}
                                 </View>
 
+                                <View style={styles.termContainer}>
+                                    <Checkbox checked={agreement} onPress={() => setAgreement(!agreement)} />
+                                    <AppText style={styles.agreementText} onPress={() => setAgreement(!agreement)}>
+                                        By signing up, you agree to our Privicy Policy and terms of service
+                                    </AppText>
+                                </View>
+
                                 <Button
+                                    style={styles.button}
                                     onPress={handleSubmit}
-                                    disabled={isSubmitting}
+                                    disabled={!agreement || isSubmitting}
                                     label={isSubmitting ? "Processing..." : "Create Account"}
                                 />
                             </>
                         )}
                     </Formik>
                     <View style={styles.registerActionBox}>
-                        <AppText>Already signed up?</AppText>
+                        <AppText>Existing User?</AppText>
                         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                            <AppMediumText style={styles.singupLink}>Log In</AppMediumText>
+                            <AppMediumText style={styles.singupLink}>Log in here</AppMediumText>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
@@ -176,33 +201,52 @@ const registrationSchema = object().shape({
 });
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
     header: {
-        marginTop: RFPercentage(1),
-        marginBottom: RFPercentage(2),
+        marginTop: RFPercentage(4),
+        marginVertical: RFPercentage(2),
     },
     pageTitle: {
-        fontSize: RFPercentage(3),
-        color: theme.colors.primary,
+        color: theme.colors.blue,
+        fontSize: RFPercentage(4),
+        marginTop: RFPercentage(2),
+    },
+    pageDescription: {
+        width: "72%",
+        color: "#6A6A6A",
+        lineHeight: RFPercentage(2.5),
+        marginTop: 10,
     },
     input: {
         marginTop: RFPercentage(2),
     },
-    form: {
-        marginVertical: RFPercentage(6),
-    },
-
     registerActionBox: {
-        marginTop: RFPercentage(2),
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
+        marginTop: RFPercentage(2),
     },
     singupLink: {
         marginLeft: RFPercentage(1),
-        color: theme.colors.primary,
+        color: theme.colors.blue,
     },
     fieldErrorText: {
         marginTop: 3,
         color: "#FF7878",
         fontSize: RFPercentage(1.8),
+    },
+    termContainer: {
+        flexDirection: "row",
+        marginVertical: RFPercentage(2),
+    },
+    agreementText: {
+        marginLeft: 10,
+        color: "#6A6A6A",
+    },
+    button: {
+        marginTop: RFPercentage(2),
     },
 });

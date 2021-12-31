@@ -5,6 +5,7 @@ import { useToast } from "react-native-fast-toast";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
+
 import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
@@ -95,8 +96,8 @@ export const PasswordReset = ({ navigation, route }) => {
                             </View>
 
                             <Button
-                                disabled={isSubmitting}
                                 onPress={handleSubmit}
+                                disabled={isSubmitting}
                                 label={isSubmitting ? "Processing..." : "Reset Password"}
                             />
 

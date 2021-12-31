@@ -28,13 +28,14 @@ const styles = StyleSheet.create({
     button: {
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: theme.radius.label,
+        borderRadius: theme.radius.button,
         paddingVertical: RFPercentage(1.5),
         paddingHorizontal: RFPercentage(10),
-        backgroundColor: Theme.colors.primary,
+        backgroundColor: Theme.colors.blue,
     },
     buttonText: {
         color: "#fff",
+        fontSize: RFPercentage(2.3),
     },
     disabledBtn: {
         backgroundColor: theme.colors.diabledBtn,

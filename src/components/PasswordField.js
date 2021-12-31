@@ -34,8 +34,10 @@ export const PasswordField = forwardRef(({ style, inputStyle, error, ...rest }, 
 
 const styles = StyleSheet.create({
     container: {
+        borderWidth: 0.5,
         flexDirection: "row",
         alignItems: "center",
+        borderColor: "#060169",
         height: RFPercentage(7),
         backgroundColor: "#F2F2F2",
         paddingHorizontal: RFPercentage(2),
