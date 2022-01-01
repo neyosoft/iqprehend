@@ -1,3 +1,4 @@
+export { Home } from "./Home";
 export { Voting } from "./Voting";
 export { Payment } from "./Payment";
 export { Articles } from "./Articles";

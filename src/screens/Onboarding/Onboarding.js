@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
+import RNBootSplash from "react-native-bootsplash";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, ScrollView, Dimensions, Image, TouchableOpacity } from "react-native";
@@ -13,6 +14,10 @@ export const Onboarding = () => {
     const scrollviewRef = useRef();
 
     const { completeOnboarding } = useAuth();
+
+    useEffect(() => {
+        RNBootSplash.hide();
+    }, []);
 
     return (
         <SafeAreaView>

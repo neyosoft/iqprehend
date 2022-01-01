@@ -6,6 +6,7 @@ import TouchableItem from "@react-navigation/drawer/src/views/TouchableItem";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 
 import {
+    Home,
     Voting,
     Payment,
     Articles,
@@ -36,6 +37,14 @@ const DrawerNavigation = () => {
             drawerStyle={{ backgroundColor: "#F6F6F6" }}
             drawerContent={(props) => <CustomDrawerContent {...props} />}
             drawerContentOptions={{ activeTintColor: "#121212", inactiveTintColor: "#174542" }}>
+            <Drawer.Screen
+                name="Home"
+                component={Home}
+                options={{
+                    title: "Home",
+                    drawerIcon: ({ color }) => <ArticleIcon color={color} />,
+                }}
+            />
             <Drawer.Screen
                 name="Articles"
                 component={Articles}
