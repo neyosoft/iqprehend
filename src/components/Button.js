@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.button,
         paddingVertical: RFPercentage(1.5),
         paddingHorizontal: RFPercentage(10),
-        backgroundColor: Theme.colors.blue,
+        backgroundColor: Theme.colors.primary,
     },
     buttonText: {
         color: "#fff",

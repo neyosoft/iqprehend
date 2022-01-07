@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
         marginVertical: RFPercentage(2),
     },
     pageTitle: {
-        color: theme.colors.blue,
+        color: theme.colors.primary,
         fontSize: RFPercentage(4),
         marginTop: RFPercentage(2),
     },

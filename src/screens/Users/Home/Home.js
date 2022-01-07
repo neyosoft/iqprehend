@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
-import { Categories, Header, WelcomeHeader } from "./components";
+import { Categories, Header, SearchInput, Summaries, TopArticles, WelcomeHeader } from "./components";
 
 export const Home = () => {
     const [search, setSearch] = useState("");
@@ -13,7 +13,12 @@ export const Home = () => {
             <Header />
             <ScrollView contentContainerStyle={styles.contentContainerStyle}>
                 <WelcomeHeader />
-                <Categories />
+                <SearchInput search={search} setSearch={setSearch} />
+                <View style={styles.spacing}>
+                    <Categories />
+                    <TopArticles search={search} />
+                    <Summaries />
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -25,6 +30,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     contentContainerStyle: {
-        padding: RFPercentage(2),
+        // padding: RFPercentage(2),
+    },
+    spacing: {
+        paddingHorizontal: RFPercentage(2),
     },
 });

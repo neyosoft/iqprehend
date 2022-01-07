@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         marginVertical: RFPercentage(2),
     },
     pageTitle: {
-        color: theme.colors.blue,
+        color: theme.colors.primary,
         fontSize: RFPercentage(4),
         marginTop: RFPercentage(2),
     },
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     },
     singupLink: {
         marginLeft: RFPercentage(1),
-        color: theme.colors.blue,
+        color: theme.colors.primary,
     },
     fieldErrorText: {
         marginTop: 3,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
         color: "#6A6A6A",
     },
     agreementLink: {
-        color: theme.colors.blue,
+        color: theme.colors.primary,
     },
     button: {
         marginTop: RFPercentage(2),

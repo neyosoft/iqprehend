@@ -16,6 +16,6 @@ const styles = StyleSheet.create({
     header: {
         alignItems: "center",
         padding: RFPercentage(2),
-        backgroundColor: theme.colors.blue,
+        backgroundColor: theme.colors.primary,
     },
 });

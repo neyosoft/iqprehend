@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     },
     formFieldLabel: {
         marginBottom: 10,
-        color: theme.colors.blue,
+        color: theme.colors.primary,
         fontSize: RFPercentage(2.3),
     },
     form: {
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     forgetPassword: {
-        color: theme.colors.blue,
+        color: theme.colors.primary,
         fontSize: RFPercentage(2.3),
         marginTop: RFPercentage(2),
     },
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     },
     singupLink: {
         marginLeft: RFPercentage(1),
-        color: theme.colors.blue,
+        color: theme.colors.primary,
     },
     fieldErrorText: {
         marginTop: 3,

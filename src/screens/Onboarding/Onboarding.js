@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     },
     title: {
         textAlign: "center",
-        color: theme.colors.blue,
+        color: theme.colors.primary,
         fontSize: RFPercentage(4.5),
         lineHeight: RFPercentage(6),
     },
@@ -136,11 +136,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginHorizontal: 2,
         width: RFPercentage(1.5),
-        borderColor: theme.colors.blue,
+        borderColor: theme.colors.primary,
     },
     activeBar: {
         width: RFPercentage(3),
-        backgroundColor: theme.colors.blue,
+        backgroundColor: theme.colors.primary,
     },
 
     button: {
