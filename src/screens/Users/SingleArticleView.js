@@ -22,7 +22,7 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { useFocusEffect } from "@react-navigation/native";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
-import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { AppBoldText, AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
 const wordCount = (text) => {
     if (!text) return 0;
@@ -411,14 +411,9 @@ export const SingleArticleView = ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+        <SafeAreaView edges={["top"]} style={styles.root}>
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={navigation.goBack}>
-                        <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                    </TouchableOpacity>
-                    <AppText style={styles.headerTitle}>Article</AppText>
-                </View>
+                <HeaderWithBack navigation={navigation} />
                 {renderContent()}
             </View>
         </SafeAreaView>
@@ -426,6 +421,10 @@ export const SingleArticleView = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+    },
     container: {
         flex: 1,
         backgroundColor: "#fff",

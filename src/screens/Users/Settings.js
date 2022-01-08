@@ -9,6 +9,7 @@ import { useAuth } from "../../context";
 import { AppMediumText, AppText } from "../../components";
 
 import theme from "../../theme";
+import { Header } from "./Home/components";
 
 export const Settings = ({ navigation }) => {
     const { logout } = useAuth();
@@ -16,9 +17,7 @@ export const Settings = ({ navigation }) => {
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <AppText style={styles.headerTitle}>Settings</AppText>
-                </View>
+                <Header />
                 <View style={styles.content}>
                     <RectButton style={styles.option} onPress={() => navigation.navigate("PersonalSettings")}>
                         <AppMediumText>Personal Information</AppMediumText>
