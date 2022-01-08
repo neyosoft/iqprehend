@@ -1,38 +1,23 @@
+import React from "react";
 import { useQuery } from "react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import {
-    View,
-    Image,
-    FlatList,
-    Platform,
-    StatusBar,
-    TextInput,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-} from "react-native";
+import { View, StyleSheet, FlatList, Platform, StatusBar, Image, TouchableWithoutFeedback } from "react-native";
 
-import theme from "../../theme";
-import { useAuth } from "../../context";
-import { VideoArticleIcon } from "../../icons";
-import { AppText, Button, PageLoading } from "../../components";
+import theme from "../../../theme";
+import { Header } from "./components";
+import { useAuth } from "../../../context";
+import { VideoArticleIcon } from "../../../icons";
+import { AppMediumText, AppText, Button, PageLoading, SearchInput } from "../../../components";
 
-export const SearchArticle = ({ navigation }) => {
-    const timer = useRef();
-    const searchInput = useRef();
+export const Articles = ({ navigation }) => {
+    const { user, authenticatedRequest } = useAuth();
 
-    const [search, setSearch] = useState("");
-    const [searchText, setSearchText] = useState("");
-
-    const { authenticatedRequest } = useAuth();
-
-    const articlesResponse = useQuery(["articles", search], async () => {
+    const articlesResponse = useQuery(["articles"], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/articles/published", { params: { search } });
+            const { data } = await authenticatedRequest().get("/articles/published");
 
             if (data && data.data) {
                 return data.data;
@@ -49,18 +34,6 @@ export const SearchArticle = ({ navigation }) => {
             articlesResponse.refetch();
         }, []),
     );
-
-    useEffect(() => {
-        if (timer?.current) {
-            clearTimeout(timer?.current);
-        }
-
-        timer.current = setTimeout(() => {
-            setSearch(searchText);
-
-            return () => clearTimeout(timer?.current);
-        }, 500);
-    }, [searchText]);
 
     const renderArticleItem = ({ item }) => (
         <TouchableWithoutFeedback onPress={() => navigation.navigate("SingleArticleView", { articleID: item._id })}>
@@ -84,7 +57,7 @@ export const SearchArticle = ({ navigation }) => {
     );
 
     const renderEmptyArticle = () => (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", height: RFPercentage(50) }}>
+        <View style={styles.emptyContainer}>
             <AppText>No article found.</AppText>
         </View>
     );
@@ -112,40 +85,42 @@ export const SearchArticle = ({ navigation }) => {
         }
 
         return (
-            <FlatList
-                numColumns={3}
-                style={styles.flatlist}
-                renderItem={renderArticleItem}
-                keyExtractor={(item) => item._id}
-                onRefresh={articlesResponse.refetch}
-                data={articlesResponse.data.articles}
-                ListEmptyComponent={renderEmptyArticle}
-                refreshing={articlesResponse.isFetching}
-                columnWrapperStyle={styles.columnWrapperStyle}
-                removeClippedSubviews={Platform.OS === "android"}
-                contentContainerStyle={styles.contentContainerStyle}
-            />
+            <View style={{ flex: 1 }}>
+                <View style={styles.topHeader}>
+                    <SearchInput style={styles.searchbox} />
+                    <Image
+                        style={styles.photo}
+                        source={
+                            user?.profilePicture
+                                ? { uri: user.profilePicture }
+                                : require("../../../assets/images/avatar.jpg")
+                        }
+                    />
+                </View>
+
+                <AppMediumText style={styles.headerTitle}>All Articles</AppMediumText>
+
+                <FlatList
+                    numColumns={3}
+                    style={styles.flatlist}
+                    renderItem={renderArticleItem}
+                    keyExtractor={(item) => item._id}
+                    onRefresh={articlesResponse.refetch}
+                    data={articlesResponse.data.articles}
+                    ListEmptyComponent={renderEmptyArticle}
+                    refreshing={articlesResponse.isFetching}
+                    columnWrapperStyle={styles.columnWrapperStyle}
+                    removeClippedSubviews={Platform.OS === "android"}
+                    contentContainerStyle={styles.contentContainerStyle}
+                />
+            </View>
         );
     };
 
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-            <View style={styles.header}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                </TouchableOpacity>
-
-                <TextInput
-                    ref={searchInput}
-                    value={searchText}
-                    style={styles.searchInput}
-                    onChangeText={setSearchText}
-                    placeholder="Seach articles"
-                    placeholderTextColor="#7189A8"
-                    onLayout={() => searchInput?.current?.focus()}
-                />
-            </View>
+            <Header />
             <View style={styles.container}>{renderArticles()}</View>
         </SafeAreaView>
     );
@@ -156,26 +131,36 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
+    topHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#F4F4F4",
+        padding: RFPercentage(2),
+    },
+    photo: {
+        width: RFPercentage(6),
+        height: RFPercentage(6),
+        borderRadius: RFPercentage(6),
+    },
+    searchbox: {
+        flex: 1,
+        marginRight: RFPercentage(5),
+    },
+    headerTitle: {
+        margin: RFPercentage(2),
+        color: theme.colors.primary,
+        fontSize: RFPercentage(4),
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        height: RFPercentage(50),
+    },
     header: {
         flexDirection: "row",
         alignItems: "center",
         padding: RFPercentage(2),
-        backgroundColor: theme.colors.primary,
-    },
-    headerTitle: {
-        flex: 1,
-        color: "#fff",
-        fontSize: RFPercentage(2.4),
-        marginHorizontal: RFPercentage(2),
-    },
-    searchInput: {
-        flex: 1,
-        height: 40,
-        color: "#fff",
-        borderBottomWidth: 1,
-        marginHorizontal: 10,
-        borderBottomColor: "#7189A8",
-        fontFamily: "Baloo2-Regular",
     },
     flatlist: {
         marginTop: RFPercentage(1),

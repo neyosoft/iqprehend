@@ -10,13 +10,13 @@ import { VideoArticleIcon } from "../../../../icons";
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
 
-export const TopArticles = ({ search }) => {
+export const TopArticles = () => {
     const navigation = useNavigation();
     const { authenticatedRequest } = useAuth();
 
-    const articlesResponse = useQuery(["articles", search], async () => {
+    const articlesResponse = useQuery(["articles"], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/articles/published", { params: { search } });
+            const { data } = await authenticatedRequest().get("/articles/published");
 
             if (data && data.data) {
                 return data.data;

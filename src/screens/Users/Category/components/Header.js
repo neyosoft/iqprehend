@@ -11,7 +11,7 @@ export const Header = ({ navigation }) => {
             <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
                 <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
             </TouchableOpacity>
-            <Image source={require("../../../../assets/images/logo.png")} />
+            <Image source={require("../../../../assets/images/logo.png")} resizeMode="contain" style={styles.image} />
         </View>
     );
 };
@@ -26,5 +26,8 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: RFPercentage(2),
         top: RFPercentage(2),
+    },
+    image: {
+        height: 30,
     },
 });

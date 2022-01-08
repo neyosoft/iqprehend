@@ -5,6 +5,7 @@ export { Checkbox } from "./Checkbox";
 export { TextField } from "./TextField";
 export { PageLoading } from "./PageLoading";
 export { AppBoldText } from "./AppBoldText";
+export { SearchInput } from "./SearchInput";
 export { AppTextField } from "./AppTextField";
 export { AppMediumText } from "./AppMediumText";
 export { PasswordField } from "./PasswordField";

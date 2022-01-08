@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
-import { Categories, Header, SearchInput, Summaries, TopArticles, WelcomeHeader } from "./components";
+import { SearchInput } from "../../../components";
+import { Categories, Header, Summaries, TopArticles, WelcomeHeader } from "./components";
 
 export const Home = () => {
-    const [search, setSearch] = useState("");
-
     return (
         <SafeAreaView style={styles.container}>
             <Header />
-            <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+            <ScrollView>
                 <WelcomeHeader />
-                <SearchInput search={search} setSearch={setSearch} />
+                <SearchInput style={styles.searchbox} />
                 <View style={styles.spacing}>
                     <Categories />
-                    <TopArticles search={search} />
+                    <TopArticles />
                     <Summaries />
                 </View>
             </ScrollView>
@@ -29,10 +28,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
-    contentContainerStyle: {
-        // padding: RFPercentage(2),
-    },
     spacing: {
         paddingHorizontal: RFPercentage(2),
+    },
+    searchbox: {
+        margin: RFPercentage(2),
+        marginTop: -RFPercentage(4),
     },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,17 +7,15 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, FlatList, Platform, StatusBar, Image, TouchableWithoutFeedback } from "react-native";
 
 import theme from "../../../theme";
+import { Header } from "./components";
 import { useAuth } from "../../../context";
-import { AppMediumText, AppText, Button, PageLoading } from "../../../components";
-import { Header, SearchInput } from "./components";
 import { VideoArticleIcon } from "../../../icons";
+import { AppMediumText, AppText, Button, PageLoading, SearchInput } from "../../../components";
 
 export const Category = ({ navigation, route }) => {
     const { sector } = route.params;
 
     const { user, authenticatedRequest } = useAuth();
-
-    const [search, setSearch] = useState("");
 
     const sectorId = sector._id;
 
@@ -65,7 +63,7 @@ export const Category = ({ navigation, route }) => {
     );
 
     const renderEmptyArticle = () => (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", height: RFPercentage(50) }}>
+        <View style={styles.emptyContainer}>
             <AppText>No article found.</AppText>
         </View>
     );
@@ -96,7 +94,7 @@ export const Category = ({ navigation, route }) => {
         return (
             <View style={{ flex: 1 }}>
                 <View style={styles.topHeader}>
-                    <SearchInput search={search} setSearch={setSearch} style={styles.searchbox} />
+                    <SearchInput style={styles.searchbox} />
                     <Image
                         style={styles.photo}
                         source={
@@ -160,6 +158,12 @@ const styles = StyleSheet.create({
         color: theme.colors.primary,
         fontSize: RFPercentage(4),
     },
+    emptyContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        height: RFPercentage(50),
+    },
     flatlist: {
         marginTop: RFPercentage(1),
     },
@@ -203,8 +207,5 @@ const styles = StyleSheet.create({
         flex: 1,
         width: undefined,
         height: undefined,
-    },
-    allArticleText: {
-        fontSize: RFPercentage(1.8),
     },
 });
