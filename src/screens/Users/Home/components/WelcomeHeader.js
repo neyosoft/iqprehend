@@ -14,7 +14,7 @@ export const WelcomeHeader = () => {
             <View style={styles.leftContainer}>
                 <AppBoldText style={styles.welcomeText}>Hello {user.firstName},</AppBoldText>
 
-                <AppText style={styles.welcomeSubtitle}>What are you reading today</AppText>
+                <AppText style={styles.welcomeSubtitle}>What are you reading today?</AppText>
             </View>
             <View>
                 <Image

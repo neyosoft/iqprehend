@@ -1,35 +1,25 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
 import { endOfDay, format, isFuture } from "date-fns";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
-import DocumentPicker from "react-native-document-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import AudioRecorderPlayer, {
-    AVEncodingOption,
-    AudioSourceAndroidType,
-    AudioEncoderAndroidType,
-    AVEncoderAudioQualityIOSType,
-} from "react-native-audio-recorder-player";
 import {
     View,
     Image,
     Share,
-    Platform,
     TextInput,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
     useWindowDimensions,
-    PermissionsAndroid,
 } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { RecordIcon } from "../../icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
@@ -40,7 +30,6 @@ const wordCount = (text) => {
 };
 
 export const SingleArticleView = ({ navigation, route }) => {
-    const audioRef = useRef(new AudioRecorderPlayer());
     const toast = useToast();
     const { authenticatedRequest } = useAuth();
 
@@ -48,9 +37,6 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     const [playing, setPlaying] = useState(false);
     const [summaryText, setSummaryText] = useState("");
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [duration, setDuration] = useState("00:00:00");
-    const [isRecording, setIsRecording] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { articleID } = route.params;
@@ -147,145 +133,6 @@ export const SingleArticleView = ({ navigation, route }) => {
             toast.show(extractResponseErrorMessage(error));
             setIsSubmitting(false);
         }
-    };
-
-    const handleSummaryAudioSubmission = async (file) => {
-        try {
-            const formData = new FormData();
-
-            formData.append("audio-content", file);
-
-            if (articlesSummaryResponse.data) {
-                formData.append("id", articlesSummaryResponse.data._id);
-            } else {
-                formData.append("article", articleID);
-            }
-
-            setIsSubmitting(true);
-
-            const { data } = articlesSummaryResponse.data
-                ? await authenticatedRequest().put("/summary", formData, {
-                      headers: {
-                          "Content-Type": "multipart/form-data",
-                      },
-                  })
-                : await authenticatedRequest().post("/summary", formData, {
-                      headers: {
-                          "Content-Type": "multipart/form-data",
-                      },
-                  });
-
-            if (data && data.data) {
-                toast.show(data.data.message, { type: "success" });
-                navigation.goBack();
-            } else {
-                throw new Error("There is a problem submitting your summary. Kindly try again");
-            }
-        } catch (error) {
-            toast.show(extractResponseErrorMessage(error));
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleAudioPicker = async () => {
-        try {
-            const res = await DocumentPicker.pick({
-                type: [DocumentPicker.types.audio],
-            });
-
-            const maxFileSize = 5 * 1024 * 1024;
-
-            if (res.size > maxFileSize) {
-                return toast.show("File selected exceeded maximum file size.");
-            }
-
-            await handleSummaryAudioSubmission(res);
-        } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-                // User cancelled the picker, exit any dialogs or menus and move on
-            } else {
-                throw err;
-            }
-        }
-    };
-
-    const startRecording = async () => {
-        if (Platform.OS === "android") {
-            try {
-                const grants = await PermissionsAndroid.requestMultiple([
-                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-                    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-                    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-                ]);
-
-                if (
-                    grants["android.permission.WRITE_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
-                    grants["android.permission.READ_EXTERNAL_STORAGE"] === PermissionsAndroid.RESULTS.GRANTED &&
-                    grants["android.permission.RECORD_AUDIO"] === PermissionsAndroid.RESULTS.GRANTED
-                ) {
-                    console.log("permissions granted");
-                } else {
-                    console.log("All required permissions not granted");
-                    return;
-                }
-            } catch (err) {
-                console.warn(err);
-                return;
-            }
-        }
-
-        const audioSet = {
-            AVNumberOfChannelsKeyIOS: 2,
-            AVFormatIDKeyIOS: AVEncodingOption.aac,
-            AudioSourceAndroid: AudioSourceAndroidType.MIC,
-            AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-            AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
-        };
-
-        setIsRecording(true);
-
-        await audioRef.current.startRecorder(undefined, audioSet);
-
-        audioRef.current.addRecordBackListener((e) => {
-            setDuration(audioRef.current.mmssss(Math.floor(e.currentPosition)));
-        });
-    };
-
-    const stopRecording = async () => {
-        const result = await audioRef.current.stopRecorder();
-        audioRef.current.removeRecordBackListener();
-
-        setIsRecording(false);
-
-        await handleSummaryAudioSubmission({
-            uri: result,
-            type: Platform.OS === "android" ? "audio/mp4" : "audio/m4a",
-            name: Platform.OS === "android" ? "summary.mp4" : "summary.m4a",
-        });
-    };
-
-    const startPlaying = async () => {
-        setIsPlaying(true);
-
-        await audioRef.current.startPlayer(articlesSummaryResponse.data.audioContent);
-        await audioRef.current.setVolume(1.0);
-
-        audioRef.current.addPlayBackListener((e) => {
-            setDuration(audioRef.current.mmssss(Math.floor(e.currentPosition)));
-
-            if (e.currentPosition === e.duration) {
-                setIsPlaying(false);
-            }
-        });
-    };
-
-    const stopPlaying = () => {
-        setIsPlaying(false);
-
-        audioRef.current.stopPlayer();
-        audioRef.current.removePlayBackListener();
-
-        setDuration(audioRef.current.mmssss(0));
     };
 
     const renderUserSummaryResponse = (summary) => {
@@ -456,76 +303,6 @@ export const SingleArticleView = ({ navigation, route }) => {
             );
         }
     };
-
-    const renderAudioSummaryForm = () => (
-        <View>
-            {isFuture(endOfDay(new Date(articlesResponse.data.deadline))) ? (
-                <View style={styles.audiobox}>
-                    <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
-
-                    <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
-
-                    <Button
-                        style={styles.startBtn}
-                        disabled={isSubmitting}
-                        label={isRecording ? "STOP RECORDING" : "RECORD"}
-                        onPress={() => {
-                            if (isRecording) {
-                                stopRecording();
-                            } else {
-                                startRecording();
-                            }
-                        }}
-                    />
-                    {articlesSummaryResponse.data?.audioContent ? (
-                        <Button
-                            disabled={isSubmitting}
-                            label={isPlaying ? "STOP" : "PLAY"}
-                            style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
-                            onPress={() => {
-                                isPlaying ? stopPlaying() : startPlaying();
-                            }}
-                        />
-                    ) : null}
-
-                    <AppText style={styles.note}>
-                        <AppMediumText>Note:</AppMediumText> Accepted file format: mp3, wav, aac,ogg. Maximum file is
-                        5MB
-                    </AppText>
-
-                    <Button
-                        disabled={isSubmitting}
-                        style={styles.uploadBtn}
-                        onPress={handleAudioPicker}
-                        label={isSubmitting ? "UPLOADING..." : "UPLOAD"}
-                    />
-                </View>
-            ) : (
-                <View style={styles.audiobox}>
-                    <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
-
-                    <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
-
-                    <Button
-                        label={isPlaying ? "STOP" : "PLAY"}
-                        style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
-                        onPress={() => {
-                            isPlaying ? stopPlaying() : startPlaying();
-                        }}
-                    />
-
-                    {articlesSummaryResponse.data?.isExpertReviewed ? (
-                        <View>
-                            <AppText>Sharable Link</AppText>
-                            <View>
-                                <AppText>http://www.iqprehend.com/v/384848</AppText>
-                            </View>
-                        </View>
-                    ) : null}
-                </View>
-            )}
-        </View>
-    );
 
     const handleInvitationShare = (URL) => {
         Share.share(

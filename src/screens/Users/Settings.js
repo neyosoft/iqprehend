@@ -5,11 +5,14 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import { useAuth } from "../../context";
 import { AppMediumText, AppText } from "../../components";
 
 import theme from "../../theme";
 
 export const Settings = ({ navigation }) => {
+    const { logout } = useAuth();
+
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
@@ -24,6 +27,11 @@ export const Settings = ({ navigation }) => {
 
                     <RectButton style={styles.option} onPress={() => navigation.navigate("ChangePassword")}>
                         <AppMediumText>Change Password</AppMediumText>
+                        <Icon name="chevron-right" size={RFPercentage(3)} />
+                    </RectButton>
+
+                    <RectButton style={styles.option} onPress={logout}>
+                        <AppMediumText>Logout</AppMediumText>
                         <Icon name="chevron-right" size={RFPercentage(3)} />
                     </RectButton>
                 </View>
