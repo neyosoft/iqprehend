@@ -6,10 +6,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
+import { View, StyleSheet, ScrollView, Image } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
+import { Header } from "./Home/components";
 import { PaymentSuccessfulModal } from "../../modals/PaymentSuccessfulModal";
 import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
 import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
@@ -121,12 +122,7 @@ export const Payment = ({ navigation }) => {
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={navigation.openDrawer}>
-                        <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
-                    </TouchableOpacity>
-                    <AppText style={styles.headerTitle}>Payment</AppText>
-                </View>
+                <Header />
 
                 {renderContent()}
             </View>

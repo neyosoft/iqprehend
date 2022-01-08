@@ -6,6 +6,7 @@ import {
     Home,
     Voting,
     Payment,
+    Category,
     Articles,
     Settings,
     MakePayment,
@@ -67,6 +68,7 @@ export default function UserNavigation() {
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             }}>
             <Stack.Screen name="Voting" component={Voting} />
+            <Stack.Screen name="Category" component={Category} />
             <Stack.Screen name="MakePayment" component={MakePayment} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="BankSettings" component={BankSettings} />

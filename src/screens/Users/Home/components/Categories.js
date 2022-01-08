@@ -1,7 +1,8 @@
 import React from "react";
 import { useQuery } from "react-query";
+import { useNavigation } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { View, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 
 import { AppBoldText, AppText } from "../../../../components";
 
@@ -9,6 +10,7 @@ import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
 
 export const Categories = () => {
+    const navigation = useNavigation();
     const { authenticatedRequest } = useAuth();
 
     const sectorResponse = useQuery("sectors", async () => {
@@ -27,16 +29,23 @@ export const Categories = () => {
 
     const renderOutput = () => {
         if (sectorResponse.isLoading) {
-            return <ActivityIndicator />;
+            return (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                </View>
+            );
         }
 
         return (
             <View style={styles.articleWrapper}>
                 {sectorResponse.data.map((record) => (
-                    <View style={styles.cellContainer} key={record._id}>
+                    <TouchableOpacity
+                        key={record._id}
+                        style={styles.cellContainer}
+                        onPress={() => navigation.navigate("Category", { sector: record })}>
                         {switchIconToDisplay(record.name)}
                         <AppText style={styles.cellText}>{record.name}</AppText>
-                    </View>
+                    </TouchableOpacity>
                 ))}
             </View>
         );
@@ -77,6 +86,11 @@ export const Categories = () => {
 
 const styles = StyleSheet.create({
     container: {},
+    loadingContainer: {
+        alignSelf: "center",
+        margin: RFPercentage(4),
+        justifyContent: "center",
+    },
     title: {
         fontSize: RFPercentage(3.5),
         color: theme.colors.primary,

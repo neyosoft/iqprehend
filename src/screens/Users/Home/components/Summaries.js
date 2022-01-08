@@ -33,11 +33,19 @@ export const Summaries = () => {
 
     const renderOutput = () => {
         if (articlesResponse.isLoading) {
-            return <ActivityIndicator />;
+            return (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                </View>
+            );
         }
 
         if (articlesResponse?.data?.totalDocs === 0) {
-            return <AppText>No summary found.</AppText>;
+            return (
+                <View style={styles.loadingContainer}>
+                    <AppText>No summary found.</AppText>
+                </View>
+            );
         }
 
         return (
@@ -84,6 +92,11 @@ export const Summaries = () => {
 const styles = StyleSheet.create({
     container: {
         paddingBottom: RFPercentage(3),
+    },
+    loadingContainer: {
+        alignSelf: "center",
+        margin: RFPercentage(4),
+        justifyContent: "center",
     },
     title: {
         fontSize: RFPercentage(3.5),

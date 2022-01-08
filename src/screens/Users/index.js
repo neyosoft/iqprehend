@@ -1,6 +1,7 @@
 export { Home } from "./Home";
 export { Voting } from "./Voting";
 export { Payment } from "./Payment";
+export { Category } from "./Category";
 export { Articles } from "./Articles";
 export { Settings } from "./Settings";
 export { MyArticles } from "./MyArticles";

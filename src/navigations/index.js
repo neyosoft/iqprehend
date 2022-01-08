@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -9,6 +9,7 @@ import { useAuth } from "../context";
 import ExpertNavigation from "./expert";
 import { AppText } from "../components";
 import { Onboarding } from "../screens/Onboarding";
+import theme from "../theme";
 
 export default function AppNavigation() {
     const { isLoading, user, isOnboardingCompleted } = useAuth();
@@ -16,7 +17,8 @@ export default function AppNavigation() {
     if (isLoading) {
         return (
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}>
-                <AppText>Loading...</AppText>
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <AppText style={{ marginTop: 10 }}>Loading...</AppText>
             </View>
         );
     }

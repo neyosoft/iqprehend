@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,9 +14,6 @@ export const Settings = ({ navigation }) => {
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={navigation.openDrawer}>
-                        <Icon name="menu" color="#fff" size={RFPercentage(3.5)} />
-                    </TouchableOpacity>
                     <AppText style={styles.headerTitle}>Settings</AppText>
                 </View>
                 <View style={styles.content}>

@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useNavigation } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { View, StyleSheet, Image, ActivityIndicator, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, Image, ActivityIndicator, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 
 import { AppBoldText, AppText } from "../../../../components";
 import { VideoArticleIcon } from "../../../../icons";
@@ -30,7 +30,17 @@ export const TopArticles = ({ search }) => {
 
     const renderOutput = () => {
         if (articlesResponse.isLoading) {
-            return <ActivityIndicator />;
+            return (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                </View>
+            );
+        }
+
+        if (articlesResponse?.data?.articles?.length < 1) {
+            <View style={styles.loadingContainer}>
+                <AppText>No article found</AppText>
+            </View>;
         }
 
         return (
@@ -62,7 +72,13 @@ export const TopArticles = ({ search }) => {
 
     return (
         <View style={styles.container}>
-            <AppBoldText style={styles.title}>Top Articles</AppBoldText>
+            <View style={styles.headerRow}>
+                <AppBoldText style={styles.title}>Top Articles</AppBoldText>
+
+                <TouchableOpacity onPress={() => navigation.navigate("Articles")}>
+                    <AppText style={styles.allArticleText}>All Articles</AppText>
+                </TouchableOpacity>
+            </View>
 
             {renderOutput()}
         </View>
@@ -71,6 +87,16 @@ export const TopArticles = ({ search }) => {
 
 const styles = StyleSheet.create({
     container: {},
+    loadingContainer: {
+        alignSelf: "center",
+        margin: RFPercentage(4),
+        justifyContent: "center",
+    },
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
     title: {
         fontSize: RFPercentage(3.5),
         color: theme.colors.primary,
@@ -87,8 +113,8 @@ const styles = StyleSheet.create({
     },
     cellText: {
         marginTop: 5,
-        fontSize: RFPercentage(1.5),
-        lineHeight: RFPercentage(2),
+        fontSize: RFPercentage(1.7),
+        lineHeight: RFPercentage(2.3),
     },
     videoImageWrapper: {
         alignItems: "center",
@@ -107,5 +133,8 @@ const styles = StyleSheet.create({
         flex: 1,
         width: undefined,
         height: undefined,
+    },
+    allArticleText: {
+        fontSize: RFPercentage(1.8),
     },
 });
