@@ -71,7 +71,7 @@ export const Categories = () => {
                 return <Image source={require("../../../../assets/images/Economics.png")} />;
 
             default:
-                return <Image source={require("../../../../assets/images/Politics.png")} />;
+                return <Image source={require("../../../../assets/images/Entertainment.png")} />;
         }
     };
 

@@ -51,30 +51,35 @@ export const Summaries = () => {
         return (
             <View style={styles.articleWrapper}>
                 {articlesResponse.data.summaries.slice(0, 9).map((record) => (
-                    <TouchableWithoutFeedback
-                        onPress={() => navigation.navigate("SingleArticleView", { articleID: record?.article?._id })}>
-                        <View style={styles.cellContainer} key={record._id}>
-                            {record.articleType === "TEXT" ? (
-                                <View style={styles.imagebox}>
-                                    <Image
-                                        resizeMode="cover"
-                                        style={styles.articleFeatureImage}
-                                        source={{ uri: record.featuredImage }}
-                                    />
+                    <>
+                        <TouchableWithoutFeedback
+                            onPress={() =>
+                                navigation.navigate("SingleArticleView", { articleID: record?.article?._id })
+                            }>
+                            <View style={styles.cellContainer} key={record._id}>
+                                {record.articleType === "TEXT" ? (
+                                    <View style={styles.imagebox}>
+                                        <Image
+                                            resizeMode="cover"
+                                            style={styles.articleFeatureImage}
+                                            source={{ uri: record.featuredImage }}
+                                        />
+                                    </View>
+                                ) : (
+                                    <View style={styles.videoImageWrapper}>
+                                        <VideoArticleIcon />
+                                    </View>
+                                )}
+                                <View style={styles.rightContainer}>
+                                    <AppText style={styles.articleTitle}>{record?.article?.title}</AppText>
+                                    <AppText style={styles.createdDateStyle}>
+                                        Submitted: {format(new Date(record.createdAt), "MMM dd, yyyy")}
+                                    </AppText>
                                 </View>
-                            ) : (
-                                <View style={styles.videoImageWrapper}>
-                                    <VideoArticleIcon />
-                                </View>
-                            )}
-                            <View style={styles.rightContainer}>
-                                <AppText style={styles.articleTitle}>{record?.article?.title}</AppText>
-                                <AppText style={styles.createdDateStyle}>
-                                    Submitted: {format(new Date(record.createdAt), "MMM dd, yyyy")}
-                                </AppText>
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
+                        </TouchableWithoutFeedback>
+                        <View style={{ height: RFPercentage(2) }} />
+                    </>
                 ))}
             </View>
         );

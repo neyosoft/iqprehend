@@ -62,6 +62,8 @@ export const PaymentPlans = ({ navigation }) => {
             return accum;
         }, {});
 
+        console.log("plans: ", plans)
+
         return (
             <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
                 <View style={styles.card}>

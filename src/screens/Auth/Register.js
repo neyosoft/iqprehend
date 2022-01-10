@@ -13,12 +13,13 @@ import {
     Page,
     Button,
     AppText,
-    Checkbox,
     TextField,
+    OnlyCheckbox,
     AppMediumText,
     PasswordField,
     FormErrorMessage,
 } from "../../components";
+import CONFIG from "../../../config";
 
 export const Register = ({ navigation }) => {
     const firstNameRef = useRef();
@@ -152,22 +153,18 @@ export const Register = ({ navigation }) => {
                                 </View>
 
                                 <View style={styles.termContainer}>
-                                    <Checkbox checked={agreement} onPress={() => setAgreement(!agreement)} />
+                                    <OnlyCheckbox checked={agreement} onPress={() => setAgreement(!agreement)} />
                                     <AppText style={styles.agreementText} onPress={() => setAgreement(!agreement)}>
                                         By signing up, you agree to our{" "}
                                         <AppMediumText
                                             style={styles.agreementLink}
-                                            onPress={() =>
-                                                Linking.openURL("https://web.iqprehend.herlabytes.com/privacy")
-                                            }>
+                                            onPress={() => Linking.openURL(`${CONFIG.FRONT_END_BASEURL}/privacy`)}>
                                             Privacy Policy
                                         </AppMediumText>{" "}
                                         and{" "}
                                         <AppMediumText
                                             style={styles.agreementLink}
-                                            onPress={() =>
-                                                Linking.openURL("https://web.iqprehend.herlabytes.com/terms")
-                                            }>
+                                            onPress={() => Linking.openURL(`${CONFIG.FRONT_END_BASEURL}/terms`)}>
                                             terms of service
                                         </AppMediumText>
                                     </AppText>

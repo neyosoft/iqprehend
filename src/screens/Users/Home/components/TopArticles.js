@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
         color: theme.colors.primary,
     },
     articleWrapper: {
+        width: "104%",
         marginTop: 10,
         flexWrap: "wrap",
         flexDirection: "row",

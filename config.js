@@ -2,6 +2,7 @@ export default {
     appName: "iQprehend",
     appVersion: "0.1.6",
     environment: "development",
+    FRONT_END_BASEURL: "http://web.iqprehend.herlabytes.com",
     DEV_SERVER_URL: "https://server.iqprehend.herlabytes.com/api",
     PROD_SERVER_URL: "https://server.iqprehend.herlabytes.com/api",
     DEV_PAYSTACK_KEY: "pk_test_a3ed9e085e83b82c53180a8b2578aa624a59ec0a",
