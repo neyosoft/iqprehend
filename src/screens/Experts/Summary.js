@@ -1,29 +1,24 @@
 import { useQuery } from "react-query";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useToast } from "react-native-fast-toast";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import AudioRecorderPlayer from "react-native-audio-recorder-player";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { RecordIcon } from "../../icons";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
 
 export const Summary = ({ navigation, route }) => {
     const toast = useToast();
-    const audioRef = useRef(new AudioRecorderPlayer());
 
     const { authenticatedRequest } = useAuth();
 
     const [score, setScore] = useState("");
     const [maxScore, setMaxScore] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [duration, setDuration] = useState("00:00:00");
     const [submitting, setSubmitting] = useState(false);
 
     const { summaryID } = route.params;
@@ -67,30 +62,6 @@ export const Summary = ({ navigation, route }) => {
             settingsResponse.refetch();
         }, []),
     );
-
-    const startPlaying = async () => {
-        setIsPlaying(true);
-
-        await audioRef.current.startPlayer(summaryResponse.data.audioContent);
-        await audioRef.current.setVolume(1.0);
-
-        audioRef.current.addPlayBackListener((e) => {
-            setDuration(audioRef.current.mmssss(Math.floor(e.currentPosition)));
-
-            if (e.currentPosition === e.duration) {
-                setIsPlaying(false);
-            }
-        });
-    };
-
-    const stopPlaying = () => {
-        setIsPlaying(false);
-
-        audioRef.current.stopPlayer();
-        audioRef.current.removePlayBackListener();
-
-        setDuration(audioRef.current.mmssss(0));
-    };
 
     const handleSubmit = async () => {
         if (!score) {
@@ -156,22 +127,6 @@ export const Summary = ({ navigation, route }) => {
                 {summary.content ? (
                     <View style={styles.summaryWrapper}>
                         <AppText style={styles.summary}>{summary.content}</AppText>
-                    </View>
-                ) : null}
-
-                {summary.audioContent ? (
-                    <View style={styles.audiobox}>
-                        <RecordIcon style={{ marginBottom: RFPercentage(2) }} />
-
-                        <AppMediumText style={{ marginBottom: 10 }}>{duration}</AppMediumText>
-
-                        <Button
-                            label={isPlaying ? "STOP" : "PLAY"}
-                            style={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
-                            onPress={() => {
-                                isPlaying ? stopPlaying() : startPlaying();
-                            }}
-                        />
                     </View>
                 ) : null}
 

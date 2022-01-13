@@ -43,7 +43,7 @@ export const Categories = () => {
                         key={record._id}
                         style={styles.cellContainer}
                         onPress={() => navigation.navigate("Category", { sector: record })}>
-                        {switchIconToDisplay(record.name)}
+                        <View style={styles.itemImageContainer}>{switchIconToDisplay(record.name)}</View>
                         <AppText style={styles.cellText}>{record.name}</AppText>
                     </TouchableOpacity>
                 ))}
@@ -54,24 +54,33 @@ export const Categories = () => {
     const switchIconToDisplay = (name) => {
         switch (name?.toLowerCase()) {
             case "academics":
-                return <Image source={require("../../../../assets/images/Academics.png")} />;
+                return <Image style={styles.itemImage} source={require("../../../../assets/images/Academics.png")} />;
             case "entertainment":
-                return <Image source={require("../../../../assets/images/Entertainment.png")} />;
+                return (
+                    <Image style={styles.itemImage} source={require("../../../../assets/images/Entertainment.png")} />
+                );
             case "sports":
-                return <Image source={require("../../../../assets/images/Sports.png")} />;
+                return <Image style={styles.itemImage} source={require("../../../../assets/images/Sports.png")} />;
             case "business":
-                return <Image source={require("../../../../assets/images/Business.png")} />;
+                return <Image style={styles.itemImage} source={require("../../../../assets/images/Business.png")} />;
             case "technology":
-                return <Image source={require("../../../../assets/images/Technology.png")} />;
+                return <Image style={styles.itemImage} source={require("../../../../assets/images/Technology.png")} />;
             case "politics":
-                return <Image source={require("../../../../assets/images/Politics.png")} />;
+                return <Image style={styles.itemImage} source={require("../../../../assets/images/Politics.png")} />;
             case "entrepreneurship":
-                return <Image source={require("../../../../assets/images/Entrepreneurship.png")} />;
+                return (
+                    <Image
+                        style={styles.itemImage}
+                        source={require("../../../../assets/images/Entrepreneurship.png")}
+                    />
+                );
             case "economics":
-                return <Image source={require("../../../../assets/images/Economics.png")} />;
+                return <Image style={styles.itemImage} source={require("../../../../assets/images/Economics.png")} />;
 
             default:
-                return <Image source={require("../../../../assets/images/Entertainment.png")} />;
+                return (
+                    <Image style={styles.itemImage} source={require("../../../../assets/images/Entertainment.png")} />
+                );
         }
     };
 
@@ -97,6 +106,7 @@ const styles = StyleSheet.create({
     },
     articleWrapper: {
         marginTop: 10,
+        width: "107%",
         flexWrap: "wrap",
         flexDirection: "row",
     },
@@ -105,10 +115,19 @@ const styles = StyleSheet.create({
     },
     cellContainer: {
         width: "25%",
-        alignItems: "center",
         marginBottom: RFPercentage(2),
     },
+    itemImageContainer: {
+        width: RFPercentage(10),
+        height: RFPercentage(10),
+    },
+    itemImage: {
+        flex: 1,
+        width: undefined,
+        height: undefined,
+    },
     cellText: {
+        width: RFPercentage(10),
         fontSize: RFPercentage(1.5),
         lineHeight: RFPercentage(2),
     },
