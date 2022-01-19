@@ -4,7 +4,7 @@ import { object, string } from "yup";
 import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
@@ -22,7 +22,7 @@ export const ForgetPassword = ({ navigation }) => {
             if (data && data.data) {
                 toast.show(data.data.message);
 
-                navigation.navigate("PasswordReset", { code: data.data.code });
+                navigation.navigate("PasswordReset");
             } else {
                 throw new Error();
             }

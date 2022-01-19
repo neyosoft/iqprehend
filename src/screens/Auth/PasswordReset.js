@@ -11,9 +11,7 @@ import { baseRequest, extractResponseErrorMessage } from "../../utils/request.ut
 import theme from "../../theme";
 import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
 
-export const PasswordReset = ({ navigation, route }) => {
-    const { code } = route.params;
-
+export const PasswordReset = ({ navigation }) => {
     const toast = useToast();
 
     const onSubmit = async (values, { setFieldError }) => {
@@ -57,10 +55,6 @@ export const PasswordReset = ({ navigation, route }) => {
                             </View>
                             <View style={styles.form}>
                                 {errors.general ? <FormErrorMessage label={errors.general} /> : null}
-
-                                <View>
-                                    <AppText>Verification code: {code}</AppText>
-                                </View>
 
                                 <AppText style={styles.description}>
                                     We recommend using a mix of upper and lower case, special characters and numbers.
