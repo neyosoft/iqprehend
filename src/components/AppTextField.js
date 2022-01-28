@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         height: RFPercentage(6),
         fontSize: RFPercentage(2.1),
         paddingLeft: RFPercentage(2),
-        fontFamily: "Baloo2-Regular",
+        fontFamily: "Rubik-Regular",
     },
     error: {
         borderWidth: 1,

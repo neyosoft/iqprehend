@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         height: undefined,
     },
     titleContainer: {
-        width: "50%",
+        width: "60%",
         justifyContent: "center",
         height: RFPercentage(20),
         marginTop: RFPercentage(5),

@@ -11,6 +11,6 @@ export const AppMediumText = ({ children, style, ...rest }) => (
 const styles = StyleSheet.create({
     root: {
         fontSize: RFPercentage(2.1),
-        fontFamily: "Baloo2-Medium",
+        fontFamily: "Rubik-Medium",
     },
 });

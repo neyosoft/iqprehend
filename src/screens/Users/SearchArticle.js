@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         marginHorizontal: 10,
         borderBottomColor: "#7189A8",
-        fontFamily: "Baloo2-Regular",
+        fontFamily: "Rubik-Regular",
     },
     flatlist: {
         marginTop: RFPercentage(1),

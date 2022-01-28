@@ -11,6 +11,6 @@ export const AppBoldText = ({ children, style, ...rest }) => (
 const styles = StyleSheet.create({
     root: {
         fontSize: RFPercentage(2.1),
-        fontFamily: "Baloo2-Bold",
+        fontFamily: "Rubik-Bold",
     },
 });

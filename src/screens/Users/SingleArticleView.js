@@ -397,7 +397,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                                 source={{ html: article.content }}
                                 baseFontStyle={{
                                     fontSize: RFPercentage(2.1),
-                                    fontFamily: "Baloo2-Regular",
+                                    fontFamily: "Rubik-Regular",
                                     lineHeight: RFPercentage(3.3),
                                 }}
                             />
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
         fontSize: RFPercentage(2.1),
         padding: RFPercentage(1.5),
-        fontFamily: "Baloo2-Regular",
+        fontFamily: "Rubik-Regular",
     },
     summaryText: {
         fontSize: RFPercentage(2),

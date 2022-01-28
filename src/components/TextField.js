@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F2F2F2",
         fontSize: RFPercentage(2.1),
         paddingLeft: RFPercentage(2),
-        fontFamily: "Baloo2-Regular",
+        fontFamily: "Rubik-Regular",
         borderRadius: theme.radius.input,
     },
     error: {

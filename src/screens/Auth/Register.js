@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,12 +22,6 @@ import {
 import CONFIG from "../../../config";
 
 export const Register = ({ navigation }) => {
-    const firstNameRef = useRef();
-    const lastNameRef = useRef();
-    const emailRef = useRef();
-    const passwordRef = useRef();
-    const phoneNumberRef = useRef();
-
     const { authenticate } = useAuth();
 
     const [agreement, setAgreement] = useState(false);
@@ -74,38 +68,30 @@ export const Register = ({ navigation }) => {
                                     {errors.general ? <FormErrorMessage label={errors.general} /> : null}
 
                                     <TextField
-                                        ref={firstNameRef}
-                                        returnKeyType="next"
                                         placeholder="First Name"
                                         value={values.firstName}
                                         onBlur={handleBlur("firstName")}
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("firstName")}
                                         error={errors.firstName && touched.firstName}
-                                        onEndEditing={() => lastNameRef?.current?.focus()}
                                     />
                                     {errors.firstName && touched.firstName && (
                                         <AppText style={styles.fieldErrorText}>{errors.firstName}</AppText>
                                     )}
 
                                     <TextField
-                                        ref={lastNameRef}
-                                        returnKeyType="next"
                                         placeholder="Last Name"
                                         value={values.lastName}
                                         onBlur={handleBlur("lastName")}
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("lastName")}
                                         error={errors.lastName && touched.lastName}
-                                        onEndEditing={() => emailRef?.current?.focus()}
                                     />
                                     {errors.lastName && touched.lastName && (
                                         <AppText style={styles.fieldErrorText}>{errors.lastName}</AppText>
                                     )}
 
                                     <TextField
-                                        ref={emailRef}
-                                        returnKeyType="next"
                                         value={values.email}
                                         autoCapitalize="none"
                                         placeholder="Email Address"
@@ -114,15 +100,12 @@ export const Register = ({ navigation }) => {
                                         onChangeText={handleChange("email")}
                                         error={touched.email && errors.email}
                                         style={{ marginTop: RFPercentage(2) }}
-                                        onEndEditing={() => phoneNumberRef?.current?.focus()}
                                     />
                                     {touched.email && errors.email && (
                                         <AppText style={styles.fieldErrorText}>{errors.email}</AppText>
                                     )}
 
                                     <TextField
-                                        ref={phoneNumberRef}
-                                        returnKeyType="next"
                                         keyboardType="numeric"
                                         value={values.phoneNumber}
                                         placeholder="Phone Number"
@@ -130,14 +113,12 @@ export const Register = ({ navigation }) => {
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("phoneNumber")}
                                         error={errors.phoneNumber && touched.phoneNumber}
-                                        onEndEditing={() => passwordRef?.current?.focus()}
                                     />
                                     {errors.phoneNumber && touched.phoneNumber && (
                                         <AppText style={styles.fieldErrorText}>{errors.phoneNumber}</AppText>
                                     )}
 
                                     <PasswordField
-                                        ref={passwordRef}
                                         style={styles.input}
                                         autoCapitalize="none"
                                         value={values.password}

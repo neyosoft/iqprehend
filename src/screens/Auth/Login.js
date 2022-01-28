@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     },
     pageDescription: {
         color: "#6A6A6A",
+        marginTop: RFPercentage(1),
     },
     formFieldLabel: {
         marginBottom: 10,
@@ -133,6 +134,7 @@ const styles = StyleSheet.create({
     },
     centerView: {
         alignItems: "center",
+        marginTop: RFPercentage(1),
     },
     forgetPassword: {
         color: theme.colors.primary,
