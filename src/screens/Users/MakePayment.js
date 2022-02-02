@@ -49,10 +49,11 @@ export const MakePayment = ({ navigation, route }) => {
     };
 
     const paymentResponse = useQuery("payment-info", async () => {
-        const { data } = await authenticatedRequest().post("/payment", { plan: plan.id, amount: plan.price });
+        const { data } = await authenticatedRequest().post("/payment", { name: plan.name });
 
         if (data && data) {
             setAccessCode(data.data.accessCode);
+
             return data.data;
         } else {
             throw new Error("There is problem setting up payment at the moment.");

@@ -36,6 +36,14 @@ export const Categories = () => {
             );
         }
 
+        if (sectorResponse.data?.length === 0) {
+            return (
+                <View style={styles.emptyContainer}>
+                    <AppText>No category found.</AppText>
+                </View>
+            );
+        }
+
         return (
             <View style={styles.articleWrapper}>
                 {sectorResponse.data.map((record) => (
@@ -95,6 +103,12 @@ export const Categories = () => {
 
 const styles = StyleSheet.create({
     container: {},
+    emptyContainer: {
+        alignSelf: "center",
+        marginTop: RFPercentage(2),
+        marginBottom: RFPercentage(4),
+        justifyContent: "center",
+    },
     loadingContainer: {
         alignSelf: "center",
         margin: RFPercentage(4),
@@ -114,7 +128,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     cellContainer: {
-        width: "25%",
+        width: "50%",
         marginBottom: RFPercentage(2),
     },
     itemImageContainer: {
@@ -128,7 +142,7 @@ const styles = StyleSheet.create({
     },
     cellText: {
         width: RFPercentage(10),
-        fontSize: RFPercentage(1.5),
+        fontSize: RFPercentage(1.7),
         lineHeight: RFPercentage(2),
     },
 });

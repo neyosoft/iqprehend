@@ -4,8 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, Image, ActivityIndicator, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 
-import { AppBoldText, AppText } from "../../../../components";
 import { VideoArticleIcon } from "../../../../icons";
+import { AppBoldText, AppText } from "../../../../components";
 
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
@@ -37,10 +37,12 @@ export const TopArticles = () => {
             );
         }
 
-        if (articlesResponse?.data?.articles?.length < 1) {
-            <View style={styles.loadingContainer}>
-                <AppText>No article found</AppText>
-            </View>;
+        if (articlesResponse?.data?.totalDocuments === 0) {
+            return (
+                <View style={styles.emptyContainer}>
+                    <AppText>No article found</AppText>
+                </View>
+            );
         }
 
         return (
@@ -75,9 +77,11 @@ export const TopArticles = () => {
             <View style={styles.headerRow}>
                 <AppBoldText style={styles.title}>Top Articles</AppBoldText>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Articles")}>
-                    <AppText style={styles.allArticleText}>All Articles</AppText>
-                </TouchableOpacity>
+                {articlesResponse?.data?.totalDocuments !== 0 && (
+                    <TouchableOpacity onPress={() => navigation.navigate("Articles")}>
+                        <AppText style={styles.allArticleText}>All Articles 1</AppText>
+                    </TouchableOpacity>
+                )}
             </View>
 
             {renderOutput()}
@@ -87,6 +91,12 @@ export const TopArticles = () => {
 
 const styles = StyleSheet.create({
     container: {},
+    emptyContainer: {
+        alignSelf: "center",
+        marginTop: RFPercentage(2),
+        marginBottom: RFPercentage(4),
+        justifyContent: "center",
+    },
     loadingContainer: {
         alignSelf: "center",
         margin: RFPercentage(4),

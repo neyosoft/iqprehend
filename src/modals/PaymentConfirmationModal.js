@@ -17,13 +17,15 @@ export const PaymentConfirmationModal = ({ show = false, plan, onClose, onConfir
                         <AppText style={styles.description}>You are about to subscribe to the below plan</AppText>
 
                         <View style={styles.rowItem}>
-                            <AppMediumText>Type</AppMediumText>
-                            <AppText style={styles.rowItemValue}>{plan?.duration}</AppText>
-                        </View>
-
-                        <View style={styles.rowItem}>
                             <AppMediumText>Amount</AppMediumText>
                             <AppText style={styles.rowItemValue}>{moneyFormat(plan?.price || 0)}</AppText>
+                        </View>
+
+                        <View style={[styles.rowItem, { marginTop: 5 }]}>
+                            <AppMediumText>Duration</AppMediumText>
+                            <AppText style={styles.rowItemValue}>
+                                {plan?.duration === "ANNUAL" ? "One year" : "One month"}
+                            </AppText>
                         </View>
                     </View>
 

@@ -42,7 +42,7 @@ export const Summaries = () => {
 
         if (articlesResponse?.data?.totalDocs === 0) {
             return (
-                <View style={styles.loadingContainer}>
+                <View style={styles.emptyContainer}>
                     <AppText>No summary found.</AppText>
                 </View>
             );
@@ -97,6 +97,12 @@ export const Summaries = () => {
 const styles = StyleSheet.create({
     container: {
         paddingBottom: RFPercentage(3),
+    },
+    emptyContainer: {
+        alignSelf: "center",
+        marginTop: RFPercentage(2),
+        marginBottom: RFPercentage(4),
+        justifyContent: "center",
     },
     loadingContainer: {
         alignSelf: "center",

@@ -4,7 +4,7 @@ import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, TouchableOpacity, StatusBar, ScrollView } from "react-native";
+import { View, StyleSheet, TouchableOpacity, StatusBar, ScrollView, TouchableWithoutFeedback } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -24,7 +24,7 @@ export const PaymentPlans = ({ navigation }) => {
         const { data } = await authenticatedRequest().get("/plan");
 
         if (data && data.data) {
-            return data.data.plans;
+            return data.data;
         } else {
             throw new Error("Unable to retrieve payment plans");
         }
@@ -56,179 +56,54 @@ export const PaymentPlans = ({ navigation }) => {
             );
         }
 
-        const plans = planResponse.data.reduce((accum, plan) => {
-            accum[plan.name] = plan;
-
-            return accum;
-        }, {});
-
-        console.log("plans: ", plans)
+        const plans = planResponse.data;
 
         return (
             <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <AppText style={styles.cardHeaderText}>Standard</AppText>
+                <TouchableWithoutFeedback onPress={() => setPlan("STANDARD")}>
+                    <View style={[styles.card, plan === "STANDARD" ? styles.activeCardContent : undefined]}>
+                        <View style={styles.cardHeader}>
+                            <AppText style={styles.cardHeaderText}>Standard</AppText>
+                        </View>
+                        <View style={styles.cardContent}>
+                            <AppText style={styles.planPrice}>{moneyFormat(plans.STANDARD.price)}/year</AppText>
+                        </View>
                     </View>
-                    <View style={styles.cardContent}>
-                        <Checkbox
-                            label="Monthly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "STANDARD-MONTHLY"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "standard",
-                                    duration: "One Month",
-                                    name: "STANDARD-MONTHLY",
-                                    id: plans["STANDARD-MONTHLY"]["_id"],
-                                    price: plans["STANDARD-MONTHLY"]["price"],
-                                })
-                            }
-                        />
-                        <Checkbox
-                            label="Quarterly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "STANDARD-QUARTERLY"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "standard",
-                                    duration: "One Quarter",
-                                    name: "STANDARD-QUARTERLY",
-                                    id: plans["STANDARD-QUARTERLY"]["_id"],
-                                    price: plans["STANDARD-QUARTERLY"]["price"],
-                                })
-                            }
-                        />
-                        <Checkbox
-                            label="Yearly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "STANDARD-ANNUAL"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "standard",
-                                    duration: "One Year",
-                                    name: "STANDARD-ANNUAL",
-                                    id: plans["STANDARD-ANNUAL"]["_id"],
-                                    price: plans["STANDARD-ANNUAL"]["price"],
-                                })
-                            }
-                        />
+                </TouchableWithoutFeedback>
 
-                        {plan?.type === "standard" ? (
-                            <AppText style={styles.planPrice}>{moneyFormat(plans[plan.name]["price"])}</AppText>
-                        ) : null}
+                <TouchableWithoutFeedback onPress={() => setPlan("EXPERT")}>
+                    <View
+                        style={[
+                            styles.card,
+                            { marginTop: RFPercentage(4) },
+                            plan === "EXPERT" ? styles.activeCardContent : undefined,
+                        ]}>
+                        <View style={styles.cardHeader}>
+                            <AppText style={styles.cardHeaderText}>Expert</AppText>
+                        </View>
+                        <View style={styles.cardContent}>
+                            <AppText style={styles.planPrice}>{moneyFormat(plans.EXPERT.price)}/month</AppText>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
 
-                        <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} />
+                <TouchableWithoutFeedback onPress={() => setPlan("PREMIUM")}>
+                    <View
+                        style={[
+                            styles.card,
+                            { marginTop: RFPercentage(4) },
+                            plan === "PREMIUM" ? styles.activeCardContent : undefined,
+                        ]}>
+                        <View style={styles.cardHeader}>
+                            <AppText style={styles.cardHeaderText}>Premium</AppText>
+                        </View>
+                        <View style={styles.cardContent}>
+                            <AppText style={styles.planPrice}>{moneyFormat(plans.PREMIUM.price)}/year</AppText>
+                        </View>
                     </View>
-                </View>
-                <View style={[styles.card, { marginTop: RFPercentage(4) }]}>
-                    <View style={styles.cardHeader}>
-                        <AppText style={styles.cardHeaderText}>Expert</AppText>
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Checkbox
-                            label="Monthly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "EXPERT-MONTHLY"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "expert",
-                                    duration: "One Month",
-                                    name: "EXPERT-MONTHLY",
-                                    id: plans["EXPERT-MONTHLY"]["_id"],
-                                    price: plans["EXPERT-MONTHLY"]["price"],
-                                })
-                            }
-                        />
-                        <Checkbox
-                            label="Quarterly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "EXPERT-QUARTERLY"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "expert",
-                                    name: "EXPERT-QUARTERLY",
-                                    duration: "One Quarterly",
-                                    id: plans["EXPERT-QUARTERLY"]["_id"],
-                                    price: plans["EXPERT-QUARTERLY"]["price"],
-                                })
-                            }
-                        />
-                        <Checkbox
-                            label="Yearly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "EXPERT-ANNUAL"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "expert",
-                                    name: "EXPERT-ANNUAL",
-                                    duration: "One Year",
-                                    id: plans["EXPERT-ANNUAL"]["_id"],
-                                    price: plans["EXPERT-ANNUAL"]["price"],
-                                })
-                            }
-                        />
-                        {plan?.type === "expert" ? (
-                            <AppText style={styles.planPrice}>{moneyFormat(plans[plan.name]["price"])}</AppText>
-                        ) : null}
+                </TouchableWithoutFeedback>
 
-                        <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} />
-                    </View>
-                </View>
-                <View style={[styles.card, { marginTop: RFPercentage(4) }]}>
-                    <View style={styles.cardHeader}>
-                        <AppText style={styles.cardHeaderText}>Premium</AppText>
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Checkbox
-                            label="Monthly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "PREMIUM-MONTHLY"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "premium",
-                                    duration: "One Month",
-                                    name: "PREMIUM-MONTHLY",
-                                    id: plans["PREMIUM-MONTHLY"]["_id"],
-                                    price: plans["PREMIUM-MONTHLY"]["price"],
-                                })
-                            }
-                        />
-                        <Checkbox
-                            label="Quarterly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "PREMIUM-QUARTERLY"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "premium",
-                                    duration: "One Quarter",
-                                    name: "PREMIUM-QUARTERLY",
-                                    id: plans["PREMIUM-QUARTERLY"]["_id"],
-                                    price: plans["PREMIUM-QUARTERLY"]["price"],
-                                })
-                            }
-                        />
-                        <Checkbox
-                            label="Yearly"
-                            style={styles.checkbox}
-                            checked={plan?.name === "PREMIUM-ANNUAL"}
-                            onPress={() =>
-                                setPlan({
-                                    type: "premium",
-                                    duration: "One Year",
-                                    name: "PREMIUM-ANNUAL",
-                                    id: plans["PREMIUM-ANNUAL"]["_id"],
-                                    price: plans["PREMIUM-ANNUAL"]["price"],
-                                })
-                            }
-                        />
-                        {plan?.type === "premium" ? (
-                            <AppText style={styles.planPrice}>{moneyFormat(plans[plan.name]["price"])}</AppText>
-                        ) : null}
-
-                        <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} />
-                    </View>
-                </View>
+                <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} />
             </ScrollView>
         );
     };
@@ -249,14 +124,14 @@ export const PaymentPlans = ({ navigation }) => {
             </View>
 
             <PaymentConfirmationModal
-                plan={plan}
                 show={showConfirmModal}
                 plans={planResponse.data}
+                plan={planResponse.data[plan]}
                 onClose={() => setShowConfirmModal(false)}
                 onConfirm={() => {
                     setShowConfirmModal(false);
 
-                    navigation.navigate("MakePayment", { plan });
+                    navigation.navigate("MakePayment", { plan: planResponse.data[plan] });
                 }}
             />
         </SafeAreaView>
@@ -305,6 +180,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         alignSelf: "center",
     },
+    activeCardContent: {
+        backgroundColor: "#999",
+    },
     checkbox: {
         paddingVertical: 4,
     },
@@ -314,6 +192,6 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     proceedBtn: {
-        marginTop: 10,
+        marginTop: RFPercentage(5),
     },
 });
