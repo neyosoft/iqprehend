@@ -1,6 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { View, StyleSheet, Image, TouchableWithoutFeedback } from "react-native";
 
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
@@ -8,6 +9,7 @@ import { AppBoldText, AppText } from "../../../../components";
 
 export const WelcomeHeader = () => {
     const { user } = useAuth();
+    const navigation = useNavigation();
 
     return (
         <View style={styles.container}>
@@ -16,7 +18,7 @@ export const WelcomeHeader = () => {
 
                 <AppText style={styles.welcomeSubtitle}>What are you reading today?</AppText>
             </View>
-            <View>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate("Settings")}>
                 <Image
                     style={styles.photo}
                     source={
@@ -25,7 +27,7 @@ export const WelcomeHeader = () => {
                             : require("../../../../assets/images/avatar.jpg")
                     }
                 />
-            </View>
+            </TouchableWithoutFeedback>
         </View>
     );
 };
@@ -35,17 +37,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         padding: RFPercentage(2),
         backgroundColor: "#F4F4F4",
-        justifyContent: "space-between",
         paddingBottom: RFPercentage(6),
+        justifyContent: "space-between",
     },
     leftContainer: {
         flex: 1,
     },
     welcomeText: {
         color: theme.colors.primary,
-        fontSize: RFPercentage(4),
+        fontSize: RFPercentage(3.5),
     },
     welcomeSubtitle: {
+        marginTop: 2,
         color: "#6A6A6A",
         lineHeight: RFPercentage(2.3),
     },

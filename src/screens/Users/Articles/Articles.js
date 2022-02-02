@@ -88,14 +88,16 @@ export const Articles = ({ navigation }) => {
             <View style={{ flex: 1 }}>
                 <View style={styles.topHeader}>
                     <SearchInput style={styles.searchbox} />
-                    <Image
-                        style={styles.photo}
-                        source={
-                            user?.profilePicture
-                                ? { uri: user.profilePicture }
-                                : require("../../../assets/images/avatar.jpg")
-                        }
-                    />
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate("Settings")}>
+                        <Image
+                            style={styles.photo}
+                            source={
+                                user?.profilePicture
+                                    ? { uri: user.profilePicture }
+                                    : require("../../../assets/images/avatar.jpg")
+                            }
+                        />
+                    </TouchableWithoutFeedback>
                 </View>
 
                 <AppMediumText style={styles.headerTitle}>All Articles</AppMediumText>

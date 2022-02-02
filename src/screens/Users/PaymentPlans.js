@@ -8,7 +8,6 @@ import { View, StyleSheet, TouchableOpacity, StatusBar, ScrollView, TouchableWit
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { Checkbox } from "../../components/Checkbox";
 import { moneyFormat } from "../../utils/money.utils";
 import { AppText, Button, PageLoading } from "../../components";
 import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
@@ -125,8 +124,7 @@ export const PaymentPlans = ({ navigation }) => {
 
             <PaymentConfirmationModal
                 show={showConfirmModal}
-                plans={planResponse.data}
-                plan={planResponse.data[plan]}
+                plan={planResponse?.data[plan]}
                 onClose={() => setShowConfirmModal(false)}
                 onConfirm={() => {
                     setShowConfirmModal(false);
