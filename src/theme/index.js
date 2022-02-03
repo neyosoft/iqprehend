@@ -1,9 +1,9 @@
 export default {
     colors: {
-        primary: "#102F55",
+        primary: "#060169",
+        oldPrimary: "#102F55",
         secondary: "#608EC1",
         error: "#EA394B",
-        blue: "#060169",
         diabledBtn: "#7A7A7A",
         diabledBtnText: "#333",
     },

@@ -131,6 +131,22 @@ export const Register = ({ navigation }) => {
                                     {errors.password && touched.password && (
                                         <AppText style={styles.fieldErrorText}>{errors.password}</AppText>
                                     )}
+
+                                    <TextField
+                                        placeholder="Address"
+                                        value={values.address}
+                                        onBlur={handleBlur("address")}
+                                        style={{ marginTop: RFPercentage(2) }}
+                                        onChangeText={handleChange("address")}
+                                    />
+
+                                    <TextField
+                                        placeholder="Hobbies"
+                                        value={values.hobbies}
+                                        onBlur={handleBlur("hobbies")}
+                                        style={{ marginTop: RFPercentage(2) }}
+                                        onChangeText={handleChange("hobbies")}
+                                    />
                                 </View>
 
                                 <View style={styles.termContainer}>

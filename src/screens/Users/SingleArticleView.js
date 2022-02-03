@@ -358,7 +358,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                         </AppText>
                     </View>
                     <View style={[styles.deadlineBox, { marginLeft: RFPercentage(2) }]}>
-                        <Icon name="clock-outline" color="#102F55" size={RFPercentage(3)} />
+                        <Icon name="clock-outline" color={theme.colors.primary} size={RFPercentage(3)} />
                         <AppText style={styles.deadlineText}>
                             Deadline: {format(new Date(article.deadline), "MMM dd, yyyy")}
                         </AppText>
@@ -383,7 +383,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                         {article.featuredImage ? (
                             <View style={styles.featureImageBox}>
                                 <Image
-                                    resizeMode="contain"
+                                    resizeMode="cover"
                                     style={styles.featureImage}
                                     source={{ uri: article.featuredImage }}
                                 />
@@ -471,8 +471,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     deadlineText: {
-        color: "#102F55",
         marginLeft: 4,
+        color: theme.colors.primary,
         fontSize: RFPercentage(1.8),
     },
     responseRow: {
