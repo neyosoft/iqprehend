@@ -442,7 +442,6 @@ const styles = StyleSheet.create({
         padding: RFPercentage(3),
     },
     title: {
-        textAlign: "center",
         color: theme.colors.primary,
         fontSize: RFPercentage(2.7),
     },

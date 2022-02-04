@@ -79,7 +79,7 @@ export const TopArticles = () => {
 
                 {articlesResponse?.data?.totalDocuments !== 0 && (
                     <TouchableOpacity onPress={() => navigation.navigate("Articles")}>
-                        <AppText style={styles.allArticleText}>All Articles</AppText>
+                        <AppText style={styles.allArticleText}>See All</AppText>
                     </TouchableOpacity>
                 )}
             </View>
@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
     },
     cellText: {
         marginTop: 5,
-        color: "#060169",
+        textAlign: "center",
+        color: theme.colors.primary,
         fontSize: RFPercentage(1.7),
         lineHeight: RFPercentage(2.3),
     },
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
         height: undefined,
     },
     allArticleText: {
+        color: theme.colors.primary,
         fontSize: RFPercentage(1.8),
     },
 });

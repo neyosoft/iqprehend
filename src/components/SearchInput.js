@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#fff",
         padding: RFPercentage(1),
+        paddingLeft: RFPercentage(2.5),
         borderRadius: RFPercentage(1),
     },
     textInput: {
