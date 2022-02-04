@@ -315,6 +315,31 @@ export const SingleArticleView = ({ navigation, route }) => {
         );
     };
 
+    const renderMedia = (article) => {
+        if (article.articleType === "VIDEO") {
+            return (
+                <YoutubePlayer
+                    play={playing}
+                    height={RFPercentage(30)}
+                    onChangeState={onStateChange}
+                    videoId={
+                        article.videoLink.includes("youtube")
+                            ? article.videoLink.replace("https://www.youtube.com/watch?v=", "")
+                            : article?.videoLink?.replace("https://youtu.be/", "")
+                    }
+                />
+            );
+        } else {
+            if (article.featuredImage) {
+                return (
+                    <View style={styles.featureImageBox}>
+                        <Image resizeMode="cover" style={styles.featureImage} source={{ uri: article.featuredImage }} />
+                    </View>
+                );
+            }
+        }
+    };
+
     const renderContent = () => {
         if (articlesResponse.isLoading || articlesSummaryResponse.isLoading || settingsResponse.isLoading) {
             return <PageLoading />;
@@ -342,70 +367,39 @@ export const SingleArticleView = ({ navigation, route }) => {
         const article = articlesResponse.data;
 
         return (
-            <ScrollView contentContainerStyle={styles.contentContainerStyle} showsVerticalScrollIndicator={false}>
-                <AppMediumText style={styles.title}>{article.title}</AppMediumText>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {renderMedia(article)}
 
-                <View style={{ flexDirection: "row", justifyContent: "center" }}>
-                    <AppBoldText>Article Sector: </AppBoldText>
-                    <AppText>{article?.sector?.name}</AppText>
-                </View>
+                <View style={styles.contentContainerStyle}>
+                    <AppMediumText style={styles.title}>{article.title}</AppMediumText>
 
-                <View style={styles.dateBox}>
-                    <View style={styles.postedBox}>
-                        <Icon name="clock-outline" color="#608EC1" size={RFPercentage(3)} />
-                        <AppText style={styles.postedText}>
-                            Posted on {format(new Date(article.createdAt), "MMM dd, yyyy")}
-                        </AppText>
-                    </View>
-                    <View style={[styles.deadlineBox, { marginLeft: RFPercentage(2) }]}>
-                        <Icon name="clock-outline" color={theme.colors.primary} size={RFPercentage(3)} />
-                        <AppText style={styles.deadlineText}>
-                            Deadline: {format(new Date(article.deadline), "MMM dd, yyyy")}
-                        </AppText>
-                    </View>
-                </View>
-
-                {article.articleType === "VIDEO" ? (
-                    <>
-                        <YoutubePlayer
-                            play={playing}
-                            height={RFPercentage(30)}
-                            onChangeState={onStateChange}
-                            videoId={
-                                article.videoLink.includes("youtube")
-                                    ? article.videoLink.replace("https://www.youtube.com/watch?v=", "")
-                                    : article?.videoLink?.replace("https://youtu.be/", "")
-                            }
-                        />
-                    </>
-                ) : (
-                    <>
-                        {article.featuredImage ? (
-                            <View style={styles.featureImageBox}>
-                                <Image
-                                    resizeMode="cover"
-                                    style={styles.featureImage}
-                                    source={{ uri: article.featuredImage }}
-                                />
-                            </View>
-                        ) : null}
-
-                        <View style={styles.body}>
-                            <HTML
-                                emSize={16}
-                                contentWidth={contentWidth}
-                                source={{ html: article.content }}
-                                baseFontStyle={{
-                                    fontSize: RFPercentage(2.1),
-                                    fontFamily: "Rubik-Regular",
-                                    lineHeight: RFPercentage(3.3),
-                                }}
-                            />
+                    <View style={styles.dateBox}>
+                        <View style={styles.postedBox}>
+                            <AppText style={styles.postedText}>
+                                Published date: {format(new Date(article.createdAt), "MMM dd, yyyy")} |
+                            </AppText>
                         </View>
-                    </>
-                )}
+                        <View style={[styles.deadlineBox, { marginLeft: RFPercentage(1) }]}>
+                            <AppText style={styles.deadlineText}>
+                                Deadline: {format(new Date(article.deadline), "MMM dd, yyyy")}
+                            </AppText>
+                        </View>
+                    </View>
 
-                {renderTextSummaryForm()}
+                    <HTML
+                        emSize={16}
+                        contentWidth={contentWidth}
+                        source={{ html: article.content }}
+                        baseFontStyle={{
+                            textAlign: "justify",
+                            fontSize: RFPercentage(2.1),
+                            fontFamily: "Rubik-Regular",
+                            lineHeight: RFPercentage(3.2),
+                        }}
+                    />
+
+                    {renderTextSummaryForm()}
+                </View>
             </ScrollView>
         );
     };
@@ -449,21 +443,21 @@ const styles = StyleSheet.create({
     },
     title: {
         textAlign: "center",
+        color: theme.colors.primary,
         fontSize: RFPercentage(2.7),
     },
     dateBox: {
         alignItems: "center",
         flexDirection: "row",
         marginTop: RFPercentage(1),
-        marginBottom: RFPercentage(3),
+        marginBottom: RFPercentage(1),
     },
     postedBox: {
         alignItems: "center",
         flexDirection: "row",
     },
     postedText: {
-        color: "#608EC1",
-        marginLeft: 4,
+        color: "#8D8D8D",
         fontSize: RFPercentage(1.8),
     },
     deadlineBox: {
@@ -471,8 +465,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     deadlineText: {
-        marginLeft: 4,
-        color: theme.colors.primary,
+        color: "#8D8D8D",
         fontSize: RFPercentage(1.8),
     },
     responseRow: {

@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
     },
     articleWrapper: {
         marginTop: 10,
-        width: "107%",
         flexWrap: "wrap",
         flexDirection: "row",
     },
@@ -129,11 +128,12 @@ const styles = StyleSheet.create({
     },
     cellContainer: {
         width: "50%",
+        alignItems: "center",
         marginBottom: RFPercentage(2),
     },
     itemImageContainer: {
-        width: RFPercentage(10),
-        height: RFPercentage(10),
+        width: RFPercentage(20),
+        height: RFPercentage(20),
     },
     itemImage: {
         flex: 1,
@@ -141,8 +141,9 @@ const styles = StyleSheet.create({
         height: undefined,
     },
     cellText: {
-        width: RFPercentage(10),
-        fontSize: RFPercentage(1.7),
+        color: "#060169",
+        textAlign: "center",
+        fontSize: RFPercentage(1.8),
         lineHeight: RFPercentage(2),
     },
 });

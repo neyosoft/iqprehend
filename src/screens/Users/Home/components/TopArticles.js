@@ -79,7 +79,7 @@ export const TopArticles = () => {
 
                 {articlesResponse?.data?.totalDocuments !== 0 && (
                     <TouchableOpacity onPress={() => navigation.navigate("Articles")}>
-                        <AppText style={styles.allArticleText}>All Articles 1</AppText>
+                        <AppText style={styles.allArticleText}>All Articles</AppText>
                     </TouchableOpacity>
                 )}
             </View>
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     },
     cellText: {
         marginTop: 5,
+        color: "#060169",
         fontSize: RFPercentage(1.7),
         lineHeight: RFPercentage(2.3),
     },
