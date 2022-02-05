@@ -58,52 +58,65 @@ export const PaymentPlans = ({ navigation }) => {
         const plans = planResponse.data;
 
         return (
-            <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
-                <TouchableWithoutFeedback onPress={() => setPlan("STANDARD")}>
-                    <View style={[styles.card, plan === "STANDARD" ? styles.activeCardContent : undefined]}>
-                        <View style={styles.cardHeader}>
-                            <AppText style={styles.cardHeaderText}>Standard</AppText>
+            <>
+                <ScrollView style={styles.scrollview} contentContainerStyle={styles.contentContainerStyle}>
+                    <TouchableWithoutFeedback onPress={() => setPlan("STANDARD")}>
+                        <View style={[styles.card, plan === "STANDARD" ? styles.activeCardContent : undefined]}>
+                            <View style={styles.cardHeader}>
+                                <AppText style={styles.cardHeaderText}>Standard</AppText>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <AppText style={styles.planPrice}>{moneyFormat(plans.STANDARD.price)}/year</AppText>
+                            </View>
                         </View>
-                        <View style={styles.cardContent}>
-                            <AppText style={styles.planPrice}>{moneyFormat(plans.STANDARD.price)}/year</AppText>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
+                    </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => setPlan("EXPERT")}>
-                    <View
-                        style={[
-                            styles.card,
-                            { marginTop: RFPercentage(4) },
-                            plan === "EXPERT" ? styles.activeCardContent : undefined,
-                        ]}>
-                        <View style={styles.cardHeader}>
-                            <AppText style={styles.cardHeaderText}>Expert</AppText>
+                    <TouchableWithoutFeedback onPress={() => setPlan("EXPERT")}>
+                        <View
+                            style={[
+                                styles.card,
+                                { marginTop: RFPercentage(4) },
+                                plan === "EXPERT" ? styles.activeCardContent : undefined,
+                            ]}>
+                            <View style={styles.cardHeader}>
+                                <AppText style={styles.cardHeaderText}>Expert</AppText>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <AppText style={styles.planPrice}>{moneyFormat(plans.EXPERT.price)}/month</AppText>
+                            </View>
                         </View>
-                        <View style={styles.cardContent}>
-                            <AppText style={styles.planPrice}>{moneyFormat(plans.EXPERT.price)}/month</AppText>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
+                    </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => setPlan("PREMIUM")}>
-                    <View
-                        style={[
-                            styles.card,
-                            { marginTop: RFPercentage(4) },
-                            plan === "PREMIUM" ? styles.activeCardContent : undefined,
-                        ]}>
-                        <View style={styles.cardHeader}>
-                            <AppText style={styles.cardHeaderText}>Premium</AppText>
+                    <TouchableWithoutFeedback onPress={() => setPlan("PREMIUM")}>
+                        <View
+                            style={[
+                                styles.card,
+                                { marginTop: RFPercentage(4) },
+                                plan === "PREMIUM" ? styles.activeCardContent : undefined,
+                            ]}>
+                            <View style={styles.cardHeader}>
+                                <AppText style={styles.cardHeaderText}>Premium</AppText>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <AppText style={styles.planPrice}>{moneyFormat(plans.PREMIUM.price)}/year</AppText>
+                            </View>
                         </View>
-                        <View style={styles.cardContent}>
-                            <AppText style={styles.planPrice}>{moneyFormat(plans.PREMIUM.price)}/year</AppText>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
+                    </TouchableWithoutFeedback>
 
-                <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} />
-            </ScrollView>
+                    <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} />
+                </ScrollView>
+
+                <PaymentConfirmationModal
+                    show={showConfirmModal}
+                    plan={planResponse?.data[plan]}
+                    onClose={() => setShowConfirmModal(false)}
+                    onConfirm={() => {
+                        setShowConfirmModal(false);
+
+                        navigation.navigate("MakePayment", { plan: planResponse.data[plan] });
+                    }}
+                />
+            </>
         );
     };
 
@@ -121,17 +134,6 @@ export const PaymentPlans = ({ navigation }) => {
 
                 {renderContent()}
             </View>
-
-            <PaymentConfirmationModal
-                show={showConfirmModal}
-                plan={planResponse?.data[plan]}
-                onClose={() => setShowConfirmModal(false)}
-                onConfirm={() => {
-                    setShowConfirmModal(false);
-
-                    navigation.navigate("MakePayment", { plan: planResponse.data[plan] });
-                }}
-            />
         </SafeAreaView>
     );
 };
