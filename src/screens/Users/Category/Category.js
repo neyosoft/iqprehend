@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,19 +10,20 @@ import theme from "../../../theme";
 import { Header } from "./components";
 import { useAuth } from "../../../context";
 import { VideoArticleIcon } from "../../../icons";
-import { AppMediumText, AppText, Button, PageLoading, SearchInput } from "../../../components";
+import { AppMediumText, AppText, ArticleFilter, Button, PageLoading, SearchInput } from "../../../components";
 
 export const Category = ({ navigation, route }) => {
     const { sector } = route.params;
 
+    const [filter, setFilter] = useState("");
     const { user, authenticatedRequest } = useAuth();
 
     const sectorId = sector._id;
 
-    const articlesResponse = useQuery(["articles", sectorId], async () => {
+    const articlesResponse = useQuery(["articles", { sectorId, filter }], async () => {
         try {
             const { data } = await authenticatedRequest().get("/articles/published", {
-                params: { sector: sectorId },
+                params: { sector: sectorId, articleType: filter },
             });
 
             if (data && data.data) {
@@ -107,6 +108,15 @@ export const Category = ({ navigation, route }) => {
 
                 <AppMediumText style={styles.headerTitle}>{sector.name}</AppMediumText>
 
+                <View style={styles.filterContainer}>
+                    <ArticleFilter
+                        value={filter}
+                        onChange={(value) => {
+                            setFilter(value === filter ? "" : value);
+                        }}
+                    />
+                </View>
+
                 <FlatList
                     numColumns={3}
                     style={styles.flatlist}
@@ -137,6 +147,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+    },
+    filterContainer: {
+        alignItems: "center",
+        marginVertical: RFPercentage(1),
     },
     topHeader: {
         flexDirection: "row",

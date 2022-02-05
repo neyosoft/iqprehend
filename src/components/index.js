@@ -8,6 +8,7 @@ export { AppBoldText } from "./AppBoldText";
 export { SearchInput } from "./SearchInput";
 export { AppTextField } from "./AppTextField";
 export { OnlyCheckbox } from "./OnlyCheckbox";
+export { ArticleFilter } from "./ArticleFilter";
 export { AppMediumText } from "./AppMediumText";
 export { PasswordField } from "./PasswordField";
 export { HeaderWithBack } from "./HeaderWithBack";

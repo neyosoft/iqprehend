@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,14 +10,15 @@ import theme from "../../../theme";
 import { Header } from "./components";
 import { useAuth } from "../../../context";
 import { VideoArticleIcon } from "../../../icons";
-import { AppMediumText, AppText, Button, PageLoading, SearchInput } from "../../../components";
+import { AppMediumText, AppText, ArticleFilter, Button, PageLoading, SearchInput } from "../../../components";
 
 export const Articles = ({ navigation }) => {
+    const [filter, setFilter] = useState("");
     const { user, authenticatedRequest } = useAuth();
 
-    const articlesResponse = useQuery(["articles"], async () => {
+    const articlesResponse = useQuery(["articles", filter], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/articles/published");
+            const { data } = await authenticatedRequest().get(`/articles/published?articleType=${filter}`);
 
             if (data && data.data) {
                 return data.data;
@@ -69,7 +70,7 @@ export const Articles = ({ navigation }) => {
 
         if (articlesResponse.isError) {
             return (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <View style={styles.centerView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
                     <AppText>There is a problem fetching articles.</AppText>
 
@@ -102,6 +103,15 @@ export const Articles = ({ navigation }) => {
 
                 <AppMediumText style={styles.headerTitle}>All Articles</AppMediumText>
 
+                <View style={styles.filterContainer}>
+                    <ArticleFilter
+                        value={filter}
+                        onChange={(value) => {
+                            setFilter(value === filter ? "" : value);
+                        }}
+                    />
+                </View>
+
                 <FlatList
                     numColumns={3}
                     style={styles.flatlist}
@@ -133,6 +143,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
+    centerView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     topHeader: {
         flexDirection: "row",
         alignItems: "center",
@@ -158,6 +173,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         height: RFPercentage(50),
+    },
+    filterContainer: {
+        alignItems: "center",
+        marginVertical: RFPercentage(1),
     },
     header: {
         flexDirection: "row",
