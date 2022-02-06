@@ -6,7 +6,7 @@ import { View, StyleSheet, ScrollView, Dimensions, Image, TouchableOpacity } fro
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { AppBoldText, AppText, Button } from "../../components";
+import { AppMediumText, AppText, Button } from "../../components";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,8 +30,8 @@ export const Onboarding = () => {
                     <View style={styles.imageContainer}>
                         <Image style={styles.imageContent} source={require("../../assets/images/slider3.png")} />
                     </View>
-                    <View style={styles.titleContainer}>
-                        <AppBoldText style={styles.title}>High Quality Articles</AppBoldText>
+                    <View style={[styles.titleContainer, { width: RFPercentage(25) }]}>
+                        <AppMediumText style={styles.title}>High Quality Articles</AppMediumText>
                     </View>
                     <View style={styles.barContainer}>
                         <View style={[styles.emptyBar, styles.activeBar]} />
@@ -53,7 +53,7 @@ export const Onboarding = () => {
                         <Image style={styles.imageContent} source={require("../../assets/images/slider2.png")} />
                     </View>
                     <View style={styles.titleContainer}>
-                        <AppBoldText style={styles.title}>Robust Evaluation Systems</AppBoldText>
+                        <AppMediumText style={styles.title}>Robust Evaluation Systems</AppMediumText>
                     </View>
                     <View style={styles.barContainer}>
                         <View style={styles.emptyBar} />
@@ -75,7 +75,7 @@ export const Onboarding = () => {
                         <Image style={styles.imageContent} source={require("../../assets/images/slider1.png")} />
                     </View>
                     <View style={styles.titleContainer}>
-                        <AppBoldText style={styles.title}>Competitive Reward for Summaries</AppBoldText>
+                        <AppMediumText style={styles.title}>Competitive Reward for Summaries</AppMediumText>
                     </View>
                     <View style={styles.barContainer}>
                         <View style={styles.emptyBar} />
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         height: undefined,
     },
     titleContainer: {
-        width: "60%",
+        width: RFPercentage(33),
         justifyContent: "center",
         height: RFPercentage(20),
         marginTop: RFPercentage(5),
@@ -119,19 +119,18 @@ const styles = StyleSheet.create({
     title: {
         textAlign: "center",
         color: theme.colors.primary,
-        fontSize: RFPercentage(4.5),
-        lineHeight: RFPercentage(6),
+        fontSize: RFPercentage(3),
+        lineHeight: RFPercentage(4),
     },
     skipText: {
         marginTop: 13,
         color: "#6A6A6A",
     },
-
     barContainer: {
         flexDirection: "row",
     },
     emptyBar: {
-        height: 7,
+        height: 5,
         borderWidth: 1,
         borderRadius: 10,
         marginHorizontal: 2,
