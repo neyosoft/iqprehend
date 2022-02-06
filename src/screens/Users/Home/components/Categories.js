@@ -127,13 +127,13 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     cellContainer: {
-        width: "50%",
+        width: `${100 / 3}%`,
         alignItems: "center",
         marginBottom: RFPercentage(2),
     },
     itemImageContainer: {
-        width: RFPercentage(20),
-        height: RFPercentage(20),
+        width: RFPercentage(15),
+        height: RFPercentage(15),
     },
     itemImage: {
         flex: 1,

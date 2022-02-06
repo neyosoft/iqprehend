@@ -96,6 +96,7 @@ export const Summaries = () => {
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: RFPercentage(3),
         paddingBottom: RFPercentage(3),
     },
     emptyContainer: {

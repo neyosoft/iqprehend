@@ -90,7 +90,9 @@ export const TopArticles = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {},
+    container: {
+        marginTop: RFPercentage(3),
+    },
     emptyContainer: {
         alignSelf: "center",
         marginTop: RFPercentage(2),

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     welcomeSubtitle: {
         marginTop: 2,
         color: "#6A6A6A",
-        lineHeight: RFPercentage(2.3),
+        fontSize: RFPercentage(2),
     },
     photo: {
         width: RFPercentage(6),

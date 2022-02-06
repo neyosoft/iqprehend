@@ -26,7 +26,7 @@ export const PasswordField = forwardRef(({ style, inputStyle, error, ...rest }, 
                 style={[styles.input, inputStyle]}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Icon name={showPassword ? "eye-off" : "eye"} size={RFPercentage(3)} color="#7A7A7A" />
+                <Icon name={showPassword ? "eye" : "eye-off"} size={RFPercentage(3)} color="#7A7A7A" />
             </TouchableOpacity>
         </View>
     );
