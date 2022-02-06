@@ -9,7 +9,7 @@ import { View, StyleSheet, TouchableOpacity, StatusBar, Dimensions } from "react
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { PaymentConfirmationModal } from "../../modals/PaymentConfirmationModal";
-import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { AppBoldText, AppText, Button, PageLoading } from "../../components";
 
 const { width } = Dimensions.get("window");
 
@@ -55,10 +55,10 @@ export const PaymentPlans = ({ navigation }) => {
                     </AppText>
                 </View>
 
-                <AppMediumText
+                <AppBoldText
                     style={[styles.slideItemPriceLabel, isCenterView ? styles.evenSlideItemPriceLabel : undefined]}>
                     NGN{item.price}
-                </AppMediumText>
+                </AppBoldText>
 
                 <Button
                     label="Subscribe Now"
@@ -179,9 +179,10 @@ const styles = StyleSheet.create({
         marginTop: RFPercentage(3),
     },
     slide: {
-        elevation: 3,
+        elevation: 4,
+        borderWidth: 1,
         borderRadius: 6,
-        borderWidth: 0.3,
+        borderColor: "red",
         backgroundColor: "#fff",
         padding: RFPercentage(4),
         borderColor: theme.colors.primary,

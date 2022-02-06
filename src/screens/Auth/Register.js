@@ -133,17 +133,17 @@ export const Register = ({ navigation }) => {
                                     )}
 
                                     <TextField
-                                        placeholder="Address"
                                         value={values.address}
                                         onBlur={handleBlur("address")}
+                                        placeholder="Address (optinal)"
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("address")}
                                     />
 
                                     <TextField
-                                        placeholder="Hobbies"
                                         value={values.hobbies}
                                         onBlur={handleBlur("hobbies")}
+                                        placeholder="Hobbies (optinal)"
                                         style={{ marginTop: RFPercentage(2) }}
                                         onChangeText={handleChange("hobbies")}
                                     />
