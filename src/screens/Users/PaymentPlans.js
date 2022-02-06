@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import Carousel from "react-native-snap-carousel";
-import { useToast } from "react-native-fast-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { View, StyleSheet, TouchableOpacity, StatusBar, TouchableWithoutFeedback, Dimensions } from "react-native";
+import { View, StyleSheet, TouchableOpacity, StatusBar, Dimensions } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -15,7 +14,6 @@ import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../
 const { width } = Dimensions.get("window");
 
 export const PaymentPlans = ({ navigation }) => {
-    const toast = useToast();
     const { authenticatedRequest } = useAuth();
 
     const [plan, setPlan] = useState(null);
@@ -31,27 +29,45 @@ export const PaymentPlans = ({ navigation }) => {
         }
     });
 
-    const handlePlanselection = () => {
-        if (!plan) {
-            return toast.show("Please select a plan");
-        }
-
-        setShowConfirmModal(true);
-    };
-
-    const _renderItem = ({ item }) => {
+    const _renderItem = ({ item, index }) => {
+        const isCenterView = index === 1;
         return (
-            <View style={styles.slide}>
-                <AppBoldText style={styles.slideTitle}>{item.name}</AppBoldText>
-                <AppText style={styles.slideItemLabel}>1 Article and video per month</AppText>
-                <AppText style={styles.slideItemLabel}>1 Summary per month</AppText>
-                <AppText style={styles.slideItemLabel}>Win up to N10,000 month</AppText>
+            <View style={[styles.slide, isCenterView ? styles.evenSlide : undefined]}>
+                <AppBoldText style={[styles.slideTitle, isCenterView ? styles.evenSlideTitle : undefined]}>
+                    {item.name}
+                </AppBoldText>
+                <View style={styles.slideItemContainer}>
+                    <View style={[styles.slideItemBox, isCenterView ? styles.evenSlideItemBox : undefined]} />
+                    <AppText style={[styles.slideItemLabel, isCenterView ? styles.evenSlideItemLabel : undefined]}>
+                        1 Article and video per month
+                    </AppText>
+                </View>
+                <View style={styles.slideItemContainer}>
+                    <View style={[styles.slideItemBox, isCenterView ? styles.evenSlideItemBox : undefined]} />
+                    <AppText style={[styles.slideItemLabel, isCenterView ? styles.evenSlideItemLabel : undefined]}>
+                        1 Summary per month
+                    </AppText>
+                </View>
+                <View style={styles.slideItemContainer}>
+                    <View style={[styles.slideItemBox, isCenterView ? styles.evenSlideItemBox : undefined]} />
+                    <AppText style={[styles.slideItemLabel, isCenterView ? styles.evenSlideItemLabel : undefined]}>
+                        Win up to {item.reward} month
+                    </AppText>
+                </View>
 
-                <AppMediumText style={styles.slideItemPriceLabel}>NGN{item.price}</AppMediumText>
+                <AppMediumText
+                    style={[styles.slideItemPriceLabel, isCenterView ? styles.evenSlideItemPriceLabel : undefined]}>
+                    NGN{item.price}
+                </AppMediumText>
 
                 <Button
-                    style={{ paddingHorizontal: 0, marginTop: RFPercentage(4), borderRadius: 6 }}
                     label="Subscribe Now"
+                    onPress={() => {
+                        setPlan(item.name.toUpperCase());
+                        setShowConfirmModal(true);
+                    }}
+                    labelStyle={isCenterView ? styles.centerBtnLabel : undefined}
+                    style={[styles.button, isCenterView ? styles.centerBtn : undefined]}
                 />
             </View>
         );
@@ -80,29 +96,38 @@ export const PaymentPlans = ({ navigation }) => {
         const ENTRIES = [
             {
                 name: "Standard",
+                reward: "N10,000",
                 price: `${plans.STANDARD.price}/Year`,
             },
             {
                 name: "Expert",
+                reward: "N25,000",
                 price: `${plans.EXPERT.price}/Month`,
             },
             {
                 name: "Premium",
+                reward: "N50,000",
                 price: `${plans.PREMIUM.price}/Year`,
             },
         ];
 
         return (
-            <View style={styles.contentContainer}>
+            <View>
                 <AppText style={styles.introText}>
                     Thank you for reading. Subcribe to any of our product catergories to submit a summary
                 </AppText>
 
                 <View style={styles.sliderWrapper}>
-                    <Carousel data={ENTRIES} renderItem={_renderItem} sliderWidth={width} itemWidth={250} />
+                    <Carousel
+                        firstItem={1}
+                        data={ENTRIES}
+                        enableSnap={false}
+                        sliderWidth={width}
+                        inactiveSlideOpacity={1}
+                        renderItem={_renderItem}
+                        itemWidth={RFPercentage(32)}
+                    />
                 </View>
-
-                {/* <Button label="Proceed" style={styles.proceedBtn} onPress={handlePlanselection} /> */}
 
                 <PaymentConfirmationModal
                     show={showConfirmModal}
@@ -147,6 +172,7 @@ const styles = StyleSheet.create({
     },
     introText: {
         textAlign: "center",
+        margin: RFPercentage(3),
         color: theme.colors.primary,
     },
     sliderWrapper: {
@@ -155,23 +181,53 @@ const styles = StyleSheet.create({
     slide: {
         elevation: 3,
         borderRadius: 6,
+        borderWidth: 0.3,
         backgroundColor: "#fff",
         padding: RFPercentage(4),
+        borderColor: theme.colors.primary,
+    },
+    evenSlide: {
+        backgroundColor: theme.colors.primary,
     },
     slideTitle: {
+        textAlign: "center",
+        fontSize: RFPercentage(2.7),
         color: theme.colors.primary,
-        fontSize: RFPercentage(3),
+        marginBottom: RFPercentage(1),
+    },
+    evenSlideTitle: {
+        color: "#fff",
+    },
+    slideItemContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: RFPercentage(2.5),
+    },
+    slideItemBox: {
+        width: 2,
+        height: 2,
+        borderColor: 2,
+        marginRight: 5,
+        backgroundColor: theme.colors.primary,
+    },
+    evenSlideItemBox: {
+        backgroundColor: "#fff",
     },
     slideItemLabel: {
         color: theme.colors.primary,
-        marginTop: RFPercentage(2),
-        fontSize: RFPercentage(1.8),
+        fontSize: RFPercentage(1.6),
+    },
+    evenSlideItemLabel: {
+        color: "#fff",
     },
     slideItemPriceLabel: {
         textAlign: "center",
         fontSize: RFPercentage(2.5),
         color: theme.colors.primary,
-        marginTop: RFPercentage(3),
+        marginTop: RFPercentage(4),
+    },
+    evenSlideItemPriceLabel: {
+        color: "#fff",
     },
     header: {
         flexDirection: "row",
@@ -185,7 +241,15 @@ const styles = StyleSheet.create({
         fontSize: RFPercentage(2.4),
         marginHorizontal: RFPercentage(2),
     },
-    proceedBtn: {
-        marginTop: RFPercentage(5),
+    button: {
+        borderRadius: 6,
+        paddingHorizontal: 0,
+        marginTop: RFPercentage(4),
+    },
+    centerBtn: {
+        backgroundColor: "#fff",
+    },
+    centerBtnLabel: {
+        color: theme.colors.primary,
     },
 });
