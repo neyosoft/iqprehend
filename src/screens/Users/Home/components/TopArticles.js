@@ -126,9 +126,8 @@ const styles = StyleSheet.create({
     },
     cellText: {
         marginTop: 5,
-        textAlign: "center",
         color: theme.colors.primary,
-        fontSize: RFPercentage(1.7),
+        fontSize: RFPercentage(1.6),
         lineHeight: RFPercentage(2.3),
     },
     videoImageWrapper: {

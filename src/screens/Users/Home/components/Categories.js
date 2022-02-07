@@ -9,6 +9,8 @@ import { AppBoldText, AppText } from "../../../../components";
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
 
+const listedCategories = ["academics", "entertainment", "business", "technology", "politics", "entrepreneurship"];
+
 export const Categories = () => {
     const navigation = useNavigation();
     const { authenticatedRequest } = useAuth();
@@ -44,9 +46,13 @@ export const Categories = () => {
             );
         }
 
+        const categories = sectorResponse.data.filter((record) =>
+            listedCategories.includes(record.name?.toLowerCase()),
+        );
+
         return (
             <View style={styles.articleWrapper}>
-                {sectorResponse.data.map((record) => (
+                {categories.map((record) => (
                     <TouchableOpacity
                         key={record._id}
                         style={styles.cellContainer}
@@ -67,8 +73,6 @@ export const Categories = () => {
                 return (
                     <Image style={styles.itemImage} source={require("../../../../assets/images/Entertainment.png")} />
                 );
-            case "sports":
-                return <Image style={styles.itemImage} source={require("../../../../assets/images/Sports.png")} />;
             case "business":
                 return <Image style={styles.itemImage} source={require("../../../../assets/images/Business.png")} />;
             case "technology":
@@ -82,9 +86,6 @@ export const Categories = () => {
                         source={require("../../../../assets/images/Entrepreneurship.png")}
                     />
                 );
-            case "economics":
-                return <Image style={styles.itemImage} source={require("../../../../assets/images/Economics.png")} />;
-
             default:
                 return (
                     <Image style={styles.itemImage} source={require("../../../../assets/images/Entertainment.png")} />
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     cellText: {
         color: "#060169",
         textAlign: "center",
-        fontSize: RFPercentage(1.8),
+        fontSize: RFPercentage(1.6),
         lineHeight: RFPercentage(2),
     },
 });
