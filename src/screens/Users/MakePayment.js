@@ -9,6 +9,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
+import { capitalize } from "../../utils/text.utils";
 import { AppMediumText, AppText, AppTextField, Button, PageLoading } from "../../components";
 
 import theme from "../../theme";
@@ -49,7 +50,7 @@ export const MakePayment = ({ navigation, route }) => {
     };
 
     const paymentResponse = useQuery("payment-info", async () => {
-        const { data } = await authenticatedRequest().post("/payment", { name: plan.name });
+        const { data } = await authenticatedRequest().post("/payment", { name: plan?.name?.toUpperCase() });
 
         if (data && data) {
             setAccessCode(data.data.accessCode);
@@ -93,7 +94,7 @@ export const MakePayment = ({ navigation, route }) => {
                             <AppText style={styles.headerTitle}>Payment</AppText>
                         </View>
                         <ScrollView style={styles.content} contentContainerStyle={styles.contentContainerStyle}>
-                            <AppMediumText style={styles.title}>Subscription</AppMediumText>
+                            <AppMediumText style={styles.title}>{capitalize(plan.name)} Subscription</AppMediumText>
 
                             <View style={{ marginTop: RFPercentage(2) }}>
                                 <AppTextField

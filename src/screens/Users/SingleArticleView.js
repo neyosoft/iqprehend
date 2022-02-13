@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
-import { endOfDay, format, isFuture } from "date-fns";
+import { endOfDay, format, isFuture, isPast } from "date-fns";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -21,6 +21,7 @@ import {
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { useFocusEffect } from "@react-navigation/native";
+import { PaymentPlanModal } from "../../modals/PaymentPlanModal";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
@@ -37,7 +38,9 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     const [playing, setPlaying] = useState(false);
     const [summaryText, setSummaryText] = useState("");
+    const [isAtBottom, setIsAtBottom] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showPlanModal, setShowPlanModal] = useState(false);
 
     const { articleID } = route.params;
 
@@ -91,6 +94,16 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     });
 
+    const paymentResponse = useQuery("payment", async () => {
+        const { data } = await authenticatedRequest().get("/payment/current-subscription");
+
+        if (data && data.data) {
+            return data.data;
+        } else {
+            throw new Error("Unable to retreive payment information");
+        }
+    });
+
     useFocusEffect(
         React.useCallback(() => {
             settingsResponse.refetch();
@@ -98,6 +111,26 @@ export const SingleArticleView = ({ navigation, route }) => {
             articlesSummaryResponse.refetch();
         }, []),
     );
+
+    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        const paddingToBottom = 20;
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    };
+
+    const handleScroll = ({ nativeEvent }) => {
+        if (isCloseToBottom(nativeEvent)) {
+            if (!isAtBottom) {
+                setIsAtBottom(true);
+                const noActiveSubscription =
+                    !paymentResponse?.data?.planDetails ||
+                    isPast(new Date(paymentResponse?.data?.planDetails?.endDate));
+
+                if (noActiveSubscription) {
+                    setShowPlanModal(true);
+                }
+            }
+        }
+    };
 
     const handleSummaryTextSubmission = async () => {
         if (summaryText.trim().length < 1) {
@@ -367,7 +400,7 @@ export const SingleArticleView = ({ navigation, route }) => {
         const article = articlesResponse.data;
 
         return (
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} onScroll={handleScroll}>
                 {renderMedia(article)}
 
                 <View style={styles.contentContainerStyle}>
@@ -400,6 +433,15 @@ export const SingleArticleView = ({ navigation, route }) => {
 
                     {renderTextSummaryForm()}
                 </View>
+
+                <PaymentPlanModal
+                    show={showPlanModal}
+                    onClose={() => setShowPlanModal(false)}
+                    onChange={(item) => {
+                        setShowPlanModal(false);
+                        navigation.navigate("MakePayment", { plan: item });
+                    }}
+                />
             </ScrollView>
         );
     };
