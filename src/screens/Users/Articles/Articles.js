@@ -10,6 +10,7 @@ import theme from "../../../theme";
 import { Header } from "./components";
 import { useAuth } from "../../../context";
 import { VideoArticleIcon } from "../../../icons";
+import { capitalize } from "../../../utils/text.utils";
 import { AppMediumText, AppText, ArticleFilter, Button, PageLoading, SearchInput } from "../../../components";
 
 export const Articles = ({ navigation }) => {
@@ -52,7 +53,7 @@ export const Articles = ({ navigation }) => {
                         <VideoArticleIcon />
                     </View>
                 )}
-                <AppText style={styles.cellText}>{item.title}</AppText>
+                <AppText style={styles.cellText}>{capitalize(item.title)}</AppText>
             </View>
         </TouchableWithoutFeedback>
     );

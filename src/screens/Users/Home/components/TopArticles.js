@@ -9,6 +9,7 @@ import { AppBoldText, AppText } from "../../../../components";
 
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
+import { capitalize } from "../../../../utils/text.utils";
 
 export const TopArticles = () => {
     const navigation = useNavigation();
@@ -49,6 +50,7 @@ export const TopArticles = () => {
             <View style={styles.articleWrapper}>
                 {articlesResponse.data.articles.slice(0, 9).map((record) => (
                     <TouchableWithoutFeedback
+                        key={record._id}
                         onPress={() => navigation.navigate("SingleArticleView", { articleID: record._id })}>
                         <View style={styles.cellContainer} key={record._id}>
                             {record.articleType === "TEXT" ? (
@@ -64,7 +66,7 @@ export const TopArticles = () => {
                                     <VideoArticleIcon />
                                 </View>
                             )}
-                            <AppText style={styles.cellText}>{record.title}</AppText>
+                            <AppText style={styles.cellText}>{capitalize(record.title)}</AppText>
                         </View>
                     </TouchableWithoutFeedback>
                 ))}

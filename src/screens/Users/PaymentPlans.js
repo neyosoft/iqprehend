@@ -114,7 +114,7 @@ export const PaymentPlans = ({ navigation }) => {
         return (
             <View>
                 <AppText style={styles.introText}>
-                    Thank you for reading. Subcribe to any of our product catergories to submit a summary
+                    Subcribe to any of our product catergories to submit a summary
                 </AppText>
 
                 <View style={styles.sliderWrapper}>

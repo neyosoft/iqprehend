@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
-import { endOfDay, format, isFuture } from "date-fns";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
+import { endOfDay, format, isFuture } from "date-fns";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -22,7 +22,7 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { useFocusEffect } from "@react-navigation/native";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
-import { AppBoldText, AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
+import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
 const wordCount = (text) => {
     if (!text) return 0;
@@ -347,7 +347,7 @@ export const SingleArticleView = ({ navigation, route }) => {
 
         if (articlesResponse.isError || articlesSummaryResponse.isError || settingsResponse.isError) {
             return (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <View style={styles.centerView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
                     <AppText>There is a problem retrieving article.</AppText>
 
@@ -422,6 +422,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+    },
+    centerView: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     },
     header: {
         flexDirection: "row",
