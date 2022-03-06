@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
+import { format, isPast } from "date-fns";
 import HTML from "react-native-render-html";
 import { useToast } from "react-native-fast-toast";
-import { endOfDay, format, isFuture, isPast } from "date-fns";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import CountDown from "react-native-countdown-component";
+
 import {
     View,
     Image,
@@ -44,12 +46,6 @@ export const SingleArticleView = ({ navigation, route }) => {
 
     const { articleID } = route.params;
 
-    const onStateChange = useCallback((state) => {
-        if (state === "ended") {
-            setPlaying(false);
-        }
-    }, []);
-
     const articlesResponse = useQuery(["articles", articleID], async () => {
         try {
             const { data } = await authenticatedRequest().get("/articles/single", { params: { id: articleID } });
@@ -61,6 +57,18 @@ export const SingleArticleView = ({ navigation, route }) => {
             }
         } catch (error) {
             throw new Error();
+        }
+    });
+
+    const articleViewResponse = useQuery(["article-view-status", articleID], async () => {
+        const { data } = await authenticatedRequest().get("/articles/submission-status", {
+            params: { id: articleID },
+        });
+
+        if (data && data.data) {
+            return data.data;
+        } else {
+            throw new Error("Unable to retreive article summary status");
         }
     });
 
@@ -80,7 +88,7 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     });
 
-    const settingsResponse = useQuery(["settings"], async () => {
+    const settingsResponse = useQuery("settings", async () => {
         try {
             const { data } = await authenticatedRequest().get("/settings");
 
@@ -108,9 +116,16 @@ export const SingleArticleView = ({ navigation, route }) => {
         React.useCallback(() => {
             settingsResponse.refetch();
             articlesResponse.refetch();
+            articleViewResponse.refetch();
             articlesSummaryResponse.refetch();
         }, []),
     );
+
+    const onStateChange = useCallback((state) => {
+        if (state === "ended") {
+            setPlaying(false);
+        }
+    }, []);
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         const paddingToBottom = 20;
@@ -277,11 +292,11 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     };
 
-    const renderTextSummaryForm = () => {
+    const renderTextSummaryForm = (articleSubmissionStatus) => {
         const settingsConfig = settingsResponse.data;
         const summaryMaxWordCount = settingsConfig?.summary?.count || 200;
 
-        if (isFuture(endOfDay(new Date(articlesResponse.data.deadline)))) {
+        if (articleSubmissionStatus?.canSubmit) {
             return (
                 <View>
                     <AppText style={styles.wordCountText}>
@@ -374,11 +389,21 @@ export const SingleArticleView = ({ navigation, route }) => {
     };
 
     const renderContent = () => {
-        if (articlesResponse.isLoading || articlesSummaryResponse.isLoading || settingsResponse.isLoading) {
+        if (
+            articlesResponse.isLoading ||
+            articleViewResponse.isLoading ||
+            articlesSummaryResponse.isLoading ||
+            settingsResponse.isLoading
+        ) {
             return <PageLoading />;
         }
 
-        if (articlesResponse.isError || articlesSummaryResponse.isError || settingsResponse.isError) {
+        if (
+            articlesResponse.isError ||
+            articleViewResponse.isError ||
+            articlesSummaryResponse.isError ||
+            settingsResponse.isError
+        ) {
             return (
                 <View style={styles.centerView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
@@ -398,6 +423,7 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
 
         const article = articlesResponse.data;
+        const articleSubmissionStatus = articleViewResponse.data;
 
         return (
             <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} onScroll={handleScroll}>
@@ -419,6 +445,20 @@ export const SingleArticleView = ({ navigation, route }) => {
                         </View>
                     </View>
 
+                    {articleSubmissionStatus.canSubmit && (
+                        <View style={{ alignItems: "center" }}>
+                            <AppText style={{ marginVertical: 10, fontSize: RFPercentage(1.8) }}>
+                                Time left for submission
+                            </AppText>
+                            <CountDown
+                                size={20}
+                                digitTxtStyle={{ color: "#FFF" }}
+                                until={articleSubmissionStatus.timeLeft * 60}
+                                digitStyle={{ backgroundColor: theme.colors.primary }}
+                            />
+                        </View>
+                    )}
+
                     <HTML
                         emSize={16}
                         contentWidth={contentWidth}
@@ -431,7 +471,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                         }}
                     />
 
-                    {renderTextSummaryForm()}
+                    {renderTextSummaryForm(articleSubmissionStatus)}
                 </View>
 
                 <PaymentPlanModal
