@@ -118,6 +118,7 @@ export const SingleArticleView = ({ navigation, route }) => {
             articlesResponse.refetch();
             articleViewResponse.refetch();
             articlesSummaryResponse.refetch();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []),
     );
 
