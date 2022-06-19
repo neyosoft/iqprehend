@@ -28,10 +28,15 @@ export const Onboarding = () => {
                 showsHorizontalScrollIndicator={false}>
                 <View style={styles.page}>
                     <View style={styles.imageContainer}>
-                        <Image style={styles.imageContent} source={require("../../assets/images/slider3.png")} />
+                        <Image style={styles.imageContent} source={require("../../assets/images/slider1.png")} />
                     </View>
-                    <View style={[styles.titleContainer, { width: RFPercentage(25) }]}>
+                    <View style={styles.titleContainer}>
                         <AppMediumText style={styles.title}>High Quality Articles</AppMediumText>
+                        <AppMediumText style={styles.subtitle}>
+                            We create and enhance the information available at our disposal and within our spheres of
+                            influence to provide our subscribers with dependable, informative and reliable articles and
+                            videos
+                        </AppMediumText>
                     </View>
                     <View style={styles.barContainer}>
                         <View style={[styles.emptyBar, styles.activeBar]} />
@@ -54,6 +59,10 @@ export const Onboarding = () => {
                     </View>
                     <View style={styles.titleContainer}>
                         <AppMediumText style={styles.title}>Robust Evaluation Systems</AppMediumText>
+                        <AppMediumText style={styles.subtitle}>
+                            We employ metrics that enable fair play and transparent processes to independently determine
+                            the most ratable summaries submitted by our subscribers.
+                        </AppMediumText>
                     </View>
                     <View style={styles.barContainer}>
                         <View style={styles.emptyBar} />
@@ -72,10 +81,14 @@ export const Onboarding = () => {
                 </View>
                 <View style={styles.page}>
                     <View style={styles.imageContainer}>
-                        <Image style={styles.imageContent} source={require("../../assets/images/slider1.png")} />
+                        <Image style={styles.imageContent} source={require("../../assets/images/slider3.png")} />
                     </View>
                     <View style={styles.titleContainer}>
                         <AppMediumText style={styles.title}>Competitive Reward for Summaries</AppMediumText>
+                        <AppMediumText style={styles.subtitle}>
+                            Our reward system is targeted at the very best, with the least grammatical errors, high
+                            level of cohesion and no plagiarism.
+                        </AppMediumText>
                     </View>
                     <View style={styles.barContainer}>
                         <View style={styles.emptyBar} />
@@ -111,9 +124,9 @@ const styles = StyleSheet.create({
         height: undefined,
     },
     titleContainer: {
-        width: RFPercentage(33),
+        width: "80%",
         justifyContent: "center",
-        height: RFPercentage(20),
+        height: RFPercentage(30),
         marginTop: RFPercentage(5),
     },
     title: {
@@ -121,6 +134,13 @@ const styles = StyleSheet.create({
         color: theme.colors.primary,
         fontSize: RFPercentage(3),
         lineHeight: RFPercentage(4),
+    },
+    subtitle: {
+        color: "#686868",
+        textAlign: "center",
+        fontSize: RFPercentage(2),
+        marginTop: RFPercentage(1),
+        lineHeight: RFPercentage(3),
     },
     skipText: {
         marginTop: 13,
