@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         borderRadius: theme.radius.button,
-        paddingVertical: RFPercentage(1.5),
+        paddingVertical: RFPercentage(2),
         paddingHorizontal: RFPercentage(10),
         backgroundColor: Theme.colors.primary,
     },

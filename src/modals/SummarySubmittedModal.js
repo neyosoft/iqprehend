@@ -3,32 +3,21 @@ import Modal from "react-native-modal";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, TouchableWithoutFeedback, View, Image } from "react-native";
 
-import { AppMediumText, AppText, Button } from "../components";
 import theme from "../theme";
+import { AppText, Button } from "../components";
 
-export const SummaryConfirmationModal = ({ show = false, onClose, onProceed }) => {
+export const SummarySubmittedModal = ({ show = false, onClose }) => {
     return (
         <Modal isVisible={show} onBackButtonPress={onClose} onBackdropPress={onClose}>
             <View style={styles.container}>
                 <View style={styles.box}>
-                    <Image source={require("../assets/images/summary_submission.png")} />
-                    <AppText style={styles.description}>
-                        <AppMediumText style={styles.boldDescription}>Deadline</AppMediumText> for submission of
-                        summaries is <AppMediumText style={styles.boldDescription}>3:00 hours</AppMediumText>.
-                    </AppText>
+                    <AppText style={styles.title}>Article submitted!</AppText>
+                    <AppText style={styles.description}>Your submission will be reviewed and evaluated,</AppText>
 
-                    <AppText style={styles.description}>Would you like proceed?</AppText>
-
-                    <TouchableWithoutFeedback onPress={onProceed}>
-                        <Button label="Yes, Proceed" style={styles.button} />
-                    </TouchableWithoutFeedback>
+                    <Image style={styles.finishImage} source={require("../assets/images/finish_line.png")} />
 
                     <TouchableWithoutFeedback onPress={onClose}>
-                        <Button
-                            label="Continue Reading"
-                            style={styles.continueBtn}
-                            labelStyle={styles.continueBtnLabel}
-                        />
+                        <Button label="Back to Home" style={styles.button} />
                     </TouchableWithoutFeedback>
                 </View>
             </View>
@@ -43,7 +32,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     box: {
-        width: "90%",
+        width: "85%",
         borderRadius: 5,
         alignItems: "center",
         backgroundColor: "#fff",
@@ -51,15 +40,20 @@ const styles = StyleSheet.create({
         paddingTop: RFPercentage(5),
         paddingBottom: RFPercentage(4),
     },
+    title: {
+        fontSize: RFPercentage(2.5),
+        color: theme.colors.primary,
+    },
     description: {
+        marginTop: 10,
         lineHeight: 22,
         color: "#636363",
         textAlign: "center",
         fontSize: RFPercentage(1.9),
         paddingHorizontal: RFPercentage(3),
     },
-    boldDescription: {
-        color: theme.colors.primary,
+    finishImage: {
+        marginTop: RFPercentage(3),
     },
     button: {
         marginTop: RFPercentage(3),

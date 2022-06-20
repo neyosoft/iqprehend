@@ -227,7 +227,10 @@ export const SingleArticleView = ({ navigation, route }) => {
                 <SummaryConfirmationModal
                     show={showSummaryConfirmModal}
                     onClose={() => setShowSummaryConfirmPlanModal(false)}
-                    onProceed={() => setShowSummaryConfirmPlanModal(false)}
+                    onProceed={() => {
+                        setShowSummaryConfirmPlanModal(false);
+                        navigation.navigate("CreateSummary", { articleID });
+                    }}
                 />
             </ScrollView>
         );
