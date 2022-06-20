@@ -15,6 +15,7 @@ import { useAuth } from "../../context";
 import { useFocusEffect } from "@react-navigation/native";
 import { PaymentPlanModal } from "../../modals/PaymentPlanModal";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
+import { SummaryConfirmationModal } from "../../modals/SummaryConfirmationModal";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
@@ -24,6 +25,7 @@ export const SingleArticleView = ({ navigation, route }) => {
     const [playing, setPlaying] = useState(false);
     const [isAtBottom, setIsAtBottom] = useState(false);
     const [showPlanModal, setShowPlanModal] = useState(false);
+    const [showSummaryConfirmModal, setShowSummaryConfirmPlanModal] = useState(false);
 
     const { articleID } = route.params;
 
@@ -209,7 +211,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                         label="Provide Summary"
                         style={styles.summaryBtn}
                         disabled={!articleSubmissionStatus.canSubmit}
-                        // onPress={handleSubmit}
+                        onPress={() => setShowSummaryConfirmPlanModal(true)}
                     />
                 </View>
 
@@ -220,6 +222,12 @@ export const SingleArticleView = ({ navigation, route }) => {
                         setShowPlanModal(false);
                         navigation.navigate("MakePayment", { plan: item });
                     }}
+                />
+
+                <SummaryConfirmationModal
+                    show={showSummaryConfirmModal}
+                    onClose={() => setShowSummaryConfirmPlanModal(false)}
+                    onProceed={() => setShowSummaryConfirmPlanModal(false)}
                 />
             </ScrollView>
         );

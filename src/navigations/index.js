@@ -3,12 +3,12 @@ import RNBootSplash from "react-native-bootsplash";
 import { NavigationContainer } from "@react-navigation/native";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 
+import theme from "../theme";
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
 import { useAuth } from "../context";
 import { AppText } from "../components";
 import { Onboarding } from "../screens/Onboarding";
-import theme from "../theme";
 
 export default function AppNavigation() {
     const { isLoading, user, isOnboardingCompleted } = useAuth();
@@ -22,7 +22,9 @@ export default function AppNavigation() {
         );
     }
 
-    if (!isOnboardingCompleted) return <Onboarding />;
+    if (!isOnboardingCompleted) {
+        return <Onboarding />;
+    }
 
     const linking = {
         prefixes: ["https://iqprehend.com", "iqprehend://"],
