@@ -94,6 +94,18 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     }, []);
 
+    const startSummary = async () => {
+        try {
+            await authenticatedRequest().post("/summary/start-countdown", { article: articleID });
+
+            setShowSummaryConfirmPlanModal(false);
+            navigation.navigate("CreateSummary", { articleID });
+        } catch (error) {
+            setShowSummaryConfirmPlanModal(false);
+            alert("Unable to start timer");
+        }
+    };
+
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         const paddingToBottom = 20;
         return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
@@ -225,12 +237,9 @@ export const SingleArticleView = ({ navigation, route }) => {
                 />
 
                 <SummaryConfirmationModal
+                    onProceed={startSummary}
                     show={showSummaryConfirmModal}
                     onClose={() => setShowSummaryConfirmPlanModal(false)}
-                    onProceed={() => {
-                        setShowSummaryConfirmPlanModal(false);
-                        navigation.navigate("CreateSummary", { articleID });
-                    }}
                 />
             </ScrollView>
         );

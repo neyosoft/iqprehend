@@ -120,12 +120,7 @@ export const MakePayment = ({ navigation, route }) => {
                                     <AppText style={styles.fieldErrorText}>{errors.cardNumber}</AppText>
                                 )}
 
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-between",
-                                        marginTop: RFPercentage(2),
-                                    }}>
+                                <View style={styles.expiryRow}>
                                     <View style={{ width: "48%" }}>
                                         <AppTextField
                                             maxLength={5}
@@ -177,7 +172,7 @@ export const MakePayment = ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+        <SafeAreaView edges={["top"]} style={styles.root}>
             {renderContent()}
         </SafeAreaView>
     );
@@ -190,6 +185,10 @@ const paymentSchema = object().shape({
 });
 
 const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+    },
     container: {
         flex: 1,
         backgroundColor: "#fff",
@@ -214,6 +213,11 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: RFPercentage(2.5),
+    },
+    expiryRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: RFPercentage(2),
     },
     input: {
         marginTop: RFPercentage(2),
