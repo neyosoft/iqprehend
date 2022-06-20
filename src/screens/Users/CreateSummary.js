@@ -236,7 +236,13 @@ export const CreateSummary = ({ navigation, route }) => {
         <SafeAreaView edges={["top"]} style={styles.root}>
             <HeaderWithBack navigation={navigation} />
             {renderContent()}
-            <SummarySubmittedModal show={showModal} onClose={() => setShowModal(false)} />
+            <SummarySubmittedModal
+                show={showModal}
+                onClose={() => {
+                    setShowModal(false);
+                    navigation.navigate("Home");
+                }}
+            />
         </SafeAreaView>
     );
 };

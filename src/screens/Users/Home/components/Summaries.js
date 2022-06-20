@@ -5,7 +5,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, Image, ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 
 import { VideoArticleIcon } from "../../../../icons";
-import { AppBoldText, AppText } from "../../../../components";
+import { AppBoldText, AppMediumText, AppText, Button } from "../../../../components";
 
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
@@ -71,10 +71,16 @@ export const Summaries = () => {
                                     </View>
                                 )}
                                 <View style={styles.rightContainer}>
-                                    <AppText style={styles.articleTitle}>{record?.article?.title}</AppText>
+                                    <AppMediumText style={styles.articleTitle}>{record?.article?.title}</AppMediumText>
                                     <AppText style={styles.createdDateStyle}>
-                                        Submitted: {format(new Date(record.createdAt), "MMM dd, yyyy")}
+                                        Submitted on {format(new Date(record.createdAt), "MMM dd, yyyy")}
                                     </AppText>
+
+                                    <Button
+                                        style={styles.summaryBtn}
+                                        labelStyle={styles.summaryBtnLabel}
+                                        label="VIEW RESULTS"
+                                    />
                                 </View>
                             </View>
                         </TouchableWithoutFeedback>
@@ -126,9 +132,18 @@ const styles = StyleSheet.create({
     },
     createdDateStyle: {
         marginTop: 5,
-        color: "#6A6A6A",
+        color: "#A3A3A3",
         fontSize: RFPercentage(1.8),
         lineHeight: RFPercentage(2.2),
+    },
+    summaryBtn: {
+        marginTop: 10,
+        borderRadius: 3,
+        paddingHorizontal: 0,
+        paddingVertical: RFPercentage(1.4),
+    },
+    summaryBtnLabel: {
+        fontSize: RFPercentage(2),
     },
     articleTitle: {
         color: theme.colors.primary,
@@ -144,7 +159,7 @@ const styles = StyleSheet.create({
     imagebox: {
         overflow: "hidden",
         width: RFPercentage(17),
-        height: RFPercentage(10),
+        height: RFPercentage(17),
         backgroundColor: "#C4C4C4",
         borderRadius: RFPercentage(1),
     },
