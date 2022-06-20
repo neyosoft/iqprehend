@@ -2,46 +2,27 @@ import React, { useState, useCallback } from "react";
 import { useQuery } from "react-query";
 import { format, isPast } from "date-fns";
 import HTML from "react-native-render-html";
-import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
+import CountDown from "react-native-countdown-component";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import CountDown from "react-native-countdown-component";
 
-import {
-    View,
-    Image,
-    Share,
-    TextInput,
-    StyleSheet,
-    ScrollView,
-    TouchableOpacity,
-    useWindowDimensions,
-} from "react-native";
+import { View, Image, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { useFocusEffect } from "@react-navigation/native";
 import { PaymentPlanModal } from "../../modals/PaymentPlanModal";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
-const wordCount = (text) => {
-    if (!text) return 0;
-    return text.trim().split(" ").length;
-};
-
 export const SingleArticleView = ({ navigation, route }) => {
-    const toast = useToast();
     const { authenticatedRequest } = useAuth();
 
     const contentWidth = useWindowDimensions().width;
 
     const [playing, setPlaying] = useState(false);
-    const [summaryText, setSummaryText] = useState("");
     const [isAtBottom, setIsAtBottom] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPlanModal, setShowPlanModal] = useState(false);
 
     const { articleID } = route.params;
@@ -69,22 +50,6 @@ export const SingleArticleView = ({ navigation, route }) => {
             return data.data;
         } else {
             throw new Error("Unable to retreive article summary status");
-        }
-    });
-
-    const articlesSummaryResponse = useQuery(["articles-summary", articleID], async () => {
-        try {
-            const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
-
-            if (data && data.data) {
-                setSummaryText(data.data?.summary?.content || "");
-
-                return data.data.summary;
-            } else {
-                throw new Error();
-            }
-        } catch (error) {
-            throw new Error();
         }
     });
 
@@ -117,7 +82,6 @@ export const SingleArticleView = ({ navigation, route }) => {
             settingsResponse.refetch();
             articlesResponse.refetch();
             articleViewResponse.refetch();
-            articlesSummaryResponse.refetch();
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []),
     );
@@ -148,222 +112,6 @@ export const SingleArticleView = ({ navigation, route }) => {
         }
     };
 
-    const handleSummaryTextSubmission = async () => {
-        if (summaryText.trim().length < 1) {
-            return toast.show("Kindly submit content for summary.");
-        }
-
-        const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
-
-        if (wordCount(summaryText) > summaryMaxWordCount) {
-            return toast.show("Summary text is too long.");
-        }
-
-        try {
-            setIsSubmitting(true);
-
-            const { data } = articlesSummaryResponse.data
-                ? await authenticatedRequest().put("/summary", {
-                      id: articlesSummaryResponse.data._id,
-                      content: summaryText,
-                  })
-                : await authenticatedRequest().post("/summary", {
-                      article: articleID,
-                      content: summaryText,
-                  });
-
-            if (data && data.data) {
-                toast.show(data.data.message, { type: "success" });
-                navigation.goBack();
-            } else {
-                throw new Error("There is a problem submitting your summary. Kindly try again");
-            }
-        } catch (error) {
-            toast.show(extractResponseErrorMessage(error));
-            setIsSubmitting(false);
-        }
-    };
-
-    const renderUserSummaryResponse = (summary) => {
-        if (!summary?.isEvaluated) {
-            return (
-                <View>
-                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
-                    <AppText style={styles.statusDescription}>Evaluation in progress...</AppText>
-                </View>
-            );
-        }
-
-        if (summary?.isFreeSummary) {
-            return (
-                <View>
-                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
-                    <AppText style={styles.statusDescription}>
-                        Your summary can not be evaluated because you do not have active subscription when summary was
-                        submitted..
-                    </AppText>
-                </View>
-            );
-        }
-
-        if (summary?.isFailed) {
-            return (
-                <View>
-                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
-                    <AppText style={styles.statusDescription}>
-                        Thank you for your participation. You failed the preliminary stage of the summary review.
-                    </AppText>
-                    <Button
-                        label="View Result"
-                        style={styles.viewResultBtn}
-                        onPress={() =>
-                            navigation.navigate("EvaluationResult", {
-                                summaryId: summary._id,
-                                articleID: summary.article._id,
-                            })
-                        }
-                    />
-                </View>
-            );
-        }
-
-        if (!summary?.isExpertReviewed) {
-            return (
-                <View>
-                    <AppMediumText style={styles.statusTitle}>Status</AppMediumText>
-                    <AppText style={styles.statusDescription}>
-                        Thank you for your participation. Your summary is currently under review.
-                    </AppText>
-                    <Button
-                        label="View Result"
-                        style={styles.viewResultBtn}
-                        onPress={() =>
-                            navigation.navigate("EvaluationResult", {
-                                summaryId: summary._id,
-                                articleID: summary.article._id,
-                            })
-                        }
-                    />
-                </View>
-            );
-        }
-
-        if (summary?.isExpertReviewed && summary?.linkId && !summary?.voting) {
-            return (
-                <View>
-                    <AppMediumText style={styles.statusTitle}>Voting Link</AppMediumText>
-                    <AppText style={styles.summaryDescription}>
-                        You can share the link below with your friends and family. Their votes can boost our summary
-                        score.
-                    </AppText>
-
-                    <TouchableOpacity
-                        style={styles.linkWrapper}
-                        onPress={() => handleInvitationShare(`http://www.iqprehend.com/voting/${summary.linkId}`)}>
-                        <AppText style={styles.link}>http://www.iqprehend.com/voting/{summary.linkId}</AppText>
-                    </TouchableOpacity>
-
-                    <Button
-                        label="View Result"
-                        style={styles.viewResultBtn}
-                        onPress={() =>
-                            navigation.navigate("EvaluationResult", {
-                                summaryId: summary._id,
-                                articleID: summary.article._id,
-                            })
-                        }
-                    />
-                </View>
-            );
-        }
-
-        if (summary?.voting) {
-            return (
-                <Button
-                    label="View Result"
-                    style={styles.viewResultBtn}
-                    onPress={() =>
-                        navigation.navigate("EvaluationResult", {
-                            summaryId: summary._id,
-                            articleID: summary.article._id,
-                        })
-                    }
-                />
-            );
-        }
-    };
-
-    const renderTextSummaryForm = (articleSubmissionStatus) => {
-        const settingsConfig = settingsResponse.data;
-        const summaryMaxWordCount = settingsConfig?.summary?.count || 200;
-
-        if (articleSubmissionStatus?.canSubmit) {
-            return (
-                <View>
-                    <AppText style={styles.wordCountText}>
-                        Summary words: {wordCount(summaryText)}/<AppMediumText>{summaryMaxWordCount}</AppMediumText>
-                    </AppText>
-
-                    <TextInput
-                        multiline={true}
-                        value={summaryText}
-                        textAlignVertical="top"
-                        style={styles.summaryInput}
-                        onChangeText={setSummaryText}
-                        placeholder="Enter summary here..."
-                    />
-
-                    <AppText style={styles.note}>
-                        <AppMediumText>Note:</AppMediumText> You are not eligible for any reward if you do not have
-                        active paid subscription
-                    </AppText>
-
-                    <Button
-                        style={styles.button}
-                        disabled={isSubmitting}
-                        onPress={handleSummaryTextSubmission}
-                        label={isSubmitting ? "Submitting..." : articlesSummaryResponse.data ? "Update" : "Submit"}
-                    />
-                </View>
-            );
-        } else {
-            const summary = articlesSummaryResponse.data;
-
-            if (!summary) {
-                return (
-                    <View style={styles.summaryArea}>
-                        <AppMediumText style={styles.statusTitle}>Summary</AppMediumText>
-                        <AppText style={styles.summaryText}>
-                            You can no longer submit summary. Article deadline already exceeded.
-                        </AppText>
-                    </View>
-                );
-            }
-
-            return (
-                <View>
-                    <View style={styles.summaryArea}>
-                        <AppMediumText style={styles.statusTitle}>Summary</AppMediumText>
-                        <AppText style={styles.summaryText}>{summaryText}</AppText>
-                    </View>
-
-                    {renderUserSummaryResponse(summary)}
-                </View>
-            );
-        }
-    };
-
-    const handleInvitationShare = (URL) => {
-        Share.share(
-            {
-                uri: URL,
-                message: URL,
-                title: "Share with your friends and family",
-            },
-            { dialogTitle: "Share with your friends and family", subject: "Share with your friends and family" },
-        );
-    };
-
     const renderMedia = (article) => {
         if (article.articleType === "VIDEO") {
             return (
@@ -390,21 +138,11 @@ export const SingleArticleView = ({ navigation, route }) => {
     };
 
     const renderContent = () => {
-        if (
-            articlesResponse.isLoading ||
-            articleViewResponse.isLoading ||
-            articlesSummaryResponse.isLoading ||
-            settingsResponse.isLoading
-        ) {
+        if (articlesResponse.isLoading || articleViewResponse.isLoading || settingsResponse.isLoading) {
             return <PageLoading />;
         }
 
-        if (
-            articlesResponse.isError ||
-            articleViewResponse.isError ||
-            articlesSummaryResponse.isError ||
-            settingsResponse.isError
-        ) {
+        if (articlesResponse.isError || articleViewResponse.isError || settingsResponse.isError) {
             return (
                 <View style={styles.centerView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
@@ -416,7 +154,7 @@ export const SingleArticleView = ({ navigation, route }) => {
                         onPress={() => {
                             articlesResponse.refetch();
                             settingsResponse.refetch();
-                            articlesSummaryResponse.refetch();
+                            articleViewResponse.refetch();
                         }}
                     />
                 </View>
@@ -427,7 +165,7 @@ export const SingleArticleView = ({ navigation, route }) => {
         const articleSubmissionStatus = articleViewResponse.data;
 
         return (
-            <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={false} onScroll={handleScroll}>
+            <ScrollView scrollEventThrottle={16} showsVerticalScrollIndicator={true} onScroll={handleScroll}>
                 {renderMedia(article)}
 
                 <View style={styles.contentContainerStyle}>
@@ -464,15 +202,15 @@ export const SingleArticleView = ({ navigation, route }) => {
                         emSize={16}
                         contentWidth={contentWidth}
                         source={{ html: article.content }}
-                        baseFontStyle={{
-                            textAlign: "justify",
-                            fontSize: RFPercentage(2.1),
-                            fontFamily: "Rubik-Regular",
-                            lineHeight: RFPercentage(3.2),
-                        }}
+                        baseFontStyle={styles.baseFontStyle}
                     />
 
-                    {renderTextSummaryForm(articleSubmissionStatus)}
+                    <Button
+                        label="Provide Summary"
+                        style={styles.summaryBtn}
+                        disabled={!articleSubmissionStatus.canSubmit}
+                        // onPress={handleSubmit}
+                    />
                 </View>
 
                 <PaymentPlanModal
@@ -601,6 +339,9 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end",
         marginTop: RFPercentage(4),
     },
+    summaryBtn: {
+        marginTop: RFPercentage(4),
+    },
     audiobox: {
         width: "90%",
         alignItems: "center",
@@ -643,5 +384,11 @@ const styles = StyleSheet.create({
     },
     viewResultBtn: {
         marginTop: 15,
+    },
+    baseFontStyle: {
+        textAlign: "justify",
+        fontSize: RFPercentage(2.1),
+        fontFamily: "Rubik-Regular",
+        lineHeight: RFPercentage(3.2),
     },
 });

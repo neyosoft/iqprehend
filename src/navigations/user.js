@@ -4,14 +4,12 @@ import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/
 
 import {
     Home,
-    Voting,
     Payment,
     Category,
     Articles,
     Settings,
     MakePayment,
     PaymentPlans,
-    BankSettings,
     SearchArticle,
     ChangePassword,
     PaymentHistory,
@@ -67,11 +65,9 @@ export default function UserNavigation() {
             screenOptions={{
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             }}>
-            <Stack.Screen name="Voting" component={Voting} />
             <Stack.Screen name="Category" component={Category} />
             <Stack.Screen name="MakePayment" component={MakePayment} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
-            <Stack.Screen name="BankSettings" component={BankSettings} />
             <Stack.Screen name="SearchArticle" component={SearchArticle} />
             <Stack.Screen name="TabNavigation" component={TabNavigation} />
             <Stack.Screen name="PaymentHistory" component={PaymentHistory} />

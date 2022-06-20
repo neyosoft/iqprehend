@@ -1,12 +1,11 @@
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import { NavigationContainer } from "@react-navigation/native";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
 
 import UserNavigation from "./user";
 import AuthNavigation from "./auth";
 import { useAuth } from "../context";
-import ExpertNavigation from "./expert";
 import { AppText } from "../components";
 import { Onboarding } from "../screens/Onboarding";
 import theme from "../theme";
@@ -16,9 +15,9 @@ export default function AppNavigation() {
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}>
+            <View style={styles.centeredView}>
                 <ActivityIndicator size="large" color={theme.colors.primary} />
-                <AppText style={{ marginTop: 10 }}>Loading...</AppText>
+                <AppText style={styles.loadingText}>Loading...</AppText>
             </View>
         );
     }
@@ -35,21 +34,19 @@ export default function AppNavigation() {
 
     return (
         <NavigationContainer linking={linking} onReady={() => RNBootSplash.hide()}>
-            {switchNavigator(user)}
+            {user?.role === "USER" ? <UserNavigation /> : <AuthNavigation />}
         </NavigationContainer>
     );
 }
 
-const switchNavigator = (user) => {
-    if (!user) {
-        return <AuthNavigation />;
-    }
-
-    if (user.role === "USER") {
-        return <UserNavigation />;
-    } else if (user.role === "EXPERT") {
-        return <ExpertNavigation />;
-    } else {
-        return <AuthNavigation />;
-    }
-};
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#fff",
+    },
+    loadingText: {
+        marginTop: 10,
+    },
+});
