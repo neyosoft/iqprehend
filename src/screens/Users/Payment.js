@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import format from "date-fns/format";
-import { isPast } from "date-fns";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -33,6 +32,7 @@ export const Payment = ({ navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             paymentResponse.refetch();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []),
     );
 
@@ -43,9 +43,9 @@ export const Payment = ({ navigation }) => {
 
         if (paymentResponse.isError) {
             return (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <View style={styles.centeredView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
-                    <AppText style={{ width: "70%", alignSelf: "center", textAlign: "center", marginTop: 20 }}>
+                    <AppText style={styles.errorLabel}>
                         There is a problem retrieving your subscription at the moment. Kindly try again.
                     </AppText>
 
@@ -54,9 +54,9 @@ export const Payment = ({ navigation }) => {
             );
         }
 
-        if (!paymentResponse.data?.planDetails || isPast(new Date(paymentResponse.data?.planDetails?.endDate))) {
+        if (!paymentResponse.data?.planDetails) {
             return (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <View style={styles.centeredView}>
                     <Image source={require("../../assets/images/information.png")} />
                     <AppBoldText style={styles.title}>No active subscription</AppBoldText>
                     <AppText style={styles.description}>You do not have an active subscription.</AppText>
@@ -102,11 +102,11 @@ export const Payment = ({ navigation }) => {
                     </View>
                     <View style={styles.itemRow}>
                         <AppMediumText style={[styles.item, { color: theme.colors.primary }]}>Start Date</AppMediumText>
-                        <AppText style={styles.item}>{format(new Date(plan.startDate), "MMM dd, yyyy")}</AppText>
+                        <AppText style={styles.item}>{format(new Date(plan.startDate), "MMMM dd, yyyy")}</AppText>
                     </View>
                     <View style={styles.itemRow}>
                         <AppMediumText style={[styles.item, { color: theme.colors.primary }]}>End Date</AppMediumText>
-                        <AppText style={styles.item}>{format(new Date(plan.endDate), "MMM dd, yyyy")}</AppText>
+                        <AppText style={styles.item}>{format(new Date(plan.endDate), "MMMM dd, yyyy")}</AppText>
                     </View>
                 </View>
 
@@ -120,7 +120,7 @@ export const Payment = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+        <SafeAreaView edges={["top"]} style={styles.root}>
             <View style={styles.container}>
                 <Header />
 
@@ -138,6 +138,10 @@ export const Payment = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+    },
     container: {
         flex: 1,
         backgroundColor: "#fff",
@@ -154,6 +158,11 @@ const styles = StyleSheet.create({
         fontSize: RFPercentage(2.4),
         marginHorizontal: RFPercentage(2),
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     content: {
         padding: RFPercentage(4),
     },
@@ -164,6 +173,12 @@ const styles = StyleSheet.create({
     description: {
         marginTop: 5,
         fontSize: RFPercentage(2),
+    },
+    errorLabel: {
+        width: "70%",
+        marginTop: 20,
+        alignSelf: "center",
+        textAlign: "center",
     },
     boxContainer: {
         marginTop: RFPercentage(2),
