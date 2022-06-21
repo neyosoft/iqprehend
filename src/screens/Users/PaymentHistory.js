@@ -9,7 +9,7 @@ import { View, StyleSheet, TouchableOpacity, StatusBar, ScrollView } from "react
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
-import { AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
 export const PaymentHistory = ({ navigation }) => {
     const { authenticatedRequest } = useAuth();
@@ -78,16 +78,10 @@ export const PaymentHistory = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+        <SafeAreaView edges={["top"]} style={styles.root}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={navigation.goBack}>
-                        <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
-                    </TouchableOpacity>
-
-                    <AppText style={styles.headerTitle}>Payment History</AppText>
-                </View>
+                <HeaderWithBack navigation={navigation} />
 
                 {renderContent()}
             </View>
@@ -96,6 +90,10 @@ export const PaymentHistory = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+    },
     container: {
         flex: 1,
         backgroundColor: "#C7C7C7",

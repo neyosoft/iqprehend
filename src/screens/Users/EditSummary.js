@@ -69,8 +69,6 @@ export const EditSummary = ({ navigation, route }) => {
             params: { id: articleID },
         });
 
-        console.log("summary status: ", data);
-
         if (data && data.data) {
             return data.data;
         } else {

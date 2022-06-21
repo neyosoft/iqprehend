@@ -11,17 +11,19 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
-export const SummaryResult = ({ navigation, route }) => {
+export const LeadersBoard = ({ navigation, route }) => {
     const { user, authenticatedRequest } = useAuth();
 
     const { articleID } = route.params;
 
-    const summaryResponse = useQuery(["summary", articleID], async () => {
+    const leadersboardResponse = useQuery(["leadersboard", articleID], async () => {
         try {
-            const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
+            const { data } = await authenticatedRequest().get("/articles/leaderboard", {
+                params: { id: articleID },
+            });
 
-            if (data?.data?.summary) {
-                return data.data.summary;
+            if (data?.data?.leaderboard) {
+                return data.data.leaderboard;
             } else {
                 throw new Error();
             }
@@ -32,38 +34,34 @@ export const SummaryResult = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            summaryResponse.refetch();
+            leadersboardResponse.refetch();
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []),
     );
 
     const renderContent = () => {
-        if (summaryResponse.isLoading || summaryResponse.isFetching) {
+        if (leadersboardResponse.isLoading || leadersboardResponse.isFetching) {
             return <PageLoading />;
         }
 
-        if (summaryResponse.isError) {
+        if (leadersboardResponse.isError) {
             return (
                 <View style={styles.centeredView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
-                    <AppText style={styles.errorLabel}>There is a problem retrieving result. Kindly try again.</AppText>
+                    <AppText style={styles.errorLabel}>
+                        There is a problem retrieving leadersboard. Kindly try again.
+                    </AppText>
 
-                    <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={summaryResponse.refetch} />
+                    <Button
+                        label="Retry"
+                        style={{ marginTop: RFPercentage(5) }}
+                        onPress={leadersboardResponse.refetch}
+                    />
                 </View>
             );
         }
 
-        const summary = summaryResponse.data;
-
-        const essayScore = summary?.essay?.score;
-        const grammarScore = summary?.grammar?.score;
-        const plagiarismScore = summary?.plagiarism?.score;
-
-        const totalScore = Number(essayScore) + Number(grammarScore) + Number(plagiarismScore);
-
-        const widthAndHeight = RFPercentage(30);
-        const sliceColor = ["#C3EDFF", "#060169", "#676668"];
-        const series = [essayScore || 1, plagiarismScore || 1, grammarScore || 1];
+        const leaders = leadersboardResponse.data;
 
         return (
             <ScrollView>
@@ -80,32 +78,24 @@ export const SummaryResult = ({ navigation, route }) => {
                             />
                         </TouchableWithoutFeedback>
                     </View>
-                    <AppMediumText style={styles.title}>{summary.article.title}</AppMediumText>
-
-                    <View style={styles.chartWrapper}>
-                        <PieChart series={series} sliceColor={sliceColor} widthAndHeight={widthAndHeight} />
-
-                        <AppMediumText style={styles.scoreLabel}>SCORE: {totalScore.toFixed(2)}%</AppMediumText>
-                    </View>
                 </View>
                 <View style={styles.bottomBox}>
-                    <View style={styles.evaluationRow}>
-                        <View style={styles.evaluationIndicator} />
-                        <AppText style={styles.evaluationLabel}>Grammar Check</AppText>
-                    </View>
-                    <View style={styles.evaluationRow}>
-                        <View style={[styles.evaluationIndicator, { backgroundColor: "#060169" }]} />
-                        <AppText style={styles.evaluationLabel}>Plagiarism Check</AppText>
-                    </View>
-                    <View style={styles.evaluationRow}>
-                        <View style={[styles.evaluationIndicator, { backgroundColor: "#C3EDFF" }]} />
-                        <AppText style={styles.evaluationLabel}>Coherence Score</AppText>
-                    </View>
-                    <Button
-                        style={styles.button}
-                        label="VIEW LEADERBOARD"
-                        onPress={() => navigation.navigate("LeadersBoard", { articleID })}
-                    />
+                    <AppMediumText style={styles.title}>Leadersboard</AppMediumText>
+
+                    {leaders.map((record) => (
+                        <View style={styles.leaderCard}>
+                            <Image
+                                style={styles.headerPhoto}
+                                source={
+                                    record?.profilePicture
+                                        ? { uri: user.profilePicture }
+                                        : require("../../assets/images/avatar.jpg")
+                                }
+                            />
+                            <AppText style={styles.leaderName}>{record.firstName}</AppText>
+                            <AppText style={styles.leaderScore}>{record.score}%</AppText>
+                        </View>
+                    ))}
                 </View>
             </ScrollView>
         );
@@ -143,6 +133,11 @@ const styles = StyleSheet.create({
         padding: RFPercentage(4),
         backgroundColor: "#F4F4F4",
     },
+    bottomBox: {
+        padding: RFPercentage(4),
+        paddingVertical: RFPercentage(2),
+        backgroundColor: "#FFF",
+    },
     title: {
         color: theme.colors.primary,
         fontSize: RFPercentage(3),
@@ -156,32 +151,19 @@ const styles = StyleSheet.create({
         height: RFPercentage(6),
         borderRadius: RFPercentage(6),
     },
-    chartWrapper: {
-        alignItems: "center",
-        marginTop: RFPercentage(4),
-    },
-    scoreLabel: {
-        marginTop: RFPercentage(2),
-        fontSize: RFPercentage(2.5),
-        color: theme.colors.primary,
-    },
-    bottomBox: {
-        backgroundColor: "#FFF",
-        padding: RFPercentage(4),
-    },
-    evaluationRow: {
+    leaderCard: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: RFPercentage(3),
+        padding: RFPercentage(1),
+        borderBottomColor: "#eee",
+        marginTop: RFPercentage(1),
     },
-    evaluationIndicator: {
-        width: RFPercentage(4),
-        height: RFPercentage(4),
-        backgroundColor: "#676668",
+    leaderName: {
+        flex: 1,
+        color: theme.colors.primary,
+        marginHorizontal: RFPercentage(2),
     },
-    evaluationLabel: {
-        marginLeft: RFPercentage(2),
-        fontSize: RFPercentage(2.5),
+    leaderScore: {
         color: theme.colors.primary,
     },
     button: {

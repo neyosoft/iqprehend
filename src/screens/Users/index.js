@@ -7,6 +7,7 @@ export { MyArticles } from "./MyArticles";
 export { Evaluation } from "./Evaluation";
 export { EditSummary } from "./EditSummary";
 export { MakePayment } from "./MakePayment";
+export { LeadersBoard } from "./LeadersBoard";
 export { PaymentPlans } from "./PaymentPlans";
 export { SummaryResult } from "./SummaryResult";
 export { CreateSummary } from "./CreateSummary";

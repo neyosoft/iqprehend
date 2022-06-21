@@ -10,6 +10,7 @@ import {
     Settings,
     EditSummary,
     MakePayment,
+    LeadersBoard,
     PaymentPlans,
     SearchArticle,
     SummaryResult,
@@ -71,6 +72,7 @@ export default function UserNavigation() {
             <Stack.Screen name="Category" component={Category} />
             <Stack.Screen name="EditSummary" component={EditSummary} />
             <Stack.Screen name="MakePayment" component={MakePayment} />
+            <Stack.Screen name="LeadersBoard" component={LeadersBoard} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="SearchArticle" component={SearchArticle} />
             <Stack.Screen name="SummaryResult" component={SummaryResult} />

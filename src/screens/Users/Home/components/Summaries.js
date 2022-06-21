@@ -38,7 +38,6 @@ export const Summaries = () => {
     );
 
     const renderActionable = (record) => {
-        console.log("stage: ", record.stage);
         switch (record.stage) {
             case "REVIEW":
                 return (
