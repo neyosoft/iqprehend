@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     button: {
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: theme.radius.button,
+        borderRadius: theme.radius.small,
         paddingVertical: RFPercentage(2),
         paddingHorizontal: RFPercentage(10),
         backgroundColor: Theme.colors.primary,

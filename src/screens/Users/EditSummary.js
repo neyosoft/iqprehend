@@ -15,7 +15,7 @@ import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummarySubmittedModal } from "../../modals/SummarySubmittedModal";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
-const wordCount = (text) => {
+const wordCount = (text = "") => {
     if (!text) {
         return 0;
     }
@@ -23,7 +23,7 @@ const wordCount = (text) => {
     return text.trim().split(" ").length;
 };
 
-export const CreateSummary = ({ navigation, route }) => {
+export const EditSummary = ({ navigation, route }) => {
     const { articleID } = route.params;
 
     const toast = useToast();
@@ -49,10 +49,27 @@ export const CreateSummary = ({ navigation, route }) => {
         }
     });
 
+    useQuery(["summary", articleID], async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/summary/detail", { params: { article: articleID } });
+
+            if (data?.data?.summary) {
+                setSummaryText(data.data.summary.content);
+                return data.data.summary;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
     const articleViewResponse = useQuery(["summary-view-status", articleID], async () => {
         const { data } = await authenticatedRequest().get("/summary/submission-status", {
             params: { id: articleID },
         });
+
+        console.log("summary status: ", data);
 
         if (data && data.data) {
             return data.data;

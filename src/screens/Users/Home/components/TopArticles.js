@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, Image, ActivityIndicator, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 
@@ -28,6 +28,13 @@ export const TopArticles = () => {
             throw new Error();
         }
     });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            articlesResponse.refetch();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []),
+    );
 
     const renderOutput = () => {
         if (articlesResponse.isLoading) {

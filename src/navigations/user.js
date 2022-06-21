@@ -8,9 +8,11 @@ import {
     Category,
     Articles,
     Settings,
+    EditSummary,
     MakePayment,
     PaymentPlans,
     SearchArticle,
+    SummaryResult,
     CreateSummary,
     ChangePassword,
     PaymentHistory,
@@ -67,9 +69,11 @@ export default function UserNavigation() {
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             }}>
             <Stack.Screen name="Category" component={Category} />
+            <Stack.Screen name="EditSummary" component={EditSummary} />
             <Stack.Screen name="MakePayment" component={MakePayment} />
             <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
             <Stack.Screen name="SearchArticle" component={SearchArticle} />
+            <Stack.Screen name="SummaryResult" component={SummaryResult} />
             <Stack.Screen name="CreateSummary" component={CreateSummary} />
             <Stack.Screen name="TabNavigation" component={TabNavigation} />
             <Stack.Screen name="PaymentHistory" component={PaymentHistory} />

@@ -33,6 +33,7 @@ export const MyArticles = ({ navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             articlesResponse.refetch();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []),
     );
 
