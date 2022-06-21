@@ -1,6 +1,5 @@
 import React from "react";
 import { useQuery } from "react-query";
-import PieChart from "react-native-pie-chart";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -92,7 +91,9 @@ export const LeadersBoard = ({ navigation, route }) => {
                                         : require("../../assets/images/avatar.jpg")
                                 }
                             />
-                            <AppText style={styles.leaderName}>{record.firstName}</AppText>
+                            <AppText style={styles.leaderName}>
+                                {record.firstName} {record.lastName}
+                            </AppText>
                             <AppText style={styles.leaderScore}>{record.score}%</AppText>
                         </View>
                     ))}
