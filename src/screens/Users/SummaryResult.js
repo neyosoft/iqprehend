@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import PieChart from "react-native-pie-chart";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -58,6 +59,16 @@ export const SummaryResult = ({ navigation, route }) => {
 
         const summary = summaryResponse.data;
 
+        const essayScore = summary?.essay?.score;
+        const grammarScore = summary?.grammar?.score;
+        const plagiarismScore = summary?.plagiarism?.score;
+
+        const totalScore = Number(essayScore) + Number(grammarScore) + Number(plagiarismScore);
+
+        const widthAndHeight = RFPercentage(30);
+        const sliceColor = ["#C3EDFF", "#060169", "#676668"];
+        const series = [essayScore || 1, plagiarismScore || 1, grammarScore || 1];
+
         return (
             <ScrollView>
                 <View style={styles.topBox}>
@@ -74,12 +85,32 @@ export const SummaryResult = ({ navigation, route }) => {
                         </TouchableWithoutFeedback>
                     </View>
                     <AppMediumText style={styles.title}>{summary.article.title}</AppMediumText>
+
+                    <View style={styles.chartWrapper}>
+                        <PieChart series={series} sliceColor={sliceColor} widthAndHeight={widthAndHeight} />
+
+                        <AppMediumText style={styles.scoreLabel}>SCORE: {totalScore.toFixed(2)}%</AppMediumText>
+                    </View>
                 </View>
-                <Button
-                    style={styles.button}
-                    label="VIEW LEADERBOARD"
-                    onPress={() => navigation.navigate("PaymentHistory")}
-                />
+                <View style={styles.bottomBox}>
+                    <View style={styles.evaluationRow}>
+                        <View style={styles.evaluationIndicator} />
+                        <AppText style={styles.evaluationLabel}>Grammar Check</AppText>
+                    </View>
+                    <View style={styles.evaluationRow}>
+                        <View style={[styles.evaluationIndicator, { backgroundColor: "#060169" }]} />
+                        <AppText style={styles.evaluationLabel}>Plagiarism Check</AppText>
+                    </View>
+                    <View style={styles.evaluationRow}>
+                        <View style={[styles.evaluationIndicator, { backgroundColor: "#C3EDFF" }]} />
+                        <AppText style={styles.evaluationLabel}>Coherence Score</AppText>
+                    </View>
+                    <Button
+                        style={styles.button}
+                        label="VIEW LEADERBOARD"
+                        onPress={() => navigation.navigate("PaymentHistory")}
+                    />
+                </View>
             </ScrollView>
         );
     };
@@ -119,6 +150,7 @@ const styles = StyleSheet.create({
     title: {
         color: theme.colors.primary,
         fontSize: RFPercentage(3),
+        marginTop: RFPercentage(2),
     },
     headerPhotoWrapper: {
         alignSelf: "flex-end",
@@ -127,6 +159,34 @@ const styles = StyleSheet.create({
         width: RFPercentage(6),
         height: RFPercentage(6),
         borderRadius: RFPercentage(6),
+    },
+    chartWrapper: {
+        alignItems: "center",
+        marginTop: RFPercentage(4),
+    },
+    scoreLabel: {
+        marginTop: RFPercentage(2),
+        fontSize: RFPercentage(2.5),
+        color: theme.colors.primary,
+    },
+    bottomBox: {
+        backgroundColor: "#FFF",
+        padding: RFPercentage(4),
+    },
+    evaluationRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: RFPercentage(3),
+    },
+    evaluationIndicator: {
+        width: RFPercentage(4),
+        height: RFPercentage(4),
+        backgroundColor: "#676668",
+    },
+    evaluationLabel: {
+        marginLeft: RFPercentage(2),
+        fontSize: RFPercentage(2.5),
+        color: theme.colors.primary,
     },
     button: {
         marginTop: RFPercentage(2),
