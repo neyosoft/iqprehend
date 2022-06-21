@@ -1,17 +1,16 @@
 import React from "react";
 import { useQuery } from "react-query";
-import format from "date-fns/format";
+import PieChart from "react-native-pie-chart";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { View, StyleSheet, ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import PieChart from "react-native-pie-chart";
+import { View, StyleSheet, ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { Header } from "./Home/components";
-import { AppBoldText, AppMediumText, AppText, Button, PageLoading } from "../../components";
+import { AppMediumText, AppText, Button, PageLoading } from "../../components";
 
 export const SummaryResult = ({ navigation, route }) => {
     const { user, authenticatedRequest } = useAuth();
