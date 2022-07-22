@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import CountDown from "react-native-countdown-component";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummarySubmittedModal } from "../../modals/SummarySubmittedModal";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
@@ -101,6 +101,8 @@ export const CreateSummary = ({ navigation, route }) => {
                 isDraft: saveAsDraft,
             });
 
+            console.log("created summary: ", data);
+
             if (data && data.data) {
                 setShowModal(true);
                 toast.show(data.data.message, { type: "success" });
@@ -108,6 +110,7 @@ export const CreateSummary = ({ navigation, route }) => {
                 throw new Error("There is a problem submitting your summary. Kindly try again");
             }
         } catch (error) {
+            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
             setIsSubmitting(false);
         }
@@ -207,7 +210,12 @@ export const CreateSummary = ({ navigation, route }) => {
                         active paid subscription
                     </AppText>
 
-                    <Button label="Submit" disabled={false} style={styles.button} onPress={() => setShowModal(true)} />
+                    <Button
+                        label="Submit"
+                        disabled={false}
+                        style={styles.button}
+                        onPress={() => handleSummaryTextSubmission(false)}
+                    />
 
                     <Button
                         label="Save Draft"
