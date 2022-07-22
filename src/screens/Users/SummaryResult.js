@@ -91,15 +91,15 @@ export const SummaryResult = ({ navigation, route }) => {
                 <View style={styles.bottomBox}>
                     <View style={styles.evaluationRow}>
                         <View style={styles.evaluationIndicator} />
-                        <AppText style={styles.evaluationLabel}>Grammar Check</AppText>
+                        <AppText style={styles.evaluationLabel}>Grammar Check: {grammarScore}</AppText>
                     </View>
                     <View style={styles.evaluationRow}>
                         <View style={[styles.evaluationIndicator, { backgroundColor: "#060169" }]} />
-                        <AppText style={styles.evaluationLabel}>Plagiarism Check</AppText>
+                        <AppText style={styles.evaluationLabel}>Plagiarism Check: {plagiarismScore}</AppText>
                     </View>
                     <View style={styles.evaluationRow}>
                         <View style={[styles.evaluationIndicator, { backgroundColor: "#C3EDFF" }]} />
-                        <AppText style={styles.evaluationLabel}>Coherence Score</AppText>
+                        <AppText style={styles.evaluationLabel}>Coherence Score: {essayScore}</AppText>
                     </View>
                     <Button
                         style={styles.button}
