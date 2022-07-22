@@ -48,7 +48,7 @@ export const LeadersBoard = ({ navigation, route }) => {
                 <View style={styles.centeredView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
                     <AppText style={styles.errorLabel}>
-                        There is a problem retrieving leadersboard. Kindly try again.
+                        There is a problem retrieving leaderboard. Kindly try again.
                     </AppText>
 
                     <Button
@@ -79,7 +79,7 @@ export const LeadersBoard = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={styles.bottomBox}>
-                    <AppMediumText style={styles.title}>Leadersboard</AppMediumText>
+                    <AppMediumText style={styles.title}>Leaderboard</AppMediumText>
 
                     {leaders.map((record) => (
                         <View style={styles.leaderCard}>

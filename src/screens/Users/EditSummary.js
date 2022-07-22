@@ -117,6 +117,10 @@ export const EditSummary = ({ navigation, route }) => {
             });
 
             if (data && data.data) {
+                if (saveAsDraft) {
+                    return navigation.navigate("Home");
+                }
+
                 setShowModal(true);
                 toast.show(data.data.message, { type: "success" });
             } else {
@@ -222,7 +226,12 @@ export const EditSummary = ({ navigation, route }) => {
                         active paid subscription
                     </AppText>
 
-                    <Button label="Submit" disabled={false} style={styles.button} onPress={() => setShowModal(true)} />
+                    <Button
+                        label="Submit"
+                        disabled={false}
+                        style={styles.button}
+                        onPress={() => handleSummaryTextSubmission(false)}
+                    />
 
                     <Button
                         label="Save Draft"

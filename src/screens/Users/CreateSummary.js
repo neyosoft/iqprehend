@@ -104,6 +104,10 @@ export const CreateSummary = ({ navigation, route }) => {
             console.log("created summary: ", data);
 
             if (data && data.data) {
+                if (saveAsDraft) {
+                    return navigation.navigate("Home");
+                }
+
                 setShowModal(true);
                 toast.show(data.data.message, { type: "success" });
             } else {

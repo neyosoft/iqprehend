@@ -37,6 +37,17 @@ export const Summaries = () => {
         }, []),
     );
 
+    const getTimeLeft = (timeInSeconds) => {
+        const hours = Math.floor(timeInSeconds / 3600);
+        const mins = Math.floor((timeInSeconds - 3600 * hours) / 60);
+
+        if (hours >= 1) {
+            return `${hours} hr ${mins} mins`;
+        }
+
+        return `${mins} mins`;
+    };
+
     const renderActionable = (record) => {
         switch (record.stage) {
             case "REVIEW":
@@ -74,7 +85,8 @@ export const Summaries = () => {
                 return (
                     <View>
                         <AppText style={styles.timeLeftLabel}>
-                            Time Remaining: <AppText style={styles.createdDateStyle}>{record.timeLeft}</AppText>
+                            Time Remaining:{" "}
+                            <AppText style={styles.createdDateStyle}>{getTimeLeft(record.timeLeft)}</AppText>
                         </AppText>
                         <View style={styles.draftBtnWrapper}>
                             <Button
