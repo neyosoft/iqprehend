@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
         backgroundColor: "#fff",
+        justifyContent: "center",
     },
     loadingText: {
         marginTop: 10,

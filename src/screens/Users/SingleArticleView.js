@@ -205,8 +205,9 @@ export const SingleArticleView = ({ navigation, route }) => {
                             <AppText style={styles.timeLeftText}>Time left for submission</AppText>
                             <CountDown
                                 size={20}
+                                running={true}
                                 digitTxtStyle={styles.digitTxtStyle}
-                                until={articleSubmissionStatus.timeLeft * 60}
+                                until={articleSubmissionStatus.timeLeft}
                                 digitStyle={{ backgroundColor: theme.colors.primary }}
                             />
                         </View>
