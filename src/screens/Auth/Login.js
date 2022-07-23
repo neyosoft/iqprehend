@@ -7,7 +7,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { Page, AppText, Button, TextField, AppMediumText, PasswordField, FormErrorMessage } from "../../components";
 
 export const Login = ({ navigation }) => {

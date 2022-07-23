@@ -4,6 +4,7 @@ import { format, isPast } from "date-fns";
 import HTML from "react-native-render-html";
 import YoutubePlayer from "react-native-youtube-iframe";
 import CountDown from "react-native-countdown-component";
+import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -12,10 +13,10 @@ import { View, Image, StyleSheet, ScrollView, useWindowDimensions } from "react-
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { useFocusEffect } from "@react-navigation/native";
 import { PaymentPlanModal } from "../../modals/PaymentPlanModal";
-import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummaryConfirmationModal } from "../../modals/SummaryConfirmationModal";
+import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
@@ -102,7 +103,8 @@ export const SingleArticleView = ({ navigation, route }) => {
             navigation.navigate("CreateSummary", { articleID });
         } catch (error) {
             setShowSummaryConfirmPlanModal(false);
-            alert("Unable to start timer");
+            // eslint-disable-next-line no-alert
+            alert(extractResponseErrorMessage(error, "Unable to submit summary under this article"));
         }
     };
 
