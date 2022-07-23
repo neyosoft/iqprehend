@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
 import format from "date-fns/format";
-import { View, TextInput, StyleSheet, Image, ScrollView } from "react-native";
+import { View, TextInput, StyleSheet, Image, ScrollView, BackHandler } from "react-native";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import CountDown from "react-native-countdown-component";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummarySubmittedModal } from "../../modals/SummarySubmittedModal";
 import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
 
@@ -34,6 +34,17 @@ export const CreateSummary = ({ navigation, route }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { authenticatedRequest } = useAuth();
+
+    useEffect(() => {
+        const backAction = async () => {
+            await handleSummaryTextSubmission(true);
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+
+        return () => backHandler.remove();
+    }, [handleSummaryTextSubmission]);
 
     const articlesResponse = useQuery(["articles", articleID], async () => {
         try {
@@ -81,44 +92,44 @@ export const CreateSummary = ({ navigation, route }) => {
         }
     }, []);
 
-    const handleSummaryTextSubmission = async (saveAsDraft) => {
-        if (summaryText.trim().length < 1) {
-            return toast.show("Kindly submit content for summary.");
-        }
-
-        const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
-
-        if (wordCount(summaryText) > summaryMaxWordCount) {
-            return toast.show("Summary text is too long.");
-        }
-
-        try {
-            setIsSubmitting(true);
-
-            const { data } = await authenticatedRequest().post("/summary", {
-                article: articleID,
-                content: summaryText,
-                isDraft: saveAsDraft,
-            });
-
-            console.log("created summary: ", data);
-
-            if (data && data.data) {
-                if (saveAsDraft) {
-                    return navigation.navigate("Home");
-                }
-
-                setShowModal(true);
-                toast.show(data.data.message, { type: "success" });
-            } else {
-                throw new Error("There is a problem submitting your summary. Kindly try again");
+    const handleSummaryTextSubmission = useCallback(
+        async (saveAsDraft) => {
+            if (summaryText.trim().length < 1) {
+                return toast.show("Kindly submit content for summary.");
             }
-        } catch (error) {
-            debugAxiosError(error);
-            toast.show(extractResponseErrorMessage(error));
-            setIsSubmitting(false);
-        }
-    };
+
+            const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
+
+            if (wordCount(summaryText) > summaryMaxWordCount) {
+                return toast.show("Summary text is too long.");
+            }
+
+            try {
+                setIsSubmitting(true);
+
+                const { data } = await authenticatedRequest().post("/summary", {
+                    article: articleID,
+                    content: summaryText,
+                    isDraft: saveAsDraft,
+                });
+
+                if (data && data.data) {
+                    if (saveAsDraft) {
+                        return navigation.navigate("Home");
+                    }
+
+                    setShowModal(true);
+                    toast.show(data.data.message, { type: "success" });
+                } else {
+                    throw new Error("There is a problem submitting your summary. Kindly try again");
+                }
+            } catch (error) {
+                toast.show(extractResponseErrorMessage(error));
+                setIsSubmitting(false);
+            }
+        },
+        [articleID, toast, authenticatedRequest, navigation, settingsResponse.data.summary.count, summaryText],
+    );
 
     const renderMedia = (article) => {
         if (article.articleType === "VIDEO") {
