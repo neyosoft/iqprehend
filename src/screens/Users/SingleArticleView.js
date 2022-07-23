@@ -201,13 +201,11 @@ export const SingleArticleView = ({ navigation, route }) => {
                     </View>
 
                     {articleSubmissionStatus.canSubmit && (
-                        <View style={{ alignItems: "center" }}>
-                            <AppText style={{ marginVertical: 10, fontSize: RFPercentage(1.8) }}>
-                                Time left for submission
-                            </AppText>
+                        <View style={styles.center}>
+                            <AppText style={styles.timeLeftText}>Time left for submission</AppText>
                             <CountDown
                                 size={20}
-                                digitTxtStyle={{ color: "#FFF" }}
+                                digitTxtStyle={styles.digitTxtStyle}
                                 until={articleSubmissionStatus.timeLeft * 60}
                                 digitStyle={{ backgroundColor: theme.colors.primary }}
                             />
@@ -412,5 +410,15 @@ const styles = StyleSheet.create({
         fontSize: RFPercentage(2.1),
         fontFamily: "Rubik-Regular",
         lineHeight: RFPercentage(3.2),
+    },
+    digitTxtStyle: {
+        color: "#fff",
+    },
+    timeLeftText: {
+        marginVertical: 10,
+        fontSize: RFPercentage(1.8),
+    },
+    center: {
+        alignItems: "center",
     },
 });
