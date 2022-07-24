@@ -29,8 +29,6 @@ const NewTimerCountdown = ({ style, initialSecondsRemaining = 0, onComplete }) =
         const minutes = parseInt(((remainingSec / 60) % 60).toString(), 10);
         const hours = parseInt((remainingSec / 3600).toString(), 10);
 
-        console.log({ remainingSec, seconds, minutes, hours });
-
         const s = seconds < 10 ? "0" + seconds : seconds;
         const m = minutes < 10 ? "0" + minutes : minutes;
         let h = hours < 10 ? "0" + hours : hours;
