@@ -14,4 +14,4 @@ export { PasswordField } from "./PasswordField";
 export { HeaderWithBack } from "./HeaderWithBack";
 export { FormErrorMessage } from "./FormErrorMessage";
 export { ExistingRouteList } from "./ExistingRouteList";
-export { default as TimerCountdown } from "./TimerCountdown";
+export { default as NewTimerCountdown } from "./NewTimerCountdown";

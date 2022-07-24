@@ -15,7 +15,7 @@ import { useAuth } from "../../context";
 import { PaymentPlanModal } from "../../modals/PaymentPlanModal";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummaryConfirmationModal } from "../../modals/SummaryConfirmationModal";
-import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading, TimerCountdown } from "../../components";
+import { AppMediumText, AppText, Button, HeaderWithBack, NewTimerCountdown, PageLoading } from "../../components";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
@@ -207,10 +207,10 @@ export const SingleArticleView = ({ navigation, route }) => {
                         <View style={styles.center}>
                             <AppText style={styles.timeLeftText}>Time left for submission</AppText>
 
-                            <TimerCountdown
+                            <NewTimerCountdown
                                 onComplete={timeup}
                                 style={styles.coundownLabel}
-                                initialSecondsRemaining={articleSubmissionStatus.timeLeft * 1000}
+                                initialSecondsRemaining={articleSubmissionStatus.timeLeft}
                             />
                         </View>
                     )}

@@ -94,11 +94,6 @@ export const CreateSummary = ({ navigation, route }) => {
 
     const handleSummaryTextSubmission = useCallback(
         async (saveAsDraft, content) => {
-            console.log({ content });
-            if (content.trim().length < 1) {
-                return toast.show("Kindly submit content for summary.");
-            }
-
             const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
 
             if (wordCount(content) > summaryMaxWordCount) {

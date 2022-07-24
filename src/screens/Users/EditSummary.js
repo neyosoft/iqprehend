@@ -12,7 +12,7 @@ import theme from "../../theme";
 import { useAuth } from "../../context";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummarySubmittedModal } from "../../modals/SummarySubmittedModal";
-import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading, TimerCountdown } from "../../components";
+import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading, NewTimerCountdown } from "../../components";
 
 const wordCount = (text = "") => {
     if (!text) {
@@ -108,10 +108,6 @@ export const EditSummary = ({ navigation, route }) => {
 
     const handleSummaryTextSubmission = useCallback(
         async (saveAsDraft, content) => {
-            if (content.trim().length < 1) {
-                return toast.show("Kindly submit content for summary.");
-            }
-
             const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
 
             if (wordCount(content) > summaryMaxWordCount) {
@@ -150,6 +146,11 @@ export const EditSummary = ({ navigation, route }) => {
 
         navigation.goBack();
     }, [handleSummaryTextSubmission, summaryText, navigation]);
+
+    const handleAutoSubmission = useCallback(() => handleSummaryTextSubmission(false, summaryText), [
+        summaryText,
+        handleSummaryTextSubmission,
+    ]);
 
     const renderMedia = (article) => {
         if (article.articleType === "VIDEO") {
@@ -227,10 +228,10 @@ export const EditSummary = ({ navigation, route }) => {
                     {articleSubmissionStatus.canSubmit && (
                         <View style={styles.timerWrapper}>
                             <AppText style={styles.countdownLabel}>Time Remaining</AppText>
-                            <TimerCountdown
+                            <NewTimerCountdown
                                 style={styles.coundownLabel}
-                                onComplete={() => handleSummaryTextSubmission(true, summaryText)}
-                                initialSecondsRemaining={(articleSubmissionStatus.timeLeft - 10) * 1000}
+                                onComplete={handleAutoSubmission}
+                                initialSecondsRemaining={articleSubmissionStatus.timeLeft - 10}
                             />
                         </View>
                     )}
