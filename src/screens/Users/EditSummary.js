@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
 import format from "date-fns/format";
-import { View, TextInput, StyleSheet, Image, ScrollView } from "react-native";
+import { View, TextInput, StyleSheet, Image, ScrollView, BackHandler } from "react-native";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,10 +10,9 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import CountDown from "react-native-countdown-component";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummarySubmittedModal } from "../../modals/SummarySubmittedModal";
-import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
+import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading, TimerCountdown } from "../../components";
 
 const wordCount = (text = "") => {
     if (!text) {
@@ -64,6 +63,17 @@ export const EditSummary = ({ navigation, route }) => {
         }
     });
 
+    useEffect(() => {
+        const backAction = async () => {
+            await handleSummaryTextSubmission(true, summaryText);
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+
+        return () => backHandler.remove();
+    }, [handleSummaryTextSubmission, summaryText]);
+
     const articleViewResponse = useQuery(["summary-view-status", articleID], async () => {
         const { data } = await authenticatedRequest().get("/summary/submission-status", {
             params: { id: articleID },
@@ -96,41 +106,50 @@ export const EditSummary = ({ navigation, route }) => {
         }
     }, []);
 
-    const handleSummaryTextSubmission = async (saveAsDraft) => {
-        if (summaryText.trim().length < 1) {
-            return toast.show("Kindly submit content for summary.");
-        }
-
-        const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
-
-        if (wordCount(summaryText) > summaryMaxWordCount) {
-            return toast.show("Summary text is too long.");
-        }
-
-        try {
-            setIsSubmitting(true);
-
-            const { data } = await authenticatedRequest().post("/summary", {
-                article: articleID,
-                content: summaryText,
-                isDraft: saveAsDraft,
-            });
-
-            if (data && data.data) {
-                if (saveAsDraft) {
-                    return navigation.navigate("Home");
-                }
-
-                setShowModal(true);
-                toast.show(data.data.message, { type: "success" });
-            } else {
-                throw new Error("There is a problem submitting your summary. Kindly try again");
+    const handleSummaryTextSubmission = useCallback(
+        async (saveAsDraft, content) => {
+            if (content.trim().length < 1) {
+                return toast.show("Kindly submit content for summary.");
             }
-        } catch (error) {
-            toast.show(extractResponseErrorMessage(error));
-            setIsSubmitting(false);
-        }
-    };
+
+            const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
+
+            if (wordCount(content) > summaryMaxWordCount) {
+                return toast.show("Summary text is too long.");
+            }
+
+            try {
+                setIsSubmitting(true);
+
+                const { data } = await authenticatedRequest().post("/summary", {
+                    article: articleID,
+                    content: content,
+                    isDraft: saveAsDraft,
+                });
+
+                if (data && data.data) {
+                    if (saveAsDraft) {
+                        toast.show("Summary saved as draft.");
+                        return navigation.navigate("Home");
+                    }
+
+                    setShowModal(true);
+                } else {
+                    throw new Error("There is a problem submitting your summary. Kindly try again");
+                }
+            } catch (error) {
+                toast.show(extractResponseErrorMessage(error));
+                setIsSubmitting(false);
+            }
+        },
+        [articleID, authenticatedRequest, navigation, settingsResponse.data.summary.count, toast],
+    );
+
+    const handleBackPressed = useCallback(async () => {
+        await handleSummaryTextSubmission(true, summaryText);
+
+        navigation.goBack();
+    }, [handleSummaryTextSubmission, summaryText, navigation]);
 
     const renderMedia = (article) => {
         if (article.articleType === "VIDEO") {
@@ -205,6 +224,17 @@ export const EditSummary = ({ navigation, route }) => {
                         </View>
                     </View>
 
+                    {articleSubmissionStatus.canSubmit && (
+                        <View style={styles.timerWrapper}>
+                            <AppText style={styles.countdownLabel}>Time Remaining</AppText>
+                            <TimerCountdown
+                                style={styles.coundownLabel}
+                                onComplete={() => handleSummaryTextSubmission(true, summaryText)}
+                                initialSecondsRemaining={(articleSubmissionStatus.timeLeft - 10) * 1000}
+                            />
+                        </View>
+                    )}
+
                     <View style={styles.summaryWrapper}>
                         <TextInput
                             multiline={true}
@@ -230,7 +260,7 @@ export const EditSummary = ({ navigation, route }) => {
                         label="Submit"
                         disabled={false}
                         style={styles.button}
-                        onPress={() => handleSummaryTextSubmission(false)}
+                        onPress={() => handleSummaryTextSubmission(false, summaryText)}
                     />
 
                     <Button
@@ -238,20 +268,8 @@ export const EditSummary = ({ navigation, route }) => {
                         disabled={isSubmitting}
                         style={styles.draftBtn}
                         labelStyle={styles.draftBtnLabel}
-                        onPress={() => handleSummaryTextSubmission(true)}
+                        onPress={() => handleSummaryTextSubmission(true, summaryText)}
                     />
-
-                    {articleSubmissionStatus.canSubmit && (
-                        <View style={styles.timerWrapper}>
-                            <AppText style={styles.countdownLabel}>Time Remaining</AppText>
-                            <CountDown
-                                size={20}
-                                timeToShow={["H", "M", "S"]}
-                                digitStyle={styles.digitStyle}
-                                until={articleSubmissionStatus.timeLeft}
-                            />
-                        </View>
-                    )}
                 </View>
             </ScrollView>
         );
@@ -259,7 +277,7 @@ export const EditSummary = ({ navigation, route }) => {
 
     return (
         <SafeAreaView edges={["top"]} style={styles.root}>
-            <HeaderWithBack navigation={navigation} />
+            <HeaderWithBack navigation={navigation} onBackPressed={handleBackPressed} />
             {renderContent()}
             <SummarySubmittedModal
                 show={showModal}

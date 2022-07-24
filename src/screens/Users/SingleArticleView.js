@@ -3,20 +3,19 @@ import { useQuery } from "react-query";
 import { format, isPast } from "date-fns";
 import HTML from "react-native-render-html";
 import YoutubePlayer from "react-native-youtube-iframe";
-import CountDown from "react-native-countdown-component";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { View, Image, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import { View, Image, StyleSheet, ScrollView, useWindowDimensions, Alert } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
 import { PaymentPlanModal } from "../../modals/PaymentPlanModal";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { SummaryConfirmationModal } from "../../modals/SummaryConfirmationModal";
-import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading } from "../../components";
+import { AppMediumText, AppText, Button, HeaderWithBack, PageLoading, TimerCountdown } from "../../components";
 
 export const SingleArticleView = ({ navigation, route }) => {
     const { authenticatedRequest } = useAuth();
@@ -79,6 +78,10 @@ export const SingleArticleView = ({ navigation, route }) => {
             throw new Error("Unable to retreive payment information");
         }
     });
+
+    const timeup = useCallback(() => {
+        Alert.alert("Time up", "You can't submit submission again on this article.");
+    }, []);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -203,12 +206,11 @@ export const SingleArticleView = ({ navigation, route }) => {
                     {articleSubmissionStatus.canSubmit && (
                         <View style={styles.center}>
                             <AppText style={styles.timeLeftText}>Time left for submission</AppText>
-                            <CountDown
-                                size={20}
-                                running={true}
-                                digitTxtStyle={styles.digitTxtStyle}
-                                until={articleSubmissionStatus.timeLeft}
-                                digitStyle={{ backgroundColor: theme.colors.primary }}
+
+                            <TimerCountdown
+                                onComplete={timeup}
+                                style={styles.coundownLabel}
+                                initialSecondsRemaining={articleSubmissionStatus.timeLeft * 1000}
                             />
                         </View>
                     )}
@@ -418,6 +420,9 @@ const styles = StyleSheet.create({
     timeLeftText: {
         marginVertical: 10,
         fontSize: RFPercentage(1.8),
+    },
+    coundownLabel: {
+        fontSize: RFPercentage(2.2),
     },
     center: {
         alignItems: "center",

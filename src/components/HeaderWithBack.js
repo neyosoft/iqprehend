@@ -5,10 +5,10 @@ import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 import theme from "../theme";
 
-export const HeaderWithBack = ({ navigation }) => {
+export const HeaderWithBack = ({ navigation, onBackPressed }) => {
     return (
         <View style={styles.header}>
-            <TouchableOpacity onPress={navigation.goBack} style={styles.backIcon}>
+            <TouchableOpacity onPress={onBackPressed ? onBackPressed : navigation.goBack} style={styles.backIcon}>
                 <Icon name="arrow-left" color="#fff" size={RFPercentage(3.5)} />
             </TouchableOpacity>
             <Image source={require("../assets/images/logo.png")} resizeMode="contain" style={styles.image} />

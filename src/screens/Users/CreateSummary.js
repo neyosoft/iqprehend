@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useQuery } from "react-query";
 import format from "date-fns/format";
-import { View, TextInput, StyleSheet, Image, ScrollView, BackHandler } from "react-native";
 import { useToast } from "react-native-fast-toast";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { View, TextInput, StyleSheet, Image, ScrollView, BackHandler } from "react-native";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
@@ -37,14 +37,14 @@ export const CreateSummary = ({ navigation, route }) => {
 
     useEffect(() => {
         const backAction = async () => {
-            await handleSummaryTextSubmission(true);
+            await handleSummaryTextSubmission(true, summaryText);
             return true;
         };
 
         const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
         return () => backHandler.remove();
-    }, [handleSummaryTextSubmission]);
+    }, [handleSummaryTextSubmission, summaryText]);
 
     const articlesResponse = useQuery(["articles", articleID], async () => {
         try {
@@ -93,14 +93,15 @@ export const CreateSummary = ({ navigation, route }) => {
     }, []);
 
     const handleSummaryTextSubmission = useCallback(
-        async (saveAsDraft) => {
-            if (summaryText.trim().length < 1) {
+        async (saveAsDraft, content) => {
+            console.log({ content });
+            if (content.trim().length < 1) {
                 return toast.show("Kindly submit content for summary.");
             }
 
             const summaryMaxWordCount = settingsResponse.data?.summary?.count || 200;
 
-            if (wordCount(summaryText) > summaryMaxWordCount) {
+            if (wordCount(content) > summaryMaxWordCount) {
                 return toast.show("Summary text is too long.");
             }
 
@@ -109,17 +110,17 @@ export const CreateSummary = ({ navigation, route }) => {
 
                 const { data } = await authenticatedRequest().post("/summary", {
                     article: articleID,
-                    content: summaryText,
+                    content: content,
                     isDraft: saveAsDraft,
                 });
 
                 if (data && data.data) {
                     if (saveAsDraft) {
+                        toast.show("Summary saved as draft.");
                         return navigation.navigate("Home");
                     }
 
                     setShowModal(true);
-                    toast.show(data.data.message, { type: "success" });
                 } else {
                     throw new Error("There is a problem submitting your summary. Kindly try again");
                 }
@@ -128,7 +129,7 @@ export const CreateSummary = ({ navigation, route }) => {
                 setIsSubmitting(false);
             }
         },
-        [articleID, toast, authenticatedRequest, navigation, settingsResponse.data.summary.count, summaryText],
+        [articleID, toast, authenticatedRequest, navigation, settingsResponse.data.summary.count],
     );
 
     const renderMedia = (article) => {
@@ -229,7 +230,7 @@ export const CreateSummary = ({ navigation, route }) => {
                         label="Submit"
                         disabled={false}
                         style={styles.button}
-                        onPress={() => handleSummaryTextSubmission(false)}
+                        onPress={() => handleSummaryTextSubmission(false, summaryText)}
                     />
 
                     <Button
@@ -237,7 +238,7 @@ export const CreateSummary = ({ navigation, route }) => {
                         disabled={isSubmitting}
                         style={styles.draftBtn}
                         labelStyle={styles.draftBtnLabel}
-                        onPress={() => handleSummaryTextSubmission(true)}
+                        onPress={(() => handleSummaryTextSubmission(true), summaryText)}
                     />
 
                     {articleSubmissionStatus.canSubmit && (
