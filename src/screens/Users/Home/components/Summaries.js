@@ -38,14 +38,14 @@ export const Summaries = () => {
     );
 
     const getTimeLeft = (timeInSeconds) => {
+        const minutes = Math.floor((timeInSeconds / 60) % 60);
         const hours = Math.floor(timeInSeconds / 3600);
-        const mins = Math.floor((timeInSeconds - 3600 * hours) / 60);
 
         if (hours >= 1) {
-            return `${hours} hr ${mins} mins`;
+            return `${hours} hr ${minutes} mins`;
         }
 
-        return `${mins} mins`;
+        return `${minutes} mins`;
     };
 
     const renderActionable = (record) => {
