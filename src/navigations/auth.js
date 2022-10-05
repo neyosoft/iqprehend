@@ -9,7 +9,7 @@ export default function AuthNavigation() {
     return (
         <Stack.Navigator
             headerMode="none"
-            initialRouteName="Login"
+            initialRouteName="Register"
             screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />

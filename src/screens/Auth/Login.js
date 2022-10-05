@@ -77,7 +77,7 @@ export const Login = ({ navigation }) => {
 
                                 <View style={styles.centerView}>
                                     <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
-                                        <AppMediumText style={styles.forgetPassword}>Forget Password?</AppMediumText>
+                                        <AppMediumText style={styles.forgetPassword}>Forgot Password?</AppMediumText>
                                     </TouchableOpacity>
                                 </View>
                             </View>
