@@ -41,13 +41,17 @@ export default class AuthProvider extends Component {
         },
         logout: async () => {
             try {
-                await axios.post("/auth/logout", params, {
-                    baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
-                    headers: {
-                        Authorization: `Bearer ${this.state.accessToken}`,
-                        "X-Refresh-Token": `Bearer ${this.state.refreshToken}`,
+                await axios.post(
+                    "/auth/logout",
+                    {},
+                    {
+                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
+                        headers: {
+                            Authorization: `Bearer ${this.state.accessToken}`,
+                            "X-Refresh-Token": `Bearer ${this.state.refreshToken}`,
+                        },
                     },
-                });
+                );
             } catch (error) {}
 
             await Promise.all([removeUserToken(), removeRefreshToken()]);

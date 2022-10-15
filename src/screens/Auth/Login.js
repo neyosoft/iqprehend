@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,11 +7,25 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 
 import theme from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { isFirstLogin, doneWithFirstLogin } from "../../utils/storage.utils";
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 import { Page, AppText, Button, TextField, AppMediumText, PasswordField, FormErrorMessage } from "../../components";
 
 export const Login = ({ navigation }) => {
     const { authenticate } = useAuth();
+
+    useEffect(() => {
+        handleFirstLogin();
+
+        async function handleFirstLogin() {
+            const firstLogin = await isFirstLogin();
+
+            if (firstLogin) {
+                doneWithFirstLogin();
+                navigation.navigate("Register");
+            }
+        }
+    }, [navigation]);
 
     const onSubmit = async (values, { setFieldError }) => {
         try {

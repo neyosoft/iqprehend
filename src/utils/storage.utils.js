@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const USER_TOKEN_KEY = "userToken";
 const USER_REFRESH_TOKEN_KEY = "userRefreshToken";
 
+const FIRST_LOGIN = "FIRST_LOGIN";
 const BIOMETRIC_AUTH = "BIOMETRIC_AUTH";
 const ONBOARDING_COMPLETED = "ONBOARDING_COMPLETED";
 
@@ -24,3 +25,10 @@ export const getOnboardingStatus = async () => {
 
 export const saveBiometricLogin = (payload) => AsyncStorage.setItem(BIOMETRIC_AUTH, JSON.stringify(payload));
 export const getBiometricLogin = () => AsyncStorage.getItem(BIOMETRIC_AUTH);
+
+export const doneWithFirstLogin = () => AsyncStorage.setItem(FIRST_LOGIN, "TRUE");
+export const isFirstLogin = async () => {
+    const status = await AsyncStorage.getItem(FIRST_LOGIN);
+
+    return status !== "TRUE";
+};
