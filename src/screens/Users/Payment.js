@@ -63,17 +63,8 @@ export const Payment = ({ navigation }) => {
 
                     <Button
                         label="Try again."
-                        style={[
-                            styles.button,
-                            {
-                                borderWidth: 1,
-                                backgroundColor: "#fff",
-                                marginTop: RFPercentage(5),
-                                borderColor: theme.colors.primary,
-                                borderRadius: theme.radius.small,
-                            },
-                        ]}
                         onPress={paymentResponse.refetch}
+                        style={[styles.button, styles.retryButton]}
                         labelStyle={{ color: theme.colors.primary }}
                     />
                     <Button
@@ -195,5 +186,12 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: RFPercentage(2),
+    },
+    retryButton: {
+        borderWidth: 1,
+        backgroundColor: "#fff",
+        marginTop: RFPercentage(5),
+        borderColor: theme.colors.primary,
+        borderRadius: theme.radius.small,
     },
 });

@@ -42,7 +42,7 @@ export const MakePayment = ({ navigation, route }) => {
 
                 toast.show("Payment successfully completed.");
 
-                navigation.navigate("Payment");
+                navigation.navigate("Home");
             }
         } catch (error) {
             toast.show("Payment failed: ", error);
@@ -52,7 +52,7 @@ export const MakePayment = ({ navigation, route }) => {
     const paymentResponse = useQuery("payment-info", async () => {
         const { data } = await authenticatedRequest().post("/payment", { name: plan?.name?.toUpperCase() });
 
-        if (data && data) {
+        if (data?.data) {
             setAccessCode(data.data.accessCode);
 
             return data.data;

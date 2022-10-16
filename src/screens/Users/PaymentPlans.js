@@ -80,11 +80,9 @@ export const PaymentPlans = ({ navigation }) => {
 
         if (planResponse.isError) {
             return (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <View style={styles.centerView}>
                     <Icon name="alert" color="red" size={RFPercentage(10)} />
-                    <AppText style={{ width: "70%", alignSelf: "center", textAlign: "center", marginTop: 20 }}>
-                        Unable to retrieve payment plans
-                    </AppText>
+                    <AppText style={styles.errorLabelDescription}>Unable to retrieve payment plans</AppText>
 
                     <Button label="Retry" style={{ marginTop: RFPercentage(5) }} onPress={planResponse.refetch} />
                 </View>
@@ -252,5 +250,16 @@ const styles = StyleSheet.create({
     },
     centerBtnLabel: {
         color: theme.colors.primary,
+    },
+    centerView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    errorLabelDescription: {
+        width: "70%",
+        alignSelf: "center",
+        textAlign: "center",
+        marginTop: 20,
     },
 });
