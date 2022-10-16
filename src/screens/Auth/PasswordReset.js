@@ -114,7 +114,10 @@ const resetSchema = object().shape({
         .length(6)
         .required("Reset code is required.")
         .matches(/^[0-9]+$/, "Only digits are allowed for this field "),
-    password: string().required("Password is required.").min(6),
+    password: string()
+        .required("Password is required.")
+        .min(6)
+        .matches(/^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/, "Password must contain one number"),
 });
 
 const styles = StyleSheet.create({

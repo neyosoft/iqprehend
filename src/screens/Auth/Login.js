@@ -118,7 +118,10 @@ export const Login = ({ navigation }) => {
 
 const loginSchema = object().shape({
     email: string().required("Email is required.").email("Enter valid email address").lowercase(),
-    password: string().required("Password is required.").min(6),
+    password: string()
+        .required("Password is required.")
+        .min(6)
+        .matches(/^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/, "Password must contain one number"),
 });
 
 const styles = StyleSheet.create({

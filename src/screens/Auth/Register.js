@@ -206,7 +206,10 @@ const registrationSchema = object().shape({
             "You provided invalid email.",
         )
         .lowercase(),
-    password: string().required("Password is required.").min(6),
+    password: string()
+        .required("Password is required.")
+        .min(6)
+        .matches(/^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/, "Password must contain one number"),
 });
 
 const styles = StyleSheet.create({

@@ -97,7 +97,10 @@ export const ChangePassword = ({ navigation }) => {
 };
 
 const changePasswordSchema = object().shape({
-    password: string().required("Password is required.").min(6),
+    password: string()
+        .required("Password is required.")
+        .min(6)
+        .matches(/^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/, "Password must contain one number"),
     confirmPassword: string()
         .required("Password confirmation is required.")
         .oneOf([ref("password"), null], "Passwords must match"),
