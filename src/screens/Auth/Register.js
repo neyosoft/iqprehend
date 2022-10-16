@@ -7,7 +7,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { View, StyleSheet, TouchableOpacity, ScrollView, Linking } from "react-native";
 
 import theme from "../../theme";
-import { useAuth } from "../../context";
 import { baseRequest, extractResponseErrorAsObject } from "../../utils/request.utils";
 import {
     Page,
@@ -20,21 +19,21 @@ import {
     FormErrorMessage,
 } from "../../components";
 import CONFIG from "../../../config";
+import { useToast } from "react-native-fast-toast";
 
 export const Register = ({ navigation }) => {
-    const { authenticate } = useAuth();
-
+    const toast = useToast();
     const [agreement, setAgreement] = useState(false);
 
     const onSubmit = async (values, { setErrors }) => {
         try {
             const { data } = await baseRequest.post("/user", values);
 
-            if (data && data.data && data.data.status) {
-                const { entity, token, refreshToken } = data.data;
-
-                authenticate({ accessToken: token, refreshToken, user: entity });
+            if (data?.data?.message) {
+                toast.show(data.data.message);
             }
+
+            navigation.navigate("RegistrationOTP");
         } catch (error) {
             setErrors(extractResponseErrorAsObject(error));
         }

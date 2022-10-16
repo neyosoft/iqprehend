@@ -1,7 +1,14 @@
 import React from "react";
 
 import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
-import { Login, Register, ForgetPassword, PasswordReset, PasswordResetSuccessful } from "../screens/Auth";
+import {
+    Login,
+    Register,
+    PasswordReset,
+    ForgetPassword,
+    RegistrationOTP,
+    PasswordResetSuccessful,
+} from "../screens/Auth";
 
 const Stack = createStackNavigator();
 
@@ -15,6 +22,7 @@ export default function AuthNavigation() {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="PasswordReset" component={PasswordReset} />
             <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
+            <Stack.Screen name="RegistrationOTP" component={RegistrationOTP} />
             <Stack.Screen name="PasswordResetSuccessful" component={PasswordResetSuccessful} />
         </Stack.Navigator>
     );

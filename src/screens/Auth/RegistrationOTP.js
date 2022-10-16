@@ -2,41 +2,35 @@ import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import { useToast } from "react-native-fast-toast";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
 import theme from "../../theme";
-import { AppMediumText, AppText, Button, FormErrorMessage, Page, PasswordField, TextField } from "../../components";
+import { useAuth } from "../../context";
+import { AppMediumText, AppText, Button, FormErrorMessage, Page, TextField } from "../../components";
 
-export const PasswordReset = ({ navigation }) => {
+export const RegistrationOTP = ({ navigation }) => {
     const toast = useToast();
+    const { authenticate } = useAuth();
 
     const onSubmit = async (values, { setFieldError }) => {
         try {
-            const { data: linkVerificationData, headers } = await baseRequest.get("/auth/verify-link", {
-                params: { resetLink: values.code },
-            });
+            const { data } = await baseRequest.post("/user/verify", values);
 
-            if (!(linkVerificationData && linkVerificationData.data)) {
-                throw new Error();
-            }
+            console.log("The data: ", data.data);
 
-            const { data } = await baseRequest.put(
-                "/auth/reset-password",
-                { password: values.password },
-                { headers: { "X-Submission-Token": headers["x-submission-token"] } },
-            );
+            if (data?.data && data.data.status) {
+                toast.show("Registration completed.");
 
-            if (data && data.data) {
-                toast.show(data.data.message);
+                const { entity, token, refreshToken } = data.data;
 
-                navigation.navigate("PasswordResetSuccessful");
+                authenticate({ accessToken: token, refreshToken, user: entity });
             }
         } catch (error) {
-            setFieldError("general", extractResponseErrorMessage(error, "Password reset failed."));
+            setFieldError("general", extractResponseErrorMessage(error, "Verification failed."));
         }
     };
 
@@ -47,7 +41,7 @@ export const PasswordReset = ({ navigation }) => {
                     onSubmit={onSubmit}
                     validateOnChange={false}
                     validationSchema={resetSchema}
-                    initialValues={{ password: "", code: "" }}>
+                    initialValues={{ code: "" }}>
                     {({ handleSubmit, handleBlur, handleChange, values, errors, touched, isSubmitting }) => (
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.header}>
@@ -73,26 +67,12 @@ export const PasswordReset = ({ navigation }) => {
                                 {touched.code && errors.code && (
                                     <AppText style={styles.fieldErrorText}>{errors.code}</AppText>
                                 )}
-
-                                <PasswordField
-                                    style={styles.input}
-                                    autoCapitalize="none"
-                                    value={values.password}
-                                    placeholder="New password"
-                                    onBlur={handleBlur("password")}
-                                    onChangeText={handleChange("password")}
-                                    error={touched.password && errors.password}
-                                />
-
-                                {touched.password && errors.password && (
-                                    <AppText style={styles.fieldErrorText}>{errors.password}</AppText>
-                                )}
                             </View>
 
                             <Button
                                 onPress={handleSubmit}
                                 disabled={isSubmitting}
-                                label={isSubmitting ? "Processing..." : "Reset Password"}
+                                label={isSubmitting ? "Processing..." : "Verify Account"}
                             />
 
                             <View style={styles.registerActionBox}>
@@ -112,12 +92,8 @@ export const PasswordReset = ({ navigation }) => {
 const resetSchema = object().shape({
     code: string()
         .length(6)
-        .required("Reset code is required.")
+        .required("OTP code is required.")
         .matches(/^[0-9]+$/, "Only digits are allowed for this field "),
-    password: string()
-        .required("Password is required.")
-        .min(6)
-        .matches(/^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/, "Password must contain one number"),
 });
 
 const styles = StyleSheet.create({
