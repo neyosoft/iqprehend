@@ -2,9 +2,8 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import theme from "../theme";
 
-import Theme from "../theme";
+import theme from "../theme";
 import { AppText } from "./AppText";
 
 export const Button = ({ style, label, labelStyle, children, disabled, onPress, ...rest }) => {
@@ -27,15 +26,16 @@ export const Button = ({ style, label, labelStyle, children, disabled, onPress, 
 const styles = StyleSheet.create({
     button: {
         alignItems: "center",
+        paddingHorizontal: 40,
         justifyContent: "center",
         borderRadius: theme.radius.small,
         paddingVertical: RFPercentage(2),
-        paddingHorizontal: RFPercentage(10),
-        backgroundColor: Theme.colors.primary,
+        backgroundColor: theme.colors.primary,
     },
     buttonText: {
+        fontSize: 16,
         color: "#fff",
-        fontSize: RFPercentage(2.3),
+        textAlign: "center",
     },
     disabledBtn: {
         backgroundColor: theme.colors.diabledBtn,

@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { useQuery } from "react-query";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { View, StyleSheet, Image, ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, Image, ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 
 import theme from "../../../../theme";
 import { useAuth } from "../../../../context";
@@ -57,12 +57,7 @@ export const Summaries = () => {
                             Submitted on {format(new Date(record.createdAt), "MMM dd, yyyy")}
                         </AppText>
 
-                        <Button
-                            disabled={true}
-                            style={styles.summaryBtn}
-                            labelStyle={styles.summaryBtnLabel}
-                            label="PENDING REVIEW"
-                        />
+                        <Button disabled={true} style={styles.summaryBtn} label="PENDING REVIEW" />
                     </View>
                 );
             case "COMPLETED":
@@ -75,7 +70,6 @@ export const Summaries = () => {
                         <Button
                             label="VIEW RESULTS"
                             style={styles.summaryBtn}
-                            labelStyle={styles.summaryBtnLabel}
                             onPress={() => navigation.navigate("SummaryResult", { articleID: record.article._id })}
                         />
                     </View>
@@ -91,13 +85,9 @@ export const Summaries = () => {
                         <View style={styles.draftBtnWrapper}>
                             <Button
                                 label="Continue Editing"
-                                labelStyle={styles.summaryBtnLabel}
                                 style={[styles.summaryBtn, styles.continueEditBtn]}
                                 onPress={() => navigation.navigate("EditSummary", { articleID: record.article._id })}
                             />
-                            <TouchableOpacity style={styles.deleteBtn}>
-                                <AppText style={styles.deleteBtnLabel}>Delete</AppText>
-                            </TouchableOpacity>
                         </View>
                     </View>
                 );
@@ -217,9 +207,6 @@ const styles = StyleSheet.create({
     },
     continueEditBtn: {
         flex: 1,
-    },
-    summaryBtnLabel: {
-        fontSize: RFPercentage(2),
     },
     articleTitle: {
         color: theme.colors.primary,

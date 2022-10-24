@@ -9,24 +9,30 @@ import { Categories, Header, Summaries, TopArticles, WelcomeHeader } from "./com
 
 export const Home = () => {
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={["top"]}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-            <Header />
-            <ScrollView>
-                <WelcomeHeader />
-                <SearchInput style={styles.searchbox} />
-                <View style={styles.spacing}>
-                    <Categories />
-                    <TopArticles />
-                    <Summaries />
-                </View>
-            </ScrollView>
+            <View style={styles.content}>
+                <Header />
+                <ScrollView>
+                    <WelcomeHeader />
+                    <SearchInput style={styles.searchbox} />
+                    <View style={styles.spacing}>
+                        <Categories />
+                        <TopArticles />
+                        <Summaries />
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+    },
+    content: {
         flex: 1,
         backgroundColor: "#fff",
     },

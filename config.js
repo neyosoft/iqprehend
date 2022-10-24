@@ -3,7 +3,7 @@ export default {
     appVersion: "0.3.0",
     environment: "development",
     FRONT_END_BASEURL: "http://web.iqprehend.herlabytes.com",
-    DEV_SERVER_URL: "http://192.168.0.139:50987/api",
+    DEV_SERVER_URL: "http://localhost:50987/api",
     // DEV_SERVER_URL: "https://server.iqprehend.herlabytes.com/api",
     PROD_SERVER_URL: "https://server.iqprehend.herlabytes.com/api",
     // DEV_PAYSTACK_KEY: "pk_test_600c97c2a1783f27bfdedf5f221d21a584ffdc9a",

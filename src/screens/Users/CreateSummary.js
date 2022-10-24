@@ -104,8 +104,8 @@ export const CreateSummary = ({ navigation, route }) => {
                 setIsSubmitting(true);
 
                 const { data } = await authenticatedRequest().post("/summary", {
-                    article: articleID,
                     content: content,
+                    article: articleID,
                     isDraft: saveAsDraft,
                 });
 
@@ -233,7 +233,7 @@ export const CreateSummary = ({ navigation, route }) => {
                         disabled={isSubmitting}
                         style={styles.draftBtn}
                         labelStyle={styles.draftBtnLabel}
-                        onPress={(() => handleSummaryTextSubmission(true), summaryText)}
+                        onPress={() => handleSummaryTextSubmission(true, summaryText)}
                     />
 
                     {articleSubmissionStatus.canSubmit && (
